@@ -1,8 +1,36 @@
-/* src/Login.css */
-.login-container {
-  background-color: #f8f9fa; /* color de fondo claro */
+/* Contenedor general para asegurar full height */
+.login-contenedor {
+  width: 100vw;
 }
 
-.login-form {
-  width: 350px;
+/* Imagen ocupa toda la altura y fondo ajustado */
+.imagen-login {
+  height: 100vh;
+  background-image: url('../../Imagenes/Escudo.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Contenedor del formulario con fondo claro */
+.formulario-contenedor {
+  background-color: #f1f1eb;
+}
+
+/* Formulario con sombra, bordes redondeados y máximo ancho */
+.formulario-login {
+  max-width: 400px;
+  width: 100%;
+}
+
+/* Botón rojo escarlata */
+.btn-escarlata {
+  background-color: #FF2400; /* rojo escarlata */
+  color: white;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.btn-escarlata:hover {
+  background-color: #cc1a00;
 }
