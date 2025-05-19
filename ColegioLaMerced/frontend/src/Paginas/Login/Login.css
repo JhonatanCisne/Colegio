@@ -1,0 +1,8 @@
+/* src/Login.css */
+.login-container {
+  background-color: #f8f9fa; /* color de fondo claro */
+}
+
+.login-form {
+  width: 350px;
+}
