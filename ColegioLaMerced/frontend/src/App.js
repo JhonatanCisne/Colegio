@@ -1,11 +1,14 @@
 import React from "react";
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from "react-router-dom";
+
 import Inicio from "./Paginas/Alumno-Padre/Inicio";
 import Curso from "./Paginas/Alumno-Padre/Curso";
 import Asistencia from "./Paginas/Alumno-Padre/Asistencia";
 import Anuncios from "./Paginas/Alumno-Padre/Anuncios";
 import Login from "./Paginas/Login/Login";
+
 import BarraDeNavegacionLateral from "./Componentes/BarraDeNavegacionLateral";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 
@@ -18,7 +21,7 @@ function Layout() {
       {!esLogin && <BarraDeNavegacionLateral />}
       <div className="flex-grow-1 p-3">
         <Routes>
-          <Route path="/" element={<Login />} />
+          <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/inicio" element={<Inicio />} />
           <Route path="/cursos" element={<Curso />} />

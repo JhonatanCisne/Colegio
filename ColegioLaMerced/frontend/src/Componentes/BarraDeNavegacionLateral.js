@@ -2,7 +2,7 @@ import React from "react";
 import { Link } from "react-router-dom";
 import "./EstilosBarraLateral.css";
 
-function BarraDeNavegaciónLateral() {
+function BarraDeNavegacionLateral() {
   return (
     <div className="sidebar">
       <h3 className="sidebar-title">Menú</h3>
@@ -11,7 +11,7 @@ function BarraDeNavegaciónLateral() {
           <Link to="/inicio" className="nav-link">Inicio</Link>
         </li>
         <li className="nav-item">
-          <Link to="/curso" className="nav-link">Curso</Link>
+          <Link to="/cursos" className="nav-link">Curso</Link>
         </li>
         <li className="nav-item">
           <Link to="/asistencia" className="nav-link">Asistencia</Link>
@@ -27,4 +27,5 @@ function BarraDeNavegaciónLateral() {
   );
 }
 
-export default BarraDeNavegaciónLateral;
+export default BarraDeNavegacionLateral;
+

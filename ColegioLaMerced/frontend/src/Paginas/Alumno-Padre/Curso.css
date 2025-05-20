@@ -1,0 +1,26 @@
+/* Curso.css */
+
+/* Alinea el contenido evitando que lo tape la barra lateral */
+.contenido-principal {
+  margin-left: 220px;
+  padding: 2rem;
+  width: 100%;
+}
+
+.curso-card {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border-left: 5px solid #007bff;
+  transition: transform 0.2s;
+}
+
+.curso-card:hover {
+  transform: scale(1.02);
+}
+
+.card-title {
+  font-weight: bold;
+}
+
+.card-text {
+  color: #555;
+}

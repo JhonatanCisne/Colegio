@@ -1,37 +1,26 @@
+/* EstilosBarraLateral.css */
 .sidebar {
+  width: 220px; /* ancho fijo */
   height: 100vh;
-  width: 220px;
-  position: fixed;
+  background-color: #343a40;
+  color: white;
+  padding: 1rem;
+  position: fixed; /* importante para que no empuje el contenido */
   top: 0;
   left: 0;
-  background-color: #343a40;
-  padding-top: 1rem;
-  color: white;
-  z-index: 100;
 }
 
 .sidebar-title {
-  text-align: center;
-  margin-bottom: 1rem;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
+  margin-bottom: 2rem;
 }
 
 .nav-link {
-  color: #ddd;
-  padding: 0.5rem 1rem;
-  display: block;
-  transition: background 0.2s ease;
+  color: #ffffff;
+  margin-bottom: 0.8rem;
+  font-size: 1rem;
 }
 
 .nav-link:hover {
-  background-color: #495057;
-  color: white;
-}
-
-@media (max-width: 768px) {
-  .sidebar {
-    width: 100%;
-    height: auto;
-    position: relative;
-  }
+  color: #17a2b8;
 }

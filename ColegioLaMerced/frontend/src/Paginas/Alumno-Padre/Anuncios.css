@@ -1,0 +1,31 @@
+/* Anuncios.css */
+
+/* Este margen evita que el contenido quede tapado por la barra lateral */
+.contenido-principal {
+  margin-left: 220px; /* debe coincidir con el ancho de la sidebar */
+  padding: 2rem;
+  width: 100%;
+}
+
+.anuncios-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.anuncio {
+  background-color: #f8f9fa;
+  border-left: 5px solid #007bff;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+}
+
+.anuncio h5 {
+  margin-bottom: 0.5rem;
+  font-weight: bold;
+}
+
+.anuncio p {
+  margin: 0;
+  color: #555;
+}
