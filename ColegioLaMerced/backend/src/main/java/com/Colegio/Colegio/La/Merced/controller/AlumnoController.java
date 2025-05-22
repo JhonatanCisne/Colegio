@@ -1,9 +1,8 @@
 package com.Colegio.Colegio.La.Merced.controller;
 
-import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,29 +14,45 @@ import com.Colegio.Colegio.La.Merced.model.Alumno;
 import com.Colegio.Colegio.La.Merced.repository.AlumnoRepository;
 
 @RestController
-@RequestMapping("/api/alumnos")
-@CrossOrigin(origins = "*")  // Permite llamadas desde cualquier origen (ajusta según necesidad)
+@RequestMapping("/api/alumno")
+@CrossOrigin(origins = "http://localhost:3000")  // Permitir CORS desde React (ajusta el puerto si usas otro)
 public class AlumnoController {
 
     @Autowired
     private AlumnoRepository alumnoRepository;
 
-    // Login por DNI y contraseña
+    // DTO para recibir login
+    public static class LoginRequest {
+        private String dni;
+        private String contrasena;
+
+        public String getDni() {
+            return dni;
+        }
+
+        public void setDni(String dni) {
+            this.dni = dni;
+        }
+
+        public String getContrasena() {
+            return contrasena;
+        }
+
+        public void setContrasena(String contrasena) {
+            this.contrasena = contrasena;
+        }
+    }
+
     @PostMapping("/login")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> datos) {
-        String dni = datos.get("dni");
-        String contrasena = datos.get("contrasena");  // Asegúrate que tu JSON use "contrasena" aquí
+    public ResponseEntity<?> loginAlumno(@RequestBody LoginRequest loginRequest) {
+        Optional<Alumno> alumnoOpt = alumnoRepository.findByDniAndContrasena(loginRequest.getDni(), loginRequest.getContrasena());
 
-        // Depuración: imprimir datos recibidos
-        System.out.println("DNI recibido: " + dni);
-        System.out.println("Contraseña recibida: " + contrasena);
-
-        Alumno alumno = alumnoRepository.findByDniAndContrasena(dni, contrasena);
-
-        if (alumno != null) {
-            return ResponseEntity.ok(alumno); // Devuelve el objeto alumno en caso exitoso
+        if (alumnoOpt.isPresent()) {
+            // Login exitoso, retorna datos del alumno (puedes filtrar o crear un DTO si quieres)
+            return ResponseEntity.ok(alumnoOpt.get());
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("DNI o contraseña incorrectos");
+            // Usuario o contraseña incorrectos
+            return ResponseEntity.status(401).body("DNI o contraseña incorrectos");
         }
     }
 }

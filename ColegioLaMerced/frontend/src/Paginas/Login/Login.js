@@ -14,14 +14,13 @@ function Login() {
     setError(null);
 
     try {
-      const response = await fetch('http://localhost:8080/api/alumnos/login', {
+      const response = await fetch('http://localhost:8080/api/alumno/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ dni: dni.trim(), contrasena: contrasena.trim() })
       });
 
       if (!response.ok) {
-        // Extrae el mensaje devuelto por el backend (por ejemplo "Clave incorrecta")
         const msg = await response.text();
         throw new Error(msg);
       }
@@ -29,10 +28,10 @@ function Login() {
       const alumno = await response.json();
       console.log('Login exitoso:', alumno);
 
-      // Guarda el ID del alumno
+      // Guarda el ID del alumno para usarlo luego
       localStorage.setItem('alumnoId', alumno.id);
 
-      // Redirige a la página de inicio
+      // Redirige a la página principal (ajusta según tus rutas)
       navigate('/inicio');
 
     } catch (err) {

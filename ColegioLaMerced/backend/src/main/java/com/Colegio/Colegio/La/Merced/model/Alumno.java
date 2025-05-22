@@ -1,6 +1,5 @@
 package com.Colegio.Colegio.La.Merced.model;
 
-
 import java.time.LocalDate;
 
 import jakarta.persistence.Column;
@@ -8,8 +7,6 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -19,58 +16,56 @@ public class Alumno {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_Alumno")
-    private Long id;
+    private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "ID_Padre", nullable = false)
-    private Padre padre;
+    @Column(name = "ID_Padre", nullable = false)
+    private Integer idPadre;
 
-    @ManyToOne
-    @JoinColumn(name = "ID_Seccion", nullable = false)
-    private Seccion seccion;
+    @Column(name = "ID_Seccion", nullable = false)
+    private Integer idSeccion;
 
-    @Column(name = "Nombre", nullable = false)
+    @Column(name = "Nombre", nullable = false, length = 100)
     private String nombre;
 
-    @Column(name = "Apellido", nullable = false)
+    @Column(name = "Apellido", nullable = false, length = 100)
     private String apellido;
 
-    @Column(name = "DNI", nullable = false, unique = true)
+    @Column(name = "DNI", nullable = false, unique = true, length = 20)
     private String dni;
 
     @Column(name = "Fecha_De_Nacimiento", nullable = false)
     private LocalDate fechaDeNacimiento;
 
-    @Column(name = "Contrasena", nullable = false)
+    @Column(name = "Contrasena", length = 100)
     private String contrasena;
 
-    // Constructor vacío
+    // Constructor vacío (requerido por JPA)
     public Alumno() {
     }
 
-    // Getters y Setters
-    public Long getId() {
+    // Getters y setters
+    public Integer getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
-    public Padre getPadre() {
-        return padre;
+    public Integer getIdPadre() {
+        return idPadre;
     }
 
-    public void setPadre(Padre padre) {
-        this.padre = padre;
+    public void setIdPadre(Integer idPadre) {
+        this.idPadre = idPadre;
     }
 
-    public Seccion getSeccion() {
-        return seccion;
+    public Integer getIdSeccion() {
+        return idSeccion;
     }
 
-    public void setSeccion(Seccion seccion) {
-        this.seccion = seccion;
+    public void setIdSeccion(Integer idSeccion) {
+        this.idSeccion = idSeccion;
     }
 
     public String getNombre() {
@@ -113,4 +108,3 @@ public class Alumno {
         this.contrasena = contrasena;
     }
 }
-
