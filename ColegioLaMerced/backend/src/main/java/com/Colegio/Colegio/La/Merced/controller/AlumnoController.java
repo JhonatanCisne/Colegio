@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,39 +16,29 @@ import com.Colegio.Colegio.La.Merced.repository.AlumnoRepository;
 
 @RestController
 @RequestMapping("/api/alumnos")
-@CrossOrigin(origins = "*") // Permitir peticiones desde React (ajusta si lo necesitas)
+@CrossOrigin(origins = "*")  // Permite llamadas desde cualquier origen (ajusta según necesidad)
 public class AlumnoController {
 
     @Autowired
     private AlumnoRepository alumnoRepository;
 
-    // Login por DNI y clave
+    // Login por DNI y contraseña
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> datos) {
         String dni = datos.get("dni");
-        String clave = datos.get("clave");
+        String contrasena = datos.get("contrasena");  // Asegúrate que tu JSON use "contrasena" aquí
 
-        Alumno alumno = alumnoRepository.findByDniAndClave(dni, clave);
+        // Depuración: imprimir datos recibidos
+        System.out.println("DNI recibido: " + dni);
+        System.out.println("Contraseña recibida: " + contrasena);
+
+        Alumno alumno = alumnoRepository.findByDniAndContrasena(dni, contrasena);
 
         if (alumno != null) {
-            return ResponseEntity.ok(alumno); // Puedes retornar solo el ID si quieres
+            return ResponseEntity.ok(alumno); // Devuelve el objeto alumno en caso exitoso
         } else {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("DNI o clave incorrectos");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("DNI o contraseña incorrectos");
         }
-    }
-
-    // Obtener alumno por ID (opcional, útil para futuras consultas)
-    @GetMapping("/{id}")
-    public ResponseEntity<Alumno> obtenerAlumno(@PathVariable Long id) {
-        return alumnoRepository.findById(id)
-                .map(alumno -> ResponseEntity.ok(alumno))
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    // Crear nuevo alumno (opcional para pruebas)
-    @PostMapping("/crear")
-    public Alumno crearAlumno(@RequestBody Alumno alumno) {
-        return alumnoRepository.save(alumno);
     }
 }
 
