@@ -12,6 +12,12 @@ import LoginAdmin from "./Paginas/Administrador/LoginAdmin";
 import AdminAlumnos from "./Paginas/Administrador/AdminAlumnos";
 import AdminProfesores from "./Paginas/Administrador/AdminProfesores";
 
+// Importa las páginas del profesor
+import InicioProfesor from "./Paginas/Profesor/InicioProfesor";
+import CursoProfesor from "./Paginas/Profesor/CursoProfesor";
+import AsistenciaProfesor from "./Paginas/Profesor/AsistenciaProfesor";
+import AnunciosProfesor from "./Paginas/Profesor/AnunciosProfesor";
+
 import BarraDeNavegacionLateral from "./Componentes/BarraDeNavegacionLateral";
 
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -31,6 +37,7 @@ function Layout() {
       {!ocultarBarraLateral && <BarraDeNavegacionLateral />}
       <div className="flex-grow-1 p-3">
         <Routes>
+          {/* Rutas generales */}
           <Route path="/" element={<LaMerced />} />
           <Route path="/login" element={<Login />} />
           <Route path="/loginAlumno" element={<LoginAlumno />} />
@@ -40,7 +47,14 @@ function Layout() {
           <Route path="/anuncios" element={<Anuncios />} />
           <Route path="/LoginAdmin" element={<LoginAdmin />} />   
           <Route path="/AdminAlumnos" element={<AdminAlumnos />} /> 
-          <Route path="/AdminProfesores" element={<AdminProfesores />} />                                                               
+          <Route path="/AdminProfesores" element={<AdminProfesores />} />   
+
+          {/* Rutas para PROFESOR */}
+          <Route path="/inicioProfesor" element={<InicioProfesor />} />
+          <Route path="/cursosProfesor" element={<CursoProfesor />} />
+          <Route path="/asistenciaProfesor" element={<AsistenciaProfesor />} />
+          <Route path="/anunciosProfesor" element={<AnunciosProfesor />} />
+
           <Route path="*" element={<h2>Página no encontrada</h2>} />
         </Routes>
       </div>

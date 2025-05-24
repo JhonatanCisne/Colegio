@@ -9,34 +9,16 @@ function Login() {
   const [contrasena, setContrasena] = useState('');
   const [error, setError] = useState(null);
 
-  const manejarSubmit = async (e) => {
+  const manejarSubmit = (e) => {
     e.preventDefault();
     setError(null);
 
-    try {
-      const response = await fetch('http://localhost:8080/api/alumno/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ dni: dni.trim(), contrasena: contrasena.trim() })
-      });
-
-      if (!response.ok) {
-        const msg = await response.text();
-        throw new Error(msg);
-      }
-
-      const alumno = await response.json();
-      console.log('Login exitoso:', alumno);
-
-      // Guarda el ID del alumno para usarlo luego
-      localStorage.setItem('alumnoId', alumno.id);
-
-      // Redirige a la página principal (ajusta según tus rutas)
-      navigate('/inicio');
-
-    } catch (err) {
-      console.error('Error de login:', err);
-      setError(err.message || 'Error al conectar con el servidor');
+    // Validación simple sin conexión a base de datos
+    if (dni.trim() === '123' && contrasena.trim() === '123') {
+      localStorage.setItem('alumnoId', '1'); // ID simulado
+      navigate('/inicioProfesor');
+    } else {
+      setError('DNI o contraseña incorrectos');
     }
   };
 

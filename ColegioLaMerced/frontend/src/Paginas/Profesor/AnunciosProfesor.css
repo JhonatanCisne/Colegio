@@ -9,9 +9,17 @@
 
 /* Estilo para cada anuncio individual */
 .anuncio {
-  background-color: #ffffff;
-  border-left: 5px solid #fd0d0d; /* Azul Bootstrap */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  border: none;
+  background: #f4f8fd;
+  box-shadow: 0 2px 8px rgba(30, 60, 120, 0.07);
+  border-radius: 14px;
+  transition: box-shadow 0.2s;
+}
+
+/* Efecto hover para los anuncios */
+.anuncio:hover {
+  box-shadow: 0 4px 16px rgba(30, 60, 120, 0.13);
+  background: #eaf4ff;
 }
 
 /* Espacio entre anuncios */
@@ -30,6 +38,24 @@
 .anuncio p {
   margin: 0;
   color: #333;
+}
+
+/* Estilo para el formulario dentro del anuncio */
+.anuncio-form .form-label {
+  color: #1976d2;
+  font-weight: 600;
+}
+
+.anuncio-form input,
+.anuncio-form textarea {
+  border-radius: 8px;
+  border: 1.5px solid #b6c7e3;
+}
+
+.anuncio-form input:focus,
+.anuncio-form textarea:focus {
+  border-color: #1976d2;
+  box-shadow: 0 0 0 2px #e3eafc;
 }
 
 /* Responsive: ajusta el contenido en pantallas pequeñas */
