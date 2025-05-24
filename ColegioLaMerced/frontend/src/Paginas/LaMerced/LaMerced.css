@@ -1,4 +1,3 @@
-/* Reset básico para html y body */
 html, body {
   margin: 0;
   padding: 0;
@@ -160,6 +159,17 @@ button.btn {
 }
 
 .btn-secondary:hover {
+  background-color: #8A8A8A;
+  box-shadow: 0 5px 14px rgba(138, 138, 138, 0.7);
+}
+
+.btn-tertiary {
+  background-color: #B0B0B0; /* Gris medio */
+  color: white;
+  box-shadow: 0 3px 8px rgba(176, 176, 176, 0.5);
+}
+
+.btn-tertiary:hover {
   background-color: #8A8A8A;
   box-shadow: 0 5px 14px rgba(138, 138, 138, 0.7);
 }

@@ -8,6 +8,9 @@ import Asistencia from "./Paginas/Alumno-Padre/Asistencia";
 import Anuncios from "./Paginas/Alumno-Padre/Anuncios";
 import Login from "./Paginas/Login/Login";
 import LoginAlumno from "./Paginas/LoginAlumno/LoginAlumno";
+import LoginAdmin from "./Paginas/Administrador/LoginAdmin";
+import AdminAlumnos from "./Paginas/Administrador/AdminAlumnos";
+import AdminProfesores from "./Paginas/Administrador/AdminProfesores";
 
 import BarraDeNavegacionLateral from "./Componentes/BarraDeNavegacionLateral";
 
@@ -35,6 +38,9 @@ function Layout() {
           <Route path="/cursos" element={<Curso />} />
           <Route path="/asistencia" element={<Asistencia />} />
           <Route path="/anuncios" element={<Anuncios />} />
+          <Route path="/LoginAdmin" element={<LoginAdmin />} />   
+          <Route path="/AdminAlumnos" element={<AdminAlumnos />} /> 
+          <Route path="/AdminProfesores" element={<AdminProfesores />} />                                                               
           <Route path="*" element={<h2>Página no encontrada</h2>} />
         </Routes>
       </div>

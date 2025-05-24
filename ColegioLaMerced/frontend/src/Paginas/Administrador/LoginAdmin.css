@@ -1,0 +1,23 @@
+.login-admin-container {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: 
+    linear-gradient(to right, rgba(102, 16, 242, 0.6), rgba(128, 0, 32, 0.7)), /* Degradado violeta - rojo vino */
+    url('../../Imagenes/FondoColegio.jpg') no-repeat center center fixed;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 400px;
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.login-card h2 {
+  font-weight: bold;
+  color: #343a40;
+}
+

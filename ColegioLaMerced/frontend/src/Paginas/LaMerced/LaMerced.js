@@ -61,6 +61,12 @@ function LaMerced() {
             >
               Ingresar como Profesor
             </button>
+             <button 
+              className="btn btn-tertiary" 
+              onClick={() => navigate("/LoginAdmin")}
+            >
+              Ingresar como Administrador
+            </button>
           </div>
         </section>
       </main>
