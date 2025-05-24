@@ -1,21 +1,39 @@
 package com.Colegio.Colegio.La.Merced.model;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "Administrador")
-@Getter
-@Setter
-@NoArgsConstructor
 public class Administrador {
 
     @Id
+    @Column(name = "Usuario", nullable = false, length = 50)
     private String usuario;
 
-    private String contraseña;
+    @Column(name = "Contraseña", nullable = false, length = 255)
+    private String contrasena;
+
+    // Constructor vacío requerido por JPA
+    public Administrador() {
+    }
+
+    // Getters y setters
+    public String getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(String usuario) {
+        this.usuario = usuario;
+    }
+
+    public String getContrasena() {
+        return contrasena;
+    }
+
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
+    }
 }
