@@ -7,17 +7,21 @@ import Curso from "./Paginas/Alumno-Padre/Curso";
 import Asistencia from "./Paginas/Alumno-Padre/Asistencia";
 import Anuncios from "./Paginas/Alumno-Padre/Anuncios";
 import Login from "./Paginas/Login/Login";
+import LoginAlumno from "./Paginas/LoginAlumno/LoginAlumno";
 
 import BarraDeNavegacionLateral from "./Componentes/BarraDeNavegacionLateral";
 
 import "bootstrap/dist/css/bootstrap.min.css";
 import "./index.css";
 
+// Layout principal
 function Layout() {
   const location = useLocation();
+  console.log("Ruta actual:", location.pathname); // 🛠️ Diagnóstico
 
-  // No mostrar la barra lateral si estamos en LaMerced ("/") o en Login ("/login")
-  const ocultarBarraLateral = location.pathname === "/" || location.pathname === "/login";
+  const ocultarBarraLateral = ["/", "/login", "/loginAlumno"].some(ruta =>
+    location.pathname.startsWith(ruta)
+  );
 
   return (
     <div className="d-flex">
@@ -26,6 +30,7 @@ function Layout() {
         <Routes>
           <Route path="/" element={<LaMerced />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/loginAlumno" element={<LoginAlumno />} />
           <Route path="/inicio" element={<Inicio />} />
           <Route path="/cursos" element={<Curso />} />
           <Route path="/asistencia" element={<Asistencia />} />

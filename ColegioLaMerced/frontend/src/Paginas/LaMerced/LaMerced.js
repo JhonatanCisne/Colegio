@@ -51,13 +51,13 @@ function LaMerced() {
           <div className="buttons-container">
             <button 
               className="btn btn-primary" 
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/LoginAlumno")}
             >
               Ingresar como Alumno
             </button>
             <button 
               className="btn btn-secondary" 
-              onClick={() => navigate("/login-profesor")}
+              onClick={() => navigate("/Login")}
             >
               Ingresar como Profesor
             </button>

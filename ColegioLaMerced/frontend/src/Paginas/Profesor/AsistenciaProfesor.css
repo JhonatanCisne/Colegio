@@ -1,0 +1,26 @@
+.contenido-principal {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: #f1f3f5;
+  min-height: 100vh;
+}
+
+.table th,
+.table td {
+  text-align: center;
+  vertical-align: middle;
+  padding: 10px;
+}
+
+.table-hover tbody tr:hover {
+  background-color: #dee2e6;
+}
+
+.form-select,
+.form-control {
+  min-height: 38px;
+}
+
+.btn {
+  min-width: 90px;
+}

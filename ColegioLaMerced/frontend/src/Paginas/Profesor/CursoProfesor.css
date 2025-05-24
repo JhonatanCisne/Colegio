@@ -1,0 +1,16 @@
+.contenido-principal {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: #f4f4f4;
+  min-height: 100vh;
+}
+
+.btn {
+  min-width: 140px;
+}
+
+.table td,
+.table th {
+  vertical-align: middle;
+  text-align: center;
+}

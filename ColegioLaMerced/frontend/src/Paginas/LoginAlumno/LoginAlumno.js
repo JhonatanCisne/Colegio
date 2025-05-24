@@ -1,42 +1,24 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './Login.css';
+import './LoginAlumno.css'; // Asegúrate de que aquí está incluido el logo
 
-function Login() {
+function LoginAlumno() {
   const navigate = useNavigate();
   const [dni, setDni] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [error, setError] = useState(null);
 
-  const manejarSubmit = async (e) => {
+  const manejarSubmit = (e) => {
     e.preventDefault();
     setError(null);
 
-    try {
-      const response = await fetch('http://localhost:8080/api/alumno/login', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ dni: dni.trim(), contrasena: contrasena.trim() })
-      });
-
-      if (!response.ok) {
-        const msg = await response.text();
-        throw new Error(msg);
-      }
-
-      const alumno = await response.json();
-      console.log('Login exitoso:', alumno);
-
-      // Guarda el ID del alumno para usarlo luego
-      localStorage.setItem('alumnoId', alumno.id);
-
-      // Redirige a la página principal (ajusta según tus rutas)
+    // Validación simple sin BD
+    if (dni === '12345678' && contrasena === '1234') {
+      localStorage.setItem('alumnoId', '1'); // Simulación de login
       navigate('/inicio');
-
-    } catch (err) {
-      console.error('Error de login:', err);
-      setError(err.message || 'Error al conectar con el servidor');
+    } else {
+      setError('DNI o contraseña incorrectos');
     }
   };
 
@@ -46,7 +28,10 @@ function Login() {
 
       <div className="formulario-contenedor col-12 col-md-6 d-flex justify-content-center align-items-center">
         <form className="formulario-login w-75 p-4 rounded shadow" onSubmit={manejarSubmit}>
-          <h2 className="text-center mb-4">Iniciar Sesión del Profesor</h2>
+          <div className="text-center mb-4">
+           
+            <h2 className="mt-2">Iniciar Sesión del Alumno</h2>
+          </div>
 
           {error && <div className="alert alert-danger">{error}</div>}
 
@@ -77,4 +62,4 @@ function Login() {
   );
 }
 
-export default Login;
+export default LoginAlumno;
