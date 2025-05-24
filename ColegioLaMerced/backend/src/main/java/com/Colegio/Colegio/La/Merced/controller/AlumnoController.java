@@ -15,7 +15,7 @@ import com.Colegio.Colegio.La.Merced.repository.AlumnoRepository;
 
 @RestController
 @RequestMapping("/api/alumno")
-@CrossOrigin(origins = "http://localhost:3000")  // Permitir CORS desde React (ajusta el puerto si usas otro)
+@CrossOrigin(origins = "http://localhost:*")  // Permitir CORS desde React (ajusta el puerto si usas otro)
 public class AlumnoController {
 
     @Autowired
