@@ -1,59 +1,51 @@
 package com.Colegio.Colegio.La.Merced.controller;
 
-import java.util.Optional;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.Colegio.Colegio.La.Merced.model.Alumno;
-import com.Colegio.Colegio.La.Merced.repository.AlumnoRepository;
+import com.Colegio.Colegio.La.Merced.dto.AlumnoDTO;
+import com.Colegio.Colegio.La.Merced.service.AlumnoService;
 
 @RestController
-@RequestMapping("/api/alumno")
-@CrossOrigin(origins = "http://localhost:*")  // Permitir CORS desde React (ajusta el puerto si usas otro)
+@RequestMapping("/api/alumnos")
+@CrossOrigin(origins = "http://localhost:3000") 
 public class AlumnoController {
 
     @Autowired
-    private AlumnoRepository alumnoRepository;
+    private AlumnoService alumnoService;
 
-    // DTO para recibir login
-    public static class LoginRequest {
-        private String dni;
-        private String contrasena;
-
-        public String getDni() {
-            return dni;
-        }
-
-        public void setDni(String dni) {
-            this.dni = dni;
-        }
-
-        public String getContrasena() {
-            return contrasena;
-        }
-
-        public void setContrasena(String contrasena) {
-            this.contrasena = contrasena;
-        }
+    @GetMapping
+    public List<AlumnoDTO> listarAlumnos() {
+        return alumnoService.listarAlumnos();
     }
 
-    @PostMapping("/login")
-    public ResponseEntity<?> loginAlumno(@RequestBody LoginRequest loginRequest) {
-        Optional<Alumno> alumnoOpt = alumnoRepository.findByDniAndContrasena(loginRequest.getDni(), loginRequest.getContrasena());
+    @GetMapping("/{dni}")
+    public AlumnoDTO obtenerAlumno(@PathVariable String dni) {
+        return alumnoService.buscarPorDni(dni);
+    }
 
-        if (alumnoOpt.isPresent()) {
-            // Login exitoso, retorna datos del alumno (puedes filtrar o crear un DTO si quieres)
-            return ResponseEntity.ok(alumnoOpt.get());
-        } else {
-            // Usuario o contraseña incorrectos
-            return ResponseEntity.status(401).body("DNI o contraseña incorrectos");
-        }
+    @PostMapping
+    public AlumnoDTO crearAlumno(@RequestBody AlumnoDTO alumnoDTO) {
+        return alumnoService.crearAlumno(alumnoDTO);
+    }
+
+    @PutMapping("/{dni}")
+    public AlumnoDTO actualizarAlumno(@PathVariable String dni, @RequestBody AlumnoDTO alumnoDTO) {
+        return alumnoService.actualizarAlumno(dni, alumnoDTO);
+    }
+
+    @DeleteMapping("/{dni}")
+    public void eliminarAlumno(@PathVariable String dni) {
+        alumnoService.eliminarAlumno(dni);
     }
 }
-

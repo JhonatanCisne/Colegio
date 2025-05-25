@@ -1,5 +1,6 @@
 package com.Colegio.Colegio.La.Merced.model;
 
+
 import java.time.LocalDate;
 
 import jakarta.persistence.Column;
@@ -16,7 +17,7 @@ public class Alumno {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_Alumno")
-    private Integer id;
+    private Integer idAlumno;
 
     @Column(name = "ID_Padre", nullable = false)
     private Integer idPadre;
@@ -24,32 +25,29 @@ public class Alumno {
     @Column(name = "ID_Seccion", nullable = false)
     private Integer idSeccion;
 
-    @Column(name = "Nombre", nullable = false, length = 100)
+    @Column(name = "Nombre", nullable = false)
     private String nombre;
 
-    @Column(name = "Apellido", nullable = false, length = 100)
+    @Column(name = "Apellido", nullable = false)
     private String apellido;
 
-    @Column(name = "DNI", nullable = false, unique = true, length = 20)
+    @Column(name = "DNI", nullable = false, unique = true)
     private String dni;
 
     @Column(name = "Fecha_De_Nacimiento", nullable = false)
     private LocalDate fechaDeNacimiento;
 
-    @Column(name = "Contrasena", length = 100)
+    @Column(name = "Contrasena")
     private String contrasena;
 
-    // Constructor vacío (requerido por JPA)
-    public Alumno() {
-    }
-
     // Getters y setters
-    public Integer getId() {
-        return id;
+
+    public Integer getIdAlumno() {
+        return idAlumno;
     }
 
-    public void setId(Integer id) {
-        this.id = id;
+    public void setIdAlumno(Integer idAlumno) {
+        this.idAlumno = idAlumno;
     }
 
     public Integer getIdPadre() {

@@ -1,27 +1,24 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../Administrador/AdminAlumnos.css";
 
 const grados = [
-  "Primero de Primaria",
-  "Segundo de Primaria",
-  "Tercero de Primaria",
-  "Cuarto de Primaria",
-  "Quinto de Primaria",
-  "Sexto de Primaria",
+  "1ro",
+  "2do",
+  "3ro",
+  "4to",
+  "5to",
+  "6to",
 ];
 const secciones = ["A", "B", "C"];
 
-const alumnosEjemplo = [
-  { dni: "12345678", nombre: "Juan", apellido: "Pérez", grado: "Primero de Primaria", seccion: "A", fechaNacimiento: "2015-05-10" },
-  { dni: "87654321", nombre: "Ana", apellido: "García", grado: "Tercero de Primaria", seccion: "B", fechaNacimiento: "2013-11-01" },
-];
+const API_BASE = "http://localhost:8080/api/alumnos"; 
 
 const AdminAlumnos = () => {
   const navigate = useNavigate();
 
-  const [seccionSidebar, setSeccionSidebar] = useState("Alumnos"); // Sidebar activo
-  const [seccionBotones, setSeccionBotones] = useState("Añadir"); // Acción dentro de Alumnos
+  const [seccionSidebar, setSeccionSidebar] = useState("Alumnos");
+  const [seccionBotones, setSeccionBotones] = useState("Añadir");
   const [alumno, setAlumno] = useState({
     nombre: "",
     apellido: "",
@@ -33,20 +30,56 @@ const AdminAlumnos = () => {
   const [dniBuscar, setDniBuscar] = useState("");
   const [alumnoEncontrado, setAlumnoEncontrado] = useState(null);
   const [errorBuscar, setErrorBuscar] = useState("");
-  const [listaAlumnos, setListaAlumnos] = useState(alumnosEjemplo);
+  const [listaAlumnos, setListaAlumnos] = useState([]);
   const [filtroGrado, setFiltroGrado] = useState("");
   const [filtroSeccion, setFiltroSeccion] = useState("");
+  const [cargando, setCargando] = useState(false);
 
-  // Manejador inputs añadir/modificar
+  useEffect(() => {
+    if (seccionBotones === "Ver") {
+      cargarAlumnos();
+    }
+  }, [seccionBotones]);
+
+  const cargarAlumnos = async () => {
+    setCargando(true);
+    try {
+      const resp = await fetch(API_BASE);
+      if (!resp.ok) throw new Error("Error al cargar alumnos");
+      const data = await resp.json();
+      setListaAlumnos(data);
+    } catch (error) {
+      alert("Error al cargar alumnos: " + error.message);
+    }
+    setCargando(false);
+  };
+
   const handleChange = (e) => {
-    setAlumno({ ...alumno, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setAlumno((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Agregar alumno
-  const handleAgregar = (e) => {
+  const handleAgregar = async (e) => {
     e.preventDefault();
-    setListaAlumnos([...listaAlumnos, alumno]);
-    alert("Alumno agregado!");
+    try {
+      const resp = await fetch(API_BASE, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(alumno),
+      });
+      if (!resp.ok) {
+        const errorData = await resp.json();
+        throw new Error(errorData.message || "Error al agregar alumno");
+      }
+      alert("Alumno agregado!");
+      limpiarFormulario();
+      if (seccionBotones === "Ver") cargarAlumnos();
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  const limpiarFormulario = () => {
     setAlumno({
       nombre: "",
       apellido: "",
@@ -55,58 +88,93 @@ const AdminAlumnos = () => {
       grado: "",
       seccion: "",
     });
-  };
-
-  // Buscar alumno por DNI para modificar
-  const buscarAlumnoPorDni = () => {
-    const encontrado = listaAlumnos.find((a) => a.dni === dniBuscar);
-    if (encontrado) {
-      setAlumnoEncontrado(encontrado);
-      setAlumno(encontrado);
-      setErrorBuscar("");
-    } else {
-      setAlumnoEncontrado(null);
-      setErrorBuscar("Alumno no encontrado");
-    }
-  };
-
-  // Modificar alumno
-  const handleModificar = (e) => {
-    e.preventDefault();
-    if (!alumnoEncontrado) return;
-    setListaAlumnos(
-      listaAlumnos.map((a) =>
-        a.dni === alumno.dni ? { ...alumno } : a
-      )
-    );
-    alert("Alumno modificado!");
     setAlumnoEncontrado(null);
-    setDniBuscar("");
-    setAlumno({
-      nombre: "",
-      apellido: "",
-      dni: "",
-      fechaNacimiento: "",
-      grado: "",
-      seccion: "",
-    });
-  };
-
-  // Eliminar alumno
-  const handleEliminar = (e) => {
-    e.preventDefault();
-    const alumnoExistente = listaAlumnos.find((a) => a.dni === dniBuscar);
-    if (!alumnoExistente) {
-      setErrorBuscar("Alumno no encontrado");
-      return;
-    }
-    setListaAlumnos(listaAlumnos.filter((a) => a.dni !== dniBuscar));
-    alert("Alumno eliminado!");
     setDniBuscar("");
     setErrorBuscar("");
   };
 
-  // Filtrar alumnos para vista
+  const buscarAlumnoPorDni = async () => {
+    if (!dniBuscar.trim()) {
+      setErrorBuscar("Ingrese un DNI válido");
+      return;
+    }
+    setErrorBuscar("");
+    try {
+      const resp = await fetch(`${API_BASE}/${dniBuscar.trim()}`);
+      if (resp.status === 404) {
+        setAlumnoEncontrado(null);
+        setErrorBuscar("Alumno no encontrado");
+        return;
+      }
+      if (!resp.ok) throw new Error("Error en la búsqueda");
+      const data = await resp.json();
+      setAlumnoEncontrado(data);
+      setAlumno(data);
+    } catch (error) {
+      setAlumnoEncontrado(null);
+      setErrorBuscar(error.message);
+    }
+  };
+
+  const handleModificar = async (e) => {
+    e.preventDefault();
+    if (!alumnoEncontrado) return;
+
+    try {
+      const resp = await fetch(`${API_BASE}/${alumno.dni}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(alumno),
+      });
+      if (!resp.ok) {
+        const errorData = await resp.json();
+        throw new Error(errorData.message || "Error al modificar alumno");
+      }
+      alert("Alumno modificado!");
+      limpiarFormulario();
+      if (seccionBotones === "Ver") cargarAlumnos();
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+const handleEliminar = async (e) => {
+  e.preventDefault();
+  if (!dniBuscar.trim()) {
+    setErrorBuscar("Ingrese un DNI para eliminar.");
+    return;
+  }
+  setErrorBuscar("");
+  try {
+    const resp = await fetch(`${API_BASE}/${dniBuscar.trim()}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json"
+      },
+    });
+
+    if (resp.status === 404) {
+      setErrorBuscar("Alumno no encontrado");
+      return;
+    }
+
+    if (!resp.ok) {
+      // No intentamos hacer await resp.json() porque no hay cuerpo
+      throw new Error(`Error al eliminar alumno. Status: ${resp.status}`);
+    }
+
+    alert("Alumno eliminado!");
+    limpiarFormulario();
+    if (seccionBotones === "Ver") cargarAlumnos();
+
+  } catch (error) {
+    alert(error.message);
+  }
+};
+
+
+
   const alumnosFiltrados = listaAlumnos.filter(
     (a) =>
       (filtroGrado === "" || a.grado === filtroGrado) &&
@@ -123,9 +191,7 @@ const AdminAlumnos = () => {
             onClick={() => {
               setSeccionSidebar("Alumnos");
               setSeccionBotones("Añadir");
-              setAlumnoEncontrado(null);
-              setDniBuscar("");
-              setErrorBuscar("");
+              limpiarFormulario();
             }}
           >
             Alumnos
@@ -142,7 +208,7 @@ const AdminAlumnos = () => {
           <li
             className="cerrar-sesion"
             onClick={() => {
-              localStorage.clear(); // Limpia sesión o tokens si tienes
+              localStorage.clear();
               navigate("/login");
             }}
           >
@@ -151,9 +217,7 @@ const AdminAlumnos = () => {
         </ul>
       </aside>
 
-      {/* Contenido principal (al lado de sidebar) */}
       <div className="contenido-principal">
-        {/* Barra botones horizontal solo si estamos en Alumnos */}
         {seccionSidebar === "Alumnos" && (
           <div className="barra-botones">
             {["Añadir", "Modificar", "Eliminar", "Ver"].map((opcion) => (
@@ -162,17 +226,7 @@ const AdminAlumnos = () => {
                 className={seccionBotones === opcion ? "btn-activo" : ""}
                 onClick={() => {
                   setSeccionBotones(opcion);
-                  setAlumnoEncontrado(null);
-                  setDniBuscar("");
-                  setErrorBuscar("");
-                  setAlumno({
-                    nombre: "",
-                    apellido: "",
-                    dni: "",
-                    fechaNacimiento: "",
-                    grado: "",
-                    seccion: "",
-                  });
+                  limpiarFormulario();
                 }}
               >
                 {opcion}
@@ -181,7 +235,6 @@ const AdminAlumnos = () => {
           </div>
         )}
 
-        {/* Contenido según sección y botón */}
         <main className="contenido-alumno">
           {seccionSidebar === "Alumnos" && seccionBotones === "Añadir" && (
             <>
@@ -281,7 +334,7 @@ const AdminAlumnos = () => {
                 <button
                   className="btn-buscar"
                   onClick={buscarAlumnoPorDni}
-                  disabled={!dniBuscar}
+                  disabled={!dniBuscar.trim()}
                 >
                   Buscar
                 </button>
@@ -312,7 +365,7 @@ const AdminAlumnos = () => {
                   </div>
                   <div className="grupo">
                     <label>DNI (no editable)</label>
-                    <input type="text" name="dni" value={alumno.dni} readOnly />
+                    <input type="text" value={alumno.dni} disabled />
                   </div>
                   <div className="grupo">
                     <label>Fecha de Nacimiento</label>
@@ -357,7 +410,7 @@ const AdminAlumnos = () => {
                     </select>
                   </div>
 
-                  <button type="submit" className="btn-registrar">
+                  <button type="submit" className="btn-modificar">
                     Guardar Cambios
                   </button>
                 </form>
@@ -368,95 +421,88 @@ const AdminAlumnos = () => {
           {seccionSidebar === "Alumnos" && seccionBotones === "Eliminar" && (
             <>
               <h2>Eliminar Alumno</h2>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleEliminar(e);
-                }}
-              >
-                <div className="grupo">
-                  <label>Ingrese DNI para eliminar</label>
-                  <input
-                    type="text"
-                    value={dniBuscar}
-                    onChange={(e) => setDniBuscar(e.target.value)}
-                    placeholder="DNI"
-                    required
-                  />
-                </div>
-                {errorBuscar && <p className="error">{errorBuscar}</p>}
-                <button type="submit" className="btn-eliminar">
-                  Eliminar Alumno
+              <div className="grupo buscar-dni">
+                <label>Ingrese DNI del alumno a eliminar</label>
+                <input
+                  type="text"
+                  value={dniBuscar}
+                  onChange={(e) => setDniBuscar(e.target.value)}
+                  placeholder="Ingrese DNI"
+                />
+                <button
+                  className="btn-eliminar"
+                  onClick={handleEliminar}
+                  disabled={!dniBuscar.trim()}
+                >
+                  Eliminar
                 </button>
-              </form>
+                {errorBuscar && <p className="error">{errorBuscar}</p>}
+              </div>
             </>
           )}
 
           {seccionSidebar === "Alumnos" && seccionBotones === "Ver" && (
             <>
               <h2>Lista de Alumnos</h2>
-              <div className="filtros">
-                <select
-                  value={filtroGrado}
-                  onChange={(e) => setFiltroGrado(e.target.value)}
-                >
-                  <option value="">Todos los grados</option>
-                  {grados.map((g, i) => (
-                    <option key={i} value={g}>
-                      {g}
-                    </option>
-                  ))}
-                </select>
-                <select
-                  value={filtroSeccion}
-                  onChange={(e) => setFiltroSeccion(e.target.value)}
-                >
-                  <option value="">Todas las secciones</option>
-                  {secciones.map((s, i) => (
-                    <option key={i} value={s}>
-                      {s}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <table className="tabla-alumnos">
-                <thead>
-                  <tr>
-                    <th>DNI</th>
-                    <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>Fecha Nac.</th>
-                    <th>Grado</th>
-                    <th>Sección</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {alumnosFiltrados.length > 0 ? (
-                    alumnosFiltrados.map((a) => (
-                      <tr key={a.dni}>
-                        <td>{a.dni}</td>
-                        <td>{a.nombre}</td>
-                        <td>{a.apellido}</td>
-                        <td>{a.fechaNacimiento}</td>
-                        <td>{a.grado}</td>
-                        <td>{a.seccion}</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr>
-                      <td colSpan="6">No hay alumnos para mostrar.</td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </>
-          )}
+              {cargando ? (
+                <p>Cargando alumnos...</p>
+              ) : (
+                <>
+                  <div className="filtros">
+                    <label>Filtrar por grado:</label>
+                    <select
+                      value={filtroGrado}
+                      onChange={(e) => setFiltroGrado(e.target.value)}
+                    >
+                      <option value="">Todos</option>
+                      {grados.map((g, i) => (
+                        <option key={i} value={g}>
+                          {g}
+                        </option>
+                      ))}
+                    </select>
 
-          {seccionSidebar === "Profesores" && (
-            <div>
-              <h2>Sección Profesores</h2>
-              <p>Aquí irá el contenido de administración de profesores...</p>
-            </div>
+                    <label>Filtrar por sección:</label>
+                    <select
+                      value={filtroSeccion}
+                      onChange={(e) => setFiltroSeccion(e.target.value)}
+                    >
+                      <option value="">Todas</option>
+                      {secciones.map((s, i) => (
+                        <option key={i} value={s}>
+                          {s}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <table className="tabla-alumnos">
+                    <thead>
+                      <tr>
+                        <th>DNI</th>
+                        <th>Nombre</th>
+                        <th>Apellido</th>
+                        <th>Fecha Nacimiento</th>
+                        <th>Grado</th>
+                        <th>Sección</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {alumnosFiltrados.map((a) => (
+                        <tr key={a.dni}>
+                          <td>{a.dni}</td>
+                          <td>{a.nombre}</td>
+                          <td>{a.apellido}</td>
+                          <td>{a.fechaNacimiento}</td>
+                          <td>{a.grado}</td>
+                          <td>{a.seccion}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </>
+              )}
+            </>
           )}
         </main>
       </div>
@@ -465,4 +511,3 @@ const AdminAlumnos = () => {
 };
 
 export default AdminAlumnos;
-
