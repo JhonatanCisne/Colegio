@@ -10,7 +10,7 @@ const grados = [
   "Quinto de primaria",
   "Sexto de primaria",
 ];
-const secciones = ["A", "B", "C"];
+const secciones = ["A1", "B2"];
 
 const API_BASE = "http://localhost:8080/api/alumnos"; 
 
