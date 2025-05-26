@@ -3,7 +3,12 @@ import { useNavigate } from "react-router-dom";
 import "../Administrador/AdminAlumnos.css";
 
 const grados = [
-  "1ro","2do","3ro","4to","5to","6to",
+  "Primero de primaria",
+  "Segundo de primaria",
+  "Tercero de primaria",
+  "Cuarto de primaria",
+  "Quinto de primaria",
+  "Sexto de primaria",
 ];
 const secciones = ["A", "B", "C"];
 
