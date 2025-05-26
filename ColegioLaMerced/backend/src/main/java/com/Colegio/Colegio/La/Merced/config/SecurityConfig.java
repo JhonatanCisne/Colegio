@@ -23,7 +23,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/alumno/login").permitAll()
                 .requestMatchers("/api/alumnos/**").permitAll()
                 .requestMatchers("/api/profesores/login").permitAll()     
-                .requestMatchers("/api/profesores/**").authenticated()    
+                .requestMatchers("/api/profesores/**").permitAll()    
                 .anyRequest().authenticated()
             );
 

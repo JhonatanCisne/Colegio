@@ -20,7 +20,7 @@ return (
         <Link to="/anunciosProfesor" className="nav-link">Anuncios</Link>
         </li>
         <li className="nav-item">
-        <Link to="/login" className="nav-link">Cerrar sesión</Link>
+        <Link to="/" className="nav-link">Cerrar sesión</Link>
         </li>
     </ul>
     </div>

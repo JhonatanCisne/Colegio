@@ -3,7 +3,6 @@ import BarraDeNavegacionLateralEstudiante from "../../Componentes/BarraDeNavegac
 import "./Inicio.css";
 
 function Inicio() {
-  // Datos simulados del estudiante (reemplazar con datos reales del backend)
   const [datosEstudiante, setDatosEstudiante] = useState({
     nombre: "Sofía Díaz",
     grado: "2° de Secundaria",
@@ -15,7 +14,6 @@ function Inicio() {
       { dia: "Martes", hora: "09:30 - 11:00", curso: "Ciencia y Ambiente", profesor: "Laura Fernández" },
       { dia: "Miércoles", hora: "08:00 - 09:30", curso: "Educación Física", profesor: "Pedro Ramos" },
       { dia: "Miércoles", hora: "09:30 - 11:00", curso: "Arte", profesor: "Ana Torres" },
-      // Puedes añadir más días y horas
     ],
     ultimosAnuncios: [
       { id: 1, titulo: "Cambio de horario de Educación Física", fecha: "2025-05-20", contenido: "El curso de Educación Física de los viernes se ha movido al jueves." },
@@ -32,18 +30,15 @@ function Inicio() {
           Bienvenido, {datosEstudiante.nombre}!
         </h2>
 
-        {/* Información del Grado */}
         <div className="info-grado-card mb-4">
           <h3>Tu Grado y Sección</h3>
           <p>Estás en **{datosEstudiante.grado}**</p>
           <p>Sección: **{datosEstudiante.seccion}**</p>
         </div>
 
-        {/* Horario del Estudiante */}
         <div className="seccion-inicio-estudiante">
           <h3 className="mb-3">Tu Horario</h3>
           <div className="horario-container">
-            {/* Agrupa el horario por día */}
             {Object.entries(datosEstudiante.horario.reduce((acc, item) => {
               (acc[item.dia] = acc[item.dia] || []).push(item);
               return acc;
@@ -62,7 +57,6 @@ function Inicio() {
           </div>
         </div>
 
-        {/* Últimos Anuncios */}
         <div className="seccion-inicio-estudiante">
           <h3 className="mb-3">Últimos Anuncios</h3>
           <div className="anuncios-container">

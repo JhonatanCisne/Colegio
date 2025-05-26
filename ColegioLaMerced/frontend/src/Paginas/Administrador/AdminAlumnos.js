@@ -3,12 +3,7 @@ import { useNavigate } from "react-router-dom";
 import "../Administrador/AdminAlumnos.css";
 
 const grados = [
-  "1ro",
-  "2do",
-  "3ro",
-  "4to",
-  "5to",
-  "6to",
+  "1ro","2do","3ro","4to","5to","6to",
 ];
 const secciones = ["A", "B", "C"];
 
@@ -206,7 +201,7 @@ const handleEliminar = async (e) => {
             className="cerrar-sesion"
             onClick={() => {
               localStorage.clear();
-              navigate("/login");
+              navigate("/");
             }}
           >
             Cerrar sesión

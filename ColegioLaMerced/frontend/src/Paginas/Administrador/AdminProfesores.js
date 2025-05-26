@@ -115,7 +115,7 @@ const AdminProfesores = () => {
             setDniBuscar("");
             setErrorBuscar("");
           }}>Profesores</li>
-          <li className="cerrar-sesion" onClick={() => { localStorage.clear(); navigate("/login"); }}>Cerrar sesión</li>
+          <li className="cerrar-sesion" onClick={() => { localStorage.clear(); navigate("/"); }}>Cerrar sesión</li>
         </ul>
       </aside>
 

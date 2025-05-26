@@ -20,7 +20,7 @@ function BarraDeNavegacionLateral() {
           <Link to="/anuncios" className="nav-link">Anuncios</Link>
         </li>
         <li className="nav-item">
-          <Link to="/LoginAlumno" className="nav-link">Cerrar sesión</Link>
+          <Link to="/" className="nav-link">Cerrar sesión</Link>
         </li>
       </ul>
     </div>
