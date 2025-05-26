@@ -17,12 +17,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .cors(Customizer.withDefaults()) // habilita CORS
-            .csrf(csrf -> csrf.disable())    // deshabilita CSRF para API REST
-
+            .cors(Customizer.withDefaults())
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/alumno/login").permitAll()
                 .requestMatchers("/api/alumnos/**").permitAll()
+                .requestMatchers("/api/profesores/**").permitAll() // Asegura acceso total al CRUD
                 .anyRequest().authenticated()
             );
 
@@ -41,7 +41,6 @@ public class SecurityConfig {
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
-
         return source;
     }
 }

@@ -1,112 +1,105 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import "../Administrador/AdminProfesores.css";
 
-const cargos = [
-  "Profesor Titular",
-  "Profesor Auxiliar",
-  "Profesor Invitado",
-];
-
-const profesoresEjemplo = [
-  {
-    dni: "98765432",
-    nombre: "Carlos",
-    apellido: "Ramírez",
-    fechaNacimiento: "1980-07-22",
-    cargo: "Profesor Titular",
-  },
-  {
-    dni: "23456789",
-    nombre: "Lucía",
-    apellido: "Fernández",
-    fechaNacimiento: "1985-03-10",
-    cargo: "Profesor Auxiliar",
-  },
-];
+const cargos = ["Profesor Titular", "Profesor Auxiliar", "Profesor Invitado"];
 
 const AdminProfesores = () => {
   const navigate = useNavigate();
-
   const [seccionSidebar, setSeccionSidebar] = useState("Profesores");
   const [seccionBotones, setSeccionBotones] = useState("Añadir");
   const [profesor, setProfesor] = useState({
     nombre: "",
     apellido: "",
     dni: "",
-    fechaNacimiento: "",
-    cargo: "",
+    especialidad: "",
+    contrasena: "",
   });
   const [dniBuscar, setDniBuscar] = useState("");
   const [profesorEncontrado, setProfesorEncontrado] = useState(null);
   const [errorBuscar, setErrorBuscar] = useState("");
-  const [listaProfesores, setListaProfesores] = useState(profesoresEjemplo);
+  const [listaProfesores, setListaProfesores] = useState([]);
 
-  // Manejar inputs añadir/modificar
+  useEffect(() => {
+    axios.get("http://localhost:8080/api/profesores")
+      .then((res) => setListaProfesores(res.data))
+      .catch((err) => console.error("Error al obtener profesores:", err));
+  }, []);
+
   const handleChange = (e) => {
     setProfesor({ ...profesor, [e.target.name]: e.target.value });
   };
 
-  // Agregar profesor
   const handleAgregar = (e) => {
     e.preventDefault();
-    setListaProfesores([...listaProfesores, profesor]);
-    alert("Profesor agregado!");
-    setProfesor({
-      nombre: "",
-      apellido: "",
-      dni: "",
-      fechaNacimiento: "",
-      cargo: "",
-    });
+    axios.post("http://localhost:8080/api/profesores", profesor)
+      .then((res) => {
+        alert("Profesor agregado!");
+        setListaProfesores([...listaProfesores, res.data]);
+        setProfesor({
+          nombre: "",
+          apellido: "",
+          dni: "",
+          especialidad: "",
+          contrasena: "",
+        });
+      })
+      .catch((err) => {
+        alert("Error al agregar profesor.");
+        console.error(err);
+      });
   };
 
-  // Buscar profesor por DNI para modificar
   const buscarProfesorPorDni = () => {
-    const encontrado = listaProfesores.find((p) => p.dni === dniBuscar);
-    if (encontrado) {
-      setProfesorEncontrado(encontrado);
-      setProfesor(encontrado);
-      setErrorBuscar("");
-    } else {
-      setProfesorEncontrado(null);
-      setErrorBuscar("Profesor no encontrado");
-    }
+    axios.get(`http://localhost:8080/api/profesores/${dniBuscar}`)
+      .then((res) => {
+        setProfesorEncontrado(res.data);
+        setProfesor(res.data);
+        setErrorBuscar("");
+      })
+      .catch(() => {
+        setProfesorEncontrado(null);
+        setErrorBuscar("Profesor no encontrado");
+      });
   };
 
-  // Modificar profesor
   const handleModificar = (e) => {
     e.preventDefault();
-    if (!profesorEncontrado) return;
-    setListaProfesores(
-      listaProfesores.map((p) =>
-        p.dni === profesor.dni ? { ...profesor } : p
-      )
-    );
-    alert("Profesor modificado!");
-    setProfesorEncontrado(null);
-    setDniBuscar("");
-    setProfesor({
-      nombre: "",
-      apellido: "",
-      dni: "",
-      fechaNacimiento: "",
-      cargo: "",
-    });
+    axios.put(`http://localhost:8080/api/profesores/${profesor.dni}`, profesor)
+      .then(() => {
+        alert("Profesor modificado!");
+        setListaProfesores(
+          listaProfesores.map((p) => (p.dni === profesor.dni ? profesor : p))
+        );
+        setProfesorEncontrado(null);
+        setDniBuscar("");
+        setProfesor({
+          nombre: "",
+          apellido: "",
+          dni: "",
+          especialidad: "",
+          contrasena: "",
+        });
+      })
+      .catch((err) => {
+        alert("Error al modificar profesor.");
+        console.error(err);
+      });
   };
 
-  // Eliminar profesor
   const handleEliminar = (e) => {
     e.preventDefault();
-    const profesorExistente = listaProfesores.find((p) => p.dni === dniBuscar);
-    if (!profesorExistente) {
-      setErrorBuscar("Profesor no encontrado");
-      return;
-    }
-    setListaProfesores(listaProfesores.filter((p) => p.dni !== dniBuscar));
-    alert("Profesor eliminado!");
-    setDniBuscar("");
-    setErrorBuscar("");
+    axios.delete(`http://localhost:8080/api/profesores/${dniBuscar}`)
+      .then(() => {
+        alert("Profesor eliminado!");
+        setListaProfesores(listaProfesores.filter((p) => p.dni !== dniBuscar));
+        setDniBuscar("");
+        setErrorBuscar("");
+      })
+      .catch(() => {
+        setErrorBuscar("Profesor no encontrado");
+      });
   };
 
   return (
@@ -114,36 +107,15 @@ const AdminProfesores = () => {
       <aside className="sidebar">
         <h2>Panel</h2>
         <ul>
-          <li
-            className={seccionSidebar === "Alumnos" ? "activo" : ""}
-            onClick={() => {
-              setSeccionSidebar("Alumnos");
-              navigate("/AdminAlumnos");
-            }}
-          >
-            Alumnos
-          </li>
-          <li
-            className={seccionSidebar === "Profesores" ? "activo" : ""}
-            onClick={() => {
-              setSeccionSidebar("Profesores");
-              setSeccionBotones("Añadir");
-              setProfesorEncontrado(null);
-              setDniBuscar("");
-              setErrorBuscar("");
-            }}
-          >
-            Profesores
-          </li>
-          <li
-            className="cerrar-sesion"
-            onClick={() => {
-              localStorage.clear();
-              navigate("/login");
-            }}
-          >
-            Cerrar sesión
-          </li>
+          <li onClick={() => { setSeccionSidebar("Alumnos"); navigate("/AdminAlumnos"); }}>Alumnos</li>
+          <li className={seccionSidebar === "Profesores" ? "activo" : ""} onClick={() => {
+            setSeccionSidebar("Profesores");
+            setSeccionBotones("Añadir");
+            setProfesorEncontrado(null);
+            setDniBuscar("");
+            setErrorBuscar("");
+          }}>Profesores</li>
+          <li className="cerrar-sesion" onClick={() => { localStorage.clear(); navigate("/login"); }}>Cerrar sesión</li>
         </ul>
       </aside>
 
@@ -162,8 +134,8 @@ const AdminProfesores = () => {
                   nombre: "",
                   apellido: "",
                   dni: "",
-                  fechaNacimiento: "",
-                  cargo: "",
+                  especialidad: "",
+                  contrasena: "",
                 });
               }}
             >
@@ -179,63 +151,25 @@ const AdminProfesores = () => {
               <form onSubmit={handleAgregar}>
                 <div className="grupo">
                   <label>Nombre</label>
-                  <input
-                    type="text"
-                    name="nombre"
-                    value={profesor.nombre}
-                    onChange={handleChange}
-                    required
-                  />
+                  <input type="text" name="nombre" value={profesor.nombre} onChange={handleChange} required />
                 </div>
                 <div className="grupo">
                   <label>Apellido</label>
-                  <input
-                    type="text"
-                    name="apellido"
-                    value={profesor.apellido}
-                    onChange={handleChange}
-                    required
-                  />
+                  <input type="text" name="apellido" value={profesor.apellido} onChange={handleChange} required />
                 </div>
                 <div className="grupo">
                   <label>DNI</label>
-                  <input
-                    type="text"
-                    name="dni"
-                    value={profesor.dni}
-                    onChange={handleChange}
-                    required
-                  />
+                  <input type="text" name="dni" value={profesor.dni} onChange={handleChange} required />
                 </div>
                 <div className="grupo">
-                  <label>Fecha de Nacimiento</label>
-                  <input
-                    type="date"
-                    name="fechaNacimiento"
-                    value={profesor.fechaNacimiento}
-                    onChange={handleChange}
-                    required
-                  />
+                  <label>Especialidad</label>
+                  <input type="text" name="especialidad" value={profesor.especialidad} onChange={handleChange} required />
                 </div>
                 <div className="grupo">
-                  <label>Cargo</label>
-                  <select
-                    name="cargo"
-                    value={profesor.cargo}
-                    onChange={handleChange}
-                    required
-                  >
-                    <option value="">Selecciona un cargo</option>
-                    {cargos.map((c, i) => (
-                      <option key={i} value={c}>
-                        {c}
-                      </option>
-                    ))}
-                  </select>
+                  <label>Contraseña</label>
+                  <input type="password" name="contrasena" value={profesor.contrasena} onChange={handleChange} required />
                 </div>
-                <button type="submit" className="btn-registrar">
-                  Registrar Profesor
-                </button>
+                <button type="submit" className="btn-registrar">Registrar Profesor</button>
               </form>
             </>
           )}
@@ -251,11 +185,7 @@ const AdminProfesores = () => {
                   onChange={(e) => setDniBuscar(e.target.value)}
                   placeholder="Ingrese DNI"
                 />
-                <button
-                  className="btn-buscar"
-                  onClick={buscarProfesorPorDni}
-                  disabled={!dniBuscar}
-                >
+                <button className="btn-buscar" onClick={buscarProfesorPorDni} disabled={!dniBuscar}>
                   Buscar
                 </button>
                 {errorBuscar && <p className="error">{errorBuscar}</p>}
@@ -265,58 +195,25 @@ const AdminProfesores = () => {
                 <form onSubmit={handleModificar}>
                   <div className="grupo">
                     <label>Nombre</label>
-                    <input
-                      type="text"
-                      name="nombre"
-                      value={profesor.nombre}
-                      onChange={handleChange}
-                      required
-                    />
+                    <input type="text" name="nombre" value={profesor.nombre} onChange={handleChange} required />
                   </div>
                   <div className="grupo">
                     <label>Apellido</label>
-                    <input
-                      type="text"
-                      name="apellido"
-                      value={profesor.apellido}
-                      onChange={handleChange}
-                      required
-                    />
+                    <input type="text" name="apellido" value={profesor.apellido} onChange={handleChange} required />
                   </div>
                   <div className="grupo">
                     <label>DNI (no editable)</label>
                     <input type="text" name="dni" value={profesor.dni} readOnly />
                   </div>
                   <div className="grupo">
-                    <label>Fecha de Nacimiento</label>
-                    <input
-                      type="date"
-                      name="fechaNacimiento"
-                      value={profesor.fechaNacimiento}
-                      onChange={handleChange}
-                      required
-                    />
+                    <label>Especialidad</label>
+                    <input type="text" name="especialidad" value={profesor.especialidad} onChange={handleChange} required />
                   </div>
                   <div className="grupo">
-                    <label>Cargo</label>
-                    <select
-                      name="cargo"
-                      value={profesor.cargo}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="">Selecciona un cargo</option>
-                      {cargos.map((c, i) => (
-                        <option key={i} value={c}>
-                          {c}
-                        </option>
-                      ))}
-                    </select>
+                    <label>Contraseña</label>
+                    <input type="password" name="contrasena" value={profesor.contrasena} onChange={handleChange} required />
                   </div>
-
-                  <button type="submit" className="btn-registrar">
-                    Guardar Cambios
-                  </button>
+                  <button type="submit" className="btn-registrar">Guardar Cambios</button>
                 </form>
               )}
             </>
@@ -325,12 +222,7 @@ const AdminProfesores = () => {
           {seccionBotones === "Eliminar" && (
             <>
               <h2>Eliminar Profesor</h2>
-              <form
-                onSubmit={(e) => {
-                  e.preventDefault();
-                  handleEliminar(e);
-                }}
-              >
+              <form onSubmit={handleEliminar}>
                 <div className="grupo">
                   <label>Ingrese DNI para eliminar</label>
                   <input
@@ -342,9 +234,7 @@ const AdminProfesores = () => {
                   />
                 </div>
                 {errorBuscar && <p className="error">{errorBuscar}</p>}
-                <button type="submit" className="btn-eliminar">
-                  Eliminar Profesor
-                </button>
+                <button type="submit" className="btn-eliminar">Eliminar Profesor</button>
               </form>
             </>
           )}
@@ -358,8 +248,7 @@ const AdminProfesores = () => {
                     <th>DNI</th>
                     <th>Nombre</th>
                     <th>Apellido</th>
-                    <th>Fecha Nac.</th>
-                    <th>Cargo</th>
+                    <th>Especialidad</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -369,14 +258,11 @@ const AdminProfesores = () => {
                         <td>{p.dni}</td>
                         <td>{p.nombre}</td>
                         <td>{p.apellido}</td>
-                        <td>{p.fechaNacimiento}</td>
-                        <td>{p.cargo}</td>
+                        <td>{p.especialidad}</td>
                       </tr>
                     ))
                   ) : (
-                    <tr>
-                      <td colSpan="5">No hay profesores para mostrar.</td>
-                    </tr>
+                    <tr><td colSpan="4">No hay profesores para mostrar.</td></tr>
                   )}
                 </tbody>
               </table>
