@@ -24,7 +24,6 @@ public class AlumnoService {
     @Autowired
     private SeccionRepository seccionRepository;
 
-    // Para simplificar, padre fijo (por ejemplo ID 1)
     private static final int ID_PADRE_DEFAULT = 1;
 
     public List<AlumnoDTO> listarAlumnos() {

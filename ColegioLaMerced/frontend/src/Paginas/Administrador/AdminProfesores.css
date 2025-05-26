@@ -1,4 +1,3 @@
-/* Contenedor principal (igual que alumnos) */
 .contenedor-profesores {
   display: flex;
   flex-direction: column;
@@ -11,7 +10,6 @@
   overflow-y: auto;
 }
 
-/* Barra de botones horizontales */
 .barra-botones {
   display: flex;
   gap: 12px;
@@ -41,7 +39,6 @@
   box-shadow: 0 0 8px #a52a2a;
 }
 
-/* Grupos formulario */
 .grupo {
   margin-bottom: 18px;
 }

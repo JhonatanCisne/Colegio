@@ -2,8 +2,10 @@ package com.Colegio.Colegio.La.Merced.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import com.Colegio.Colegio.La.Merced.dto.ProfesorDTO;
 import com.Colegio.Colegio.La.Merced.model.Profesor;
 import com.Colegio.Colegio.La.Merced.repository.ProfesorRepository;
@@ -75,4 +77,16 @@ public class ProfesorService {
             })
             .orElse(false);
     }
+
+    public ProfesorDTO loginProfesor(String dni, String contrasena) {
+    Profesor profesor = profesorRepository.findByDni(dni)
+        .orElseThrow(() -> new RuntimeException("DNI o contraseña incorrectos"));
+
+    if (!profesor.getContrasena().equals(contrasena)) {
+        throw new RuntimeException("DNI o contraseña incorrectos");
+    }
+
+    return mapToDTO(profesor);
+    }
+
 }

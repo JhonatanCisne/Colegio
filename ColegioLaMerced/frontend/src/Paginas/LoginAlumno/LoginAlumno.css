@@ -1,9 +1,7 @@
-/* Contenedor principal del login */
 .login-contenedor {
   background-color: #f8f9fa;
 }
 
-/* Imagen del lado izquierdo */
 .imagen-login {
   background-image: url('../../Imagenes/Escudo.jpg'); 
   background-size: contain;
@@ -12,17 +10,14 @@
   background-color: #fff;
 }
 
-/* Formulario centrado */
 .formulario-contenedor {
   background-color: #ffffff;
 }
 
-/* Formulario de login */
 .formulario-login {
   background-color: #ffffff;
 }
 
-/* Botón con estilo escarlata */
 .btn-escarlata {
   background-color: #c62828;
   color: white;
@@ -33,13 +28,11 @@
   background-color: #b71c1c;
 }
 
-/* Asegura que los inputs se vean modernos */
 input.form-control {
   border-radius: 0.5rem;
   border: 1px solid #ced4da;
 }
 
-/* Estilo de la alerta de error */
 .alert-danger {
   font-size: 0.9rem;
 }

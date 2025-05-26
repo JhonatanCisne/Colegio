@@ -6,7 +6,6 @@ import "./AsistenciaProfesor.css";
 
 Chart.register(BarElement, CategoryScale, LinearScale);
 
-// Nombres base (igual que en CursoProfesor)
 const nombresBase = [
   "Ana López", "Carlos Pérez", "Lucía Torres", "Pedro Ramos", "Laura Gómez",
   "Marco Torres", "Sofía Díaz", "Juan Castillo", "Valeria Ruiz", "Miguel Soto",
@@ -30,7 +29,6 @@ const nombresBase = [
   "Valentín Rojas", "Luciana Paredes", "Franco Salinas", "Camila Herrera", "Sofía Romero"
 ];
 
-// Generador de nombres únicos global
 function generarNombresUnicosGlobal(cantidad, usados = new Set()) {
   const nombres = [];
   let idx = 0;
@@ -44,17 +42,15 @@ function generarNombresUnicosGlobal(cantidad, usados = new Set()) {
   return nombres;
 }
 
-// Generador de alumnos únicos
 function generarAlumnos(baseId, nombres) {
   return nombres.map((nombre, i) => ({
     id: baseId + i,
     nombre,
-    asistencia: [], // {fecha, estado: "Presente"|"Ausente"|"Tardanza"}
+    asistencia: [], 
   }));
 }
 
 function AsistenciaProfesor() {
-  // Cursos igual que en CursoProfesor
   const cursosDelProfesor = [
     { id: 1, nombre: "Matemática", seccion: "2° Sec" },
     { id: 2, nombre: "Matemática", seccion: "3° Sec" },
@@ -62,7 +58,6 @@ function AsistenciaProfesor() {
     { id: 4, nombre: "Matemática", seccion: "5° Pri" },
   ];
 
-  // Generar alumnos igual que en CursoProfesor
   const usados = new Set();
   const nombresCurso1 = generarNombresUnicosGlobal(20, usados);
   const nombresCurso2 = generarNombresUnicosGlobal(20, usados);
@@ -81,7 +76,6 @@ function AsistenciaProfesor() {
   const [asistencia, setAsistencia] = useState({}); // {alumnoId: "Presente"|"Ausente"|"Tardanza"}
   const [mostrarGrafica, setMostrarGrafica] = useState(false);
 
-  // Registrar asistencia
   const guardarAsistencia = () => {
     if (!cursoSeleccionado) return;
     const nuevosAlumnos = alumnosPorCurso[cursoSeleccionado].map(alumno => {
@@ -101,7 +95,6 @@ function AsistenciaProfesor() {
     setAsistencia({});
   };
 
-  // Estadísticas para la gráfica
   const resumenAsistencia = () => {
     if (!cursoSeleccionado) return { Presente: 0, Ausente: 0, Tardanza: 0 };
     const alumnos = alumnosPorCurso[cursoSeleccionado];
@@ -218,7 +211,6 @@ function AsistenciaProfesor() {
               </button>
             </div>
 
-            {/* Gráfica en modal */}
             {mostrarGrafica && (
               <div className="modal-estadisticas">
                 <div className="modal-content">

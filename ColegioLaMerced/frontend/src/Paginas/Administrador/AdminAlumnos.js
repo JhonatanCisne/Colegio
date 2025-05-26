@@ -160,7 +160,6 @@ const handleEliminar = async (e) => {
     }
 
     if (!resp.ok) {
-      // No intentamos hacer await resp.json() porque no hay cuerpo
       throw new Error(`Error al eliminar alumno. Status: ${resp.status}`);
     }
 
@@ -172,8 +171,6 @@ const handleEliminar = async (e) => {
     alert(error.message);
   }
 };
-
-
 
   const alumnosFiltrados = listaAlumnos.filter(
     (a) =>

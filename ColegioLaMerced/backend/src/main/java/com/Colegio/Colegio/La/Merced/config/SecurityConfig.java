@@ -22,7 +22,8 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/alumno/login").permitAll()
                 .requestMatchers("/api/alumnos/**").permitAll()
-                .requestMatchers("/api/profesores/**").permitAll() // Asegura acceso total al CRUD
+                .requestMatchers("/api/profesores/login").permitAll()     
+                .requestMatchers("/api/profesores/**").authenticated()    
                 .anyRequest().authenticated()
             );
 

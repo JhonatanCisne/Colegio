@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './Login.css';
 
@@ -9,16 +10,22 @@ function Login() {
   const [contrasena, setContrasena] = useState('');
   const [error, setError] = useState(null);
 
-  const manejarSubmit = (e) => {
+  const manejarSubmit = async (e) => {
     e.preventDefault();
     setError(null);
 
-    // Validación simple sin conexión a base de datos
-    if (dni.trim() === '123' && contrasena.trim() === '123') {
-      localStorage.setItem('alumnoId', '1'); // ID simulado
+    try {
+      const response = await axios.post('http://localhost:8080/api/profesores/login', {
+        dni,
+        contrasena,
+      });
+
+      localStorage.setItem('profesorLogged', JSON.stringify(response.data));
+
       navigate('/inicioProfesor');
-    } else {
+    } catch (err) {
       setError('DNI o contraseña incorrectos');
+      console.error('Error en login:', err);
     }
   };
 

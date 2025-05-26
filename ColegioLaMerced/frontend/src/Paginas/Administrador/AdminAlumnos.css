@@ -1,4 +1,3 @@
-/* Contenedor principal con sidebar y contenido lado a lado */
 .contenedor-principal {
   display: flex;
   min-height: 100vh;
@@ -6,10 +5,9 @@
   background-color: #f7f7f7;
 }
 
-/* Sidebar lateral vertical */
 .sidebar {
   width: 220px;
-  background-color: #800020; /* rojo vino */
+  background-color: #800020; 
   color: white;
   padding: 20px;
   display: flex;
@@ -62,7 +60,6 @@
   background-color: #800000;
 }
 
-/* Contenedor contenido (botones arriba y contenido abajo) */
 .contenido-principal {
   flex-grow: 1;
   display: flex;
@@ -70,7 +67,6 @@
   padding: 20px 30px;
 }
 
-/* Barra de botones horizontales */
 .barra-botones {
   display: flex;
   gap: 12px;
@@ -100,7 +96,6 @@
   box-shadow: 0 0 8px #a52a2a;
 }
 
-/* Contenido formulario o tabla */
 .contenido-alumno {
   background-color: white;
   padding: 25px 30px;

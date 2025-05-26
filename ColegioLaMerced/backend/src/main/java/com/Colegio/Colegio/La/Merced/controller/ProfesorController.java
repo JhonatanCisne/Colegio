@@ -1,9 +1,18 @@
 package com.Colegio.Colegio.La.Merced.controller;
 
 import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.Colegio.Colegio.La.Merced.dto.ProfesorDTO;
 import com.Colegio.Colegio.La.Merced.service.ProfesorService;
@@ -57,4 +66,15 @@ public class ProfesorController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    @PostMapping("/login")
+    public ResponseEntity<?> loginProfesor(@RequestBody ProfesorDTO dto) {
+        try {
+            ProfesorDTO profesorLogueado = profesorService.loginProfesor(dto.getDni(), dto.getContrasena());
+            return ResponseEntity.ok(profesorLogueado);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(401).body(e.getMessage());  
+        }
+    }
+
 }

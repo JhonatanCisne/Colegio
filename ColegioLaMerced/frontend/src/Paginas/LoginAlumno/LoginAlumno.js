@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import './LoginAlumno.css'; // Asegúrate de que aquí está incluido el logo
+import './LoginAlumno.css'; 
 
 function LoginAlumno() {
   const navigate = useNavigate();
@@ -13,9 +13,8 @@ function LoginAlumno() {
     e.preventDefault();
     setError(null);
 
-    // Validación simple sin BD
     if (dni === '12345678' && contrasena === '1234') {
-      localStorage.setItem('alumnoId', '1'); // Simulación de login
+      localStorage.setItem('alumnoId', '1'); 
       navigate('/inicio');
     } else {
       setError('DNI o contraseña incorrectos');

@@ -3,12 +3,11 @@ html, body {
   padding: 0;
   height: 100%;
   width: 100%;
-  background-color: #F5F5F5; /* Gris muy claro para fondo general */
+  background-color: #F5F5F5; 
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  color: #222222; /* Negro suave */
+  color: #222222; 
 }
 
-/* Contenedor principal que ocupa toda la pantalla */
 .lamerced-container {
   width: 100%;
   min-height: 100vh;
@@ -16,12 +15,12 @@ html, body {
   flex-direction: column;
   padding: 20px;
   box-sizing: border-box;
-  background-color: #FFFFFF; /* Fondo blanco para contenido */
+  background-color: #FFFFFF; 
 }
 
-/* HEADER */
+
 .header {
-  background-color: #8B1A1A; /* Rojo oscuro apagado, nada chillón */
+  background-color: #8B1A1A; 
   color: white;
   padding: 30px 20px;
   text-align: center;
@@ -53,7 +52,6 @@ html, body {
   color: #f0f0f0;
 }
 
-/* MAIN SECTIONS */
 main {
   flex-grow: 1;
 }
@@ -61,7 +59,7 @@ main {
 .about-section,
 .values-section,
 .login-section {
-  background-color: #F9F9F9; /* Gris muy claro */
+  background-color: #F9F9F9; 
   padding: 30px 35px;
   margin-bottom: 30px;
   border-radius: 10px;
@@ -72,7 +70,7 @@ main {
 .about-section h2,
 .values-section h3,
 .login-section h2 {
-  color: #8B1A1A; /* Rojo oscuro suave para títulos */
+  color: #8B1A1A;
   margin-bottom: 20px;
   font-weight: 700;
   letter-spacing: 0.6px;
@@ -85,7 +83,6 @@ main {
   color: #333333;
 }
 
-/* Tarjetas de valores */
 .values-cards {
   display: flex;
   gap: 25px;
@@ -95,7 +92,7 @@ main {
 }
 
 .card {
-  background-color: #FFFFFF; /* Blanco puro */
+  background-color: #FFFFFF; 
   padding: 24px;
   border-radius: 12px;
   width: 28%;
@@ -153,7 +150,7 @@ button.btn {
 }
 
 .btn-secondary {
-  background-color: #B0B0B0; /* Gris medio */
+  background-color: #B0B0B0;
   color: white;
   box-shadow: 0 3px 8px rgba(176, 176, 176, 0.5);
 }
@@ -164,7 +161,7 @@ button.btn {
 }
 
 .btn-tertiary {
-  background-color: #B0B0B0; /* Gris medio */
+  background-color: #B0B0B0;
   color: white;
   box-shadow: 0 3px 8px rgba(176, 176, 176, 0.5);
 }
@@ -176,7 +173,7 @@ button.btn {
 
 /* FOOTER */
 .footer {
-  background-color: #601111; /* Rojo muy oscuro */
+  background-color: #601111; 
   color: #DADADA;
   padding: 30px 20px 15px;
   border-radius: 8px;

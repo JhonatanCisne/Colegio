@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
 import "./LaMerced.css";
-import logo from "../../Imagenes/Escudo.jpg"; // Ajusta la ruta según donde esté tu logo
+import logo from "../../Imagenes/Escudo.jpg";
 
 function LaMerced() {
   const navigate = useNavigate();
@@ -90,7 +90,6 @@ function LaMerced() {
           <div className="footer-section redes">
             <h4>Síguenos</h4>
             <p>
-              {/* Aquí podrías agregar iconos de redes sociales */}
               Facebook | Twitter | Instagram
             </p>
           </div>

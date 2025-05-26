@@ -42,8 +42,6 @@ public class Profesor {
         this.contrasena = contrasena;
     }
 
-    // Getters y setters
-
     public Integer getIdProfesor() {
         return idProfesor;
     }

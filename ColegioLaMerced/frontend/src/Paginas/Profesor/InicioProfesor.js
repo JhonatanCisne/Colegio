@@ -128,7 +128,6 @@ function InicioProfesor() {
     setSemana(nuevaSemana);
   }
 
-  // Obtener el mes en texto (ej: "Mayo")
   const meses = [
     "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
     "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
@@ -137,7 +136,6 @@ function InicioProfesor() {
   const diaInicio = semana[0].getDate();
   const diaFin = semana[4].getDate();
 
-  // Resumen de la semana
   const totalClases = semana.reduce((acc, _, idx) => acc + (horario[idx + 1]?.filter(h => h.curso !== "Recreo").length || 0), 0);
   const clasesPorDia = semana.map((_, idx) => (horario[idx + 1]?.filter(h => h.curso !== "Recreo").length || 0));
   const minClases = Math.min(...clasesPorDia);
@@ -147,7 +145,6 @@ function InicioProfesor() {
     .join(", ");
   const proximoFeriado = getProximoFeriado(semana);
 
-  // Guardar nota personal en localStorage
   function guardarNota(e) {
     setNotaPersonal(e.target.value);
     localStorage.setItem("notaPersonal", e.target.value);
@@ -161,7 +158,6 @@ function InicioProfesor() {
           Horario semanal del Profesor
         </h2>
 
-        {/* CALENDARIO SEMANAL */}
         <div className="calendario-semanal-contenedor">
           <div className="calendario-header d-flex justify-content-between align-items-center mb-3">
             <button className="btn btn-outline-secondary" onClick={() => cambiarSemana(-1)}>&lt; Semana anterior</button>
@@ -209,7 +205,6 @@ function InicioProfesor() {
           </div>
         </div>
 
-        {/* RESUMEN DE LA SEMANA */}
         <div className="resumen-semana mb-4 p-3 rounded shadow-sm bg-white">
           <h5 className="mb-2">Resumen de la semana</h5>
           <div><b>Total de clases programadas:</b> {totalClases}</div>
@@ -222,7 +217,6 @@ function InicioProfesor() {
           </div>
         </div>
 
-        {/* ACCESO RÁPIDO */}
         <div className="acceso-rapido mb-4 d-flex gap-3 flex-wrap">
           <button
             className="btn btn-primary"
@@ -244,7 +238,6 @@ function InicioProfesor() {
           </button>
         </div>
 
-        {/* ESTADÍSTICAS RÁPIDAS */}
         <div className="estadisticas-rapidas mb-4 d-flex gap-4 flex-wrap">
           <div className="stat-box bg-light p-3 rounded shadow-sm">
             <b>Asistencia</b>
@@ -260,7 +253,6 @@ function InicioProfesor() {
           </div>
         </div>
 
-        {/* ANUNCIOS IMPORTANTES */}
         <div className="anuncios-importantes mb-4 p-3 rounded shadow-sm bg-white">
           <h5 className="mb-2">Anuncios importantes</h5>
           <ul>
@@ -270,7 +262,6 @@ function InicioProfesor() {
           </ul>
         </div>
 
-        {/* CUMPLEAÑOS DE ALUMNOS */}
         <div className="cumpleanios-semana mb-4 p-3 rounded shadow-sm bg-white">
           <h5 className="mb-2">Cumpleaños de alumnos esta semana</h5>
           <ul>
@@ -282,7 +273,6 @@ function InicioProfesor() {
           </ul>
         </div>
 
-        {/* NOTAS PERSONALES */}
         <div className="notas-personales mb-4 p-3 rounded shadow-sm bg-white">
           <h5 className="mb-2">Notas personales</h5>
           <textarea
@@ -294,7 +284,6 @@ function InicioProfesor() {
           />
         </div>
 
-        {/* ENLACES ÚTILES */}
         <div className="enlaces-utiles mb-4 p-3 rounded shadow-sm bg-white">
           <h5 className="mb-2">Enlaces útiles</h5>
           <ul>

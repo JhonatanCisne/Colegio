@@ -1,5 +1,7 @@
 package com.Colegio.Colegio.La.Merced.model;
 
+import java.util.Objects;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,7 +24,12 @@ public class Seccion {
     @Column(name = "Nombre", nullable = false)
     private String nombre;
 
-    // Getters y setters
+    public Seccion() {}
+
+    public Seccion(String grado, String nombre) {
+        this.grado = grado;
+        this.nombre = nombre;
+    }
 
     public Integer getIdSeccion() {
         return idSeccion;
@@ -46,5 +53,27 @@ public class Seccion {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Seccion)) return false;
+        Seccion seccion = (Seccion) o;
+        return Objects.equals(getIdSeccion(), seccion.getIdSeccion());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getIdSeccion());
+    }
+
+    @Override
+    public String toString() {
+        return "Seccion{" +
+                "idSeccion=" + idSeccion +
+                ", grado='" + grado + '\'' +
+                ", nombre='" + nombre + '\'' +
+                '}';
     }
 }

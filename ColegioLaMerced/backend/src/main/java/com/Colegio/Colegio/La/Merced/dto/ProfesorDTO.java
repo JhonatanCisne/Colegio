@@ -17,7 +17,6 @@ public class ProfesorDTO {
         this.contrasena = contrasena;
     }
 
-    // Getters y setters
     public String getDni() { return dni; }
     public void setDni(String dni) { this.dni = dni; }
 

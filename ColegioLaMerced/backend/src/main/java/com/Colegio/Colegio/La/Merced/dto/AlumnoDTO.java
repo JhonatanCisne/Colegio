@@ -12,7 +12,6 @@ public class AlumnoDTO {
     private String grado;
     private String seccion;
 
-
     public String getNombre() {
         return nombre;
     }

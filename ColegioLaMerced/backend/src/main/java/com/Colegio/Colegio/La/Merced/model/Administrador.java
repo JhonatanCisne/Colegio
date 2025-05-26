@@ -16,11 +16,9 @@ public class Administrador {
     @Column(name = "Contraseña", nullable = false, length = 255)
     private String contrasena;
 
-    // Constructor vacío requerido por JPA
     public Administrador() {
     }
 
-    // Getters y setters
     public String getUsuario() {
         return usuario;
     }

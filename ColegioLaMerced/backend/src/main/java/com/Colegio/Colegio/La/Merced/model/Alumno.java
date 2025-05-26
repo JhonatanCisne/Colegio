@@ -40,8 +40,6 @@ public class Alumno {
     @Column(name = "Contrasena")
     private String contrasena;
 
-    // Getters y setters
-
     public Integer getIdAlumno() {
         return idAlumno;
     }
