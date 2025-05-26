@@ -1,153 +1,110 @@
-import React, { useState } from "react";
-import BarraDeNavegacionLateral from "../../Componentes/BarraDeNavegacionLateral";
-import "./Curso.css";
+import React, { useState, useEffect } from "react";
+import BarraDeNavegacionLateralEstudiante from "../../Componentes/BarraDeNavegacionLateral"; // Asume que tienes un componente similar para el estudiante
+import "./Curso.css"; // Puedes reutilizar o adaptar los estilos de CursoProfesor.css
 
 function Curso() {
-  const cursosDelProfesor = [
-    { id: 1, nombre: "Matemática", seccion: "A" },
-    { id: 2, nombre: "Comunicación", seccion: "B" },
-  ];
-
-  const [alumnosPorCurso, setAlumnosPorCurso] = useState({
-    1: [
-      { id: 1, nombre: "Ana López", notas: {} },
-      { id: 2, nombre: "Carlos Pérez", notas: { "Examen 1": 13 } },
-    ],
-    2: [
-      { id: 3, nombre: "Laura Gómez", notas: {} },
-      { id: 4, nombre: "Marco Torres", notas: { "Examen 2": 17 } },
+  // Datos simulados del estudiante
+  // Aquí debes reemplazar esto con datos reales del estudiante logueado
+  const [estudianteLogueado, setEstudianteLogueado] = useState({
+    id: 101, // ID del estudiante que está viendo sus cursos
+    nombre: "Sofía Díaz",
+    cursosInscritos: [
+      { id: 1, nombre: "Matemática", seccion: "2° Sec" },
+      { id: 2, nombre: "Literatura", seccion: "2° Sec" },
+      { id: 3, nombre: "Historia", seccion: "2° Sec" },
     ],
   });
 
-  const [cursoSeleccionado, setCursoSeleccionado] = useState(null);
-  const [modoEdicion, setModoEdicion] = useState(null); // idAlumno
-  const [notaTemporal, setNotaTemporal] = useState("");
-  const [examenSeleccionado, setExamenSeleccionado] = useState("Examen 1");
+  // Datos simulados de notas (para fines de demostración)
+  // En una aplicación real, esto se cargaría desde una base de datos
+  const [notasEstudiante, setNotasEstudiante] = useState({
+    1: { // Notas para el curso con ID 1 (Matemática)
+      "Examen 1": 15,
+      "Examen 2": 18,
+      "Examen 3": 12,
+      "Examen 4": 16,
+      "Examen 5": 19,
+    },
+    2: { // Notas para el curso con ID 2 (Literatura)
+      "Examen 1": 14,
+      "Examen 2": 17,
+      "Examen 3": 10,
+      "Examen 4": 15,
+      "Examen 5": 16,
+    },
+    3: { // Notas para el curso con ID 3 (Historia)
+      "Examen 1": 11,
+      "Examen 2": 13,
+      "Examen 3": 16,
+      "Examen 4": 14,
+      "Examen 5": 17,
+    },
+  });
 
+  const [cursoSeleccionado, setCursoSeleccionado] = useState(null);
   const examenes = ["Examen 1", "Examen 2", "Examen 3", "Examen 4", "Examen 5"];
 
   const seleccionarCurso = (idCurso) => {
     setCursoSeleccionado(idCurso);
-    setModoEdicion(null);
   };
 
-  const editarNota = (idAlumno) => {
-    setModoEdicion(idAlumno);
-    setNotaTemporal("");
-    setExamenSeleccionado("Examen 1");
-  };
-
-  const guardarNota = (idAlumno) => {
-    const nuevosAlumnos = alumnosPorCurso[cursoSeleccionado].map((alumno) => {
-      if (alumno.id === idAlumno) {
-        const nuevasNotas = {
-          ...alumno.notas,
-          [examenSeleccionado]: parseFloat(notaTemporal),
-        };
-        return { ...alumno, notas: nuevasNotas };
-      }
-      return alumno;
-    });
-
-    setAlumnosPorCurso({
-      ...alumnosPorCurso,
-      [cursoSeleccionado]: nuevosAlumnos,
-    });
-
-    setModoEdicion(null);
-    setNotaTemporal("");
-    setExamenSeleccionado("Examen 1");
+  const promedioNotasCurso = (notas) => {
+    const valores = Object.values(notas).filter((n) => !isNaN(n));
+    if (valores.length === 0) return "-";
+    const suma = valores.reduce((a, b) => a + b, 0);
+    return (suma / valores.length).toFixed(2);
   };
 
   return (
     <div className="d-flex">
-      <BarraDeNavegacionLateral />
+      <BarraDeNavegacionLateralEstudiante />
       <div className="contenido-principal">
-        <h2 className="mb-4">Mis Cursos</h2>
+        <h2 className="mb-4" style={{ fontWeight: 700, color: "#8B0000" }}>
+          Mis Cursos
+        </h2>
 
-        <div className="mb-4">
-          {cursosDelProfesor.map((curso) => (
-            <button
+        <div className="cursos-lista">
+          {estudianteLogueado.cursosInscritos.map((curso) => (
+            <div
               key={curso.id}
-              className={`btn me-2 mb-2 ${
-                cursoSeleccionado === curso.id ? "btn-primary" : "btn-outline-primary"
-              }`}
+              className={`curso-card ${cursoSeleccionado === curso.id ? "selected" : ""}`}
               onClick={() => seleccionarCurso(curso.id)}
             >
-              {curso.nombre} - Sección {curso.seccion}
-            </button>
+              <span role="img" aria-label="libro">📘</span> {curso.nombre}
+              <br />
+              <span style={{ fontSize: "0.95em", color: "#8B0000" }}>{curso.seccion}</span>
+            </div>
           ))}
         </div>
 
         {cursoSeleccionado && (
-          <>
-            <h4>Alumnos del curso</h4>
+          <div className="tab-content">
+            <h4>Notas del curso: {estudianteLogueado.cursosInscritos.find(c => c.id === cursoSeleccionado)?.nombre}</h4>
             <table className="table table-striped">
-              <thead className="table-dark">
+              <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Nombre</th>
                   {examenes.map((examen) => (
                     <th key={examen}>{examen}</th>
                   ))}
-                  <th>Acción</th>
+                  <th>Promedio</th>
                 </tr>
               </thead>
               <tbody>
-                {alumnosPorCurso[cursoSeleccionado]?.map((alumno) => (
-                  <tr key={alumno.id}>
-                    <td>{alumno.id}</td>
-                    <td>{alumno.nombre}</td>
-                    {examenes.map((examen) => (
-                      <td key={examen}>
-                        {alumno.notas[examen] !== undefined
-                          ? alumno.notas[examen]
-                          : "-"}
-                      </td>
-                    ))}
-                    <td>
-                      {modoEdicion === alumno.id ? (
-                        <div className="d-flex flex-column">
-                          <select
-                            className="form-select mb-1"
-                            value={examenSeleccionado}
-                            onChange={(e) => setExamenSeleccionado(e.target.value)}
-                          >
-                            {examenes.map((examen) => (
-                              <option key={examen} value={examen}>
-                                {examen}
-                              </option>
-                            ))}
-                          </select>
-                          <input
-                            type="number"
-                            min="0"
-                            max="20"
-                            className="form-control mb-1"
-                            value={notaTemporal}
-                            onChange={(e) => setNotaTemporal(e.target.value)}
-                          />
-                          <button
-                            className="btn btn-success btn-sm"
-                            onClick={() => guardarNota(alumno.id)}
-                          >
-                            Guardar
-                          </button>
-                        </div>
-                      ) : (
-                        <button
-                          className="btn btn-warning btn-sm"
-                          onClick={() => editarNota(alumno.id)}
-                        >
-                          Registrar / Editar Nota
-                        </button>
-                      )}
+                <tr>
+                  {examenes.map((examen) => (
+                    <td key={examen}>
+                      {notasEstudiante[cursoSeleccionado]?.[examen] !== undefined
+                        ? notasEstudiante[cursoSeleccionado][examen]
+                        : "-"}
                     </td>
-                  </tr>
-                ))}
+                  ))}
+                  <td>
+                    {promedioNotasCurso(notasEstudiante[cursoSeleccionado] || {})}
+                  </td>
+                </tr>
               </tbody>
             </table>
-          </>
+          </div>
         )}
       </div>
     </div>

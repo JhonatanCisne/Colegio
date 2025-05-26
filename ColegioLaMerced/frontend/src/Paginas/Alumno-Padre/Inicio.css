@@ -1,25 +1,163 @@
-/* Inicio.css */
+/* InicioEstudiante.css - Modificado para tema Rojo Oscuro sin azul */
 
-.contenido-principal {
-  margin-left: 220px;
-  padding: 2rem;
-  width: 100%;
+/* Variables para colores */
+:root {
+  --dark-red-primary: #8B0000; /* Rojo Oscuro principal (Dark Red) */
+  --dark-red-secondary: #A52A2A; /* Un tono más claro de marrón/rojo */
+  --dark-red-light: #CD5C5C; /* Un rojo ladrillo, más claro */
+  --dark-red-background: #FFF0F0; /* Fondo muy claro rojizo */
+  --dark-red-border-light: #FFC0CB; /* Rosa claro para bordes sutiles */
+  --neutral-gray: #e0e0e0; /* Gris neutro para bordes y separadores */
+  --dark-text: #343a40; /* Texto oscuro principal */
+  --medium-text: #555; /* Texto medio */
 }
 
-.table th, .table td {
+
+/* Contenedor principal de la página de inicio del estudiante */
+.contenido-principal-inicio-estudiante {
+  flex-grow: 1;
+  padding: 20px;
+  background-color: #f8f9fa; /* Fondo general de la página */
+  min-height: 100vh;
+  margin-left: 250px; /* Adjust based on your sidebar width */
+  width: calc(100% - 250px);
+  box-sizing: border-box;
+}
+
+/* Título de bienvenida */
+.contenido-principal-inicio-estudiante h2 {
+  margin-bottom: 30px;
+  font-size: 2.2rem;
+  color: var(--dark-red-primary); /* Title in dark red */
   text-align: center;
-  vertical-align: middle;
 }
 
-.anuncios-vertical {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  margin-top: 2rem;
+/* Contenedores para las secciones (horario, anuncios) */
+.seccion-inicio-estudiante {
+  background-color: #ffffff;
+  border: 1px solid var(--neutral-gray);
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-bottom: 30px;
 }
 
-.anuncio-item img {
-  width: 100%;
-  height: auto;
-  border-radius: 8px;
+.seccion-inicio-estudiante h3 {
+  font-size: 1.8rem;
+  color: var(--dark-text);
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--neutral-gray);
+  padding-bottom: 10px;
+}
+
+/* Estilos para la tarjeta de información del grado */
+.info-grado-card {
+  background-color: var(--dark-red-background); /* Light red background */
+  border: 1px solid var(--dark-red-border-light); /* Subtle red border */
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  margin-bottom: 30px;
+  color: var(--dark-red-primary); /* Text in dark red */
+}
+
+.info-grado-card h3 {
+  font-size: 1.8rem;
+  margin-bottom: 15px;
+  color: var(--dark-red-secondary); /* Heading in secondary dark red */
+}
+
+.info-grado-card p {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+}
+
+/* Contenedor del horario */
+.horario-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive columns */
+  gap: 20px;
+}
+
+.horario-dia-card {
+  background-color: var(--dark-red-background); /* Very light red background */
+  border: 1px solid var(--dark-red-border-light);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.horario-dia-card h5 {
+  font-size: 1.3rem;
+  color: var(--dark-red-primary); /* Day headings in dark red */
+  margin-bottom: 15px;
+  border-bottom: 1px solid var(--neutral-gray);
+  padding-bottom: 8px;
+}
+
+.horario-dia-card ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.horario-dia-card li {
+  margin-bottom: 8px;
+  font-size: 1rem;
+  color: var(--medium-text);
+  line-height: 1.4;
+}
+
+.horario-dia-card li span {
+  font-weight: 600;
+  color: var(--dark-text);
+}
+
+/* Contenedor de anuncios */
+.anuncios-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+.anuncio-card {
+  background-color: #fff;
+  border: 1px solid var(--neutral-gray);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.anuncio-card h5 {
+  font-size: 1.2rem;
+  color: var(--dark-text);
+  margin-bottom: 10px;
+}
+
+.anuncio-card .anuncio-fecha {
+  font-size: 0.9rem;
+  color: #777;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 5px;
+}
+
+.anuncio-card p {
+  font-size: 1rem;
+  color: var(--medium-text);
+  line-height: 1.5;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .contenido-principal-inicio-estudiante {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .horario-container,
+  .anuncios-container {
+    grid-template-columns: 1fr; /* Single column on small screens */
+  }
 }

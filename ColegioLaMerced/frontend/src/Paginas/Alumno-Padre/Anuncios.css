@@ -1,40 +1,141 @@
-/* Estilo general del contenedor principal */
-.contenido-principal {
-  flex: 1;
-  background-color: #f8f9fa;
+/* AnunciosEstudiante.css */
+
+/* Contenedor principal de la página de anuncios */
+.contenido-principal-anuncios {
+  flex-grow: 1;
   padding: 20px;
+  background-color: #f8f9fa;
   min-height: 100vh;
-  overflow-y: auto;
+  margin-left: 250px; /* Ajusta según el ancho de tu barra lateral */
+  width: calc(100% - 250px);
+  box-sizing: border-box;
 }
 
-/* Estilo para cada anuncio individual */
-.anuncio {
+/* Título de la sección */
+.contenido-principal-anuncios h2 {
+  margin-bottom: 30px;
+  font-size: 2.2rem;
+  color: #1976d2;
+  text-align: center;
+}
+
+/* Contenedor de todos los anuncios */
+.anuncios-estudiante-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Columnas responsivas */
+  gap: 25px;
+  padding: 10px;
+}
+
+/* Estilo individual de la tarjeta de anuncio */
+.anuncio-card-estudiante {
   background-color: #ffffff;
-  border-left: 5px solid #0d6efd; /* Azul Bootstrap */
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Espacio entre anuncios */
-.anuncios-vertical {
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   display: flex;
   flex-direction: column;
+  justify-content: space-between; /* Empuja el footer hacia abajo */
+  transition: transform 0.2s ease-in-out;
 }
 
-/* Estilo para títulos */
-.anuncio h5 {
-  margin-bottom: 10px;
-  color: #0d6efd;
+.anuncio-card-estudiante:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 
-/* Estilo para párrafos */
-.anuncio p {
+.anuncio-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #eee;
+  padding-bottom: 10px;
+}
+
+.anuncio-titulo {
+  font-size: 1.4rem;
+  color: #343a40;
+  font-weight: 600;
   margin: 0;
-  color: #333;
+  line-height: 1.3;
 }
 
-/* Responsive: ajusta el contenido en pantallas pequeñas */
+.anuncio-fecha {
+  font-size: 0.9rem;
+  color: #888;
+  white-space: nowrap; /* Evita que la fecha se rompa en varias líneas */
+  margin-left: 15px;
+  flex-shrink: 0; /* Evita que la fecha se encoja */
+}
+
+.anuncio-contenido {
+  font-size: 1rem;
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 20px;
+  flex-grow: 1; /* Permite que el contenido ocupe el espacio disponible */
+}
+
+.anuncio-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.9rem;
+  color: #777;
+  border-top: 1px dashed #eee;
+  padding-top: 15px;
+  margin-top: auto; /* Empuja el footer al final de la tarjeta */
+}
+
+.anuncio-profesor {
+  font-weight: 500;
+  color: #8B0000; /* Color para el profesor */
+}
+
+.anuncio-curso {
+  background-color: #e9f5ff; /* Fondo claro para el nombre del curso */
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-weight: 500;
+  color: #5d0202;
+}
+
+.anuncio-curso.general {
+  background-color: #f0f0f0; /* Fondo gris para anuncios generales */
+  color: #666;
+}
+
+/* Estilos responsivos */
 @media (max-width: 768px) {
-  .contenido-principal {
-    padding: 15px;
+  .contenido-principal-anuncios {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .anuncios-estudiante-container {
+    grid-template-columns: 1fr; /* Una sola columna en pantallas pequeñas */
+    padding: 0 10px;
+  }
+
+  .anuncio-card-estudiante {
+    width: auto; /* Permite que la tarjeta ocupe el ancho disponible */
+  }
+
+  .anuncio-header {
+    flex-direction: column; /* Apila título y fecha */
+    align-items: flex-start;
+  }
+
+  .anuncio-fecha {
+    margin-left: 0;
+    margin-top: 5px;
+  }
+
+  .anuncio-footer {
+    flex-direction: column; /* Apila profesor y curso */
+    align-items: flex-start;
+    gap: 5px;
   }
 }

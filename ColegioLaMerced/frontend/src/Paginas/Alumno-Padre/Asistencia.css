@@ -1,26 +1,192 @@
-.contenido-principal {
+/* AsistenciaEstudiante.css */
+
+/* Contenedor principal de la página de asistencia */
+.contenido-principal-asistencia-estudiante {
   flex-grow: 1;
   padding: 20px;
-  background-color: #f1f3f5;
+  background-color: #f8f9fa;
   min-height: 100vh;
+  margin-left: 250px; /* Ajusta según el ancho de tu barra lateral */
+  width: calc(100% - 250px);
+  box-sizing: border-box;
 }
 
-.table th,
-.table td {
+/* Título de la sección */
+.contenido-principal-asistencia-estudiante h2 {
+  margin-bottom: 30px;
+  font-size: 2.2rem;
+  color: #8c0817;
   text-align: center;
-  vertical-align: middle;
-  padding: 10px;
 }
 
-.table-hover tbody tr:hover {
-  background-color: #dee2e6;
+/* Reutilización de estilos de cursos-lista y curso-card del archivo de Cursos */
+/* Si no los tienes globales, deberías copiarlos aquí */
+.cursos-lista {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 30px;
+  justify-content: center;
 }
 
-.form-select,
-.form-control {
-  min-height: 38px;
+.curso-card {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 20px 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 220px;
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
-.btn {
-  min-width: 90px;
+.curso-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+  border-color: #e26969;
+}
+
+.curso-card.selected {
+  border-color: #8B0000;
+  box-shadow: 0 4px 15px rgba(117, 38, 38, 0.3);
+  background-color: #e6f3ff;
+  color: #4a0202;
+}
+
+.curso-card span[role="img"] {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+/* Resumen de asistencia dentro de la tarjeta del curso */
+.resumen-asistencia-card {
+  font-size: 0.9em;
+  font-weight: 500;
+  color: #007bff;
+  margin-top: 10px;
+  padding-top: 8px;
+  border-top: 1px dashed #e0e0e0;
+  width: 100%;
+}
+
+
+/* Contenedor de la tabla de asistencia */
+.tab-content-asistencia {
+  background-color: #ffffff;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-top: 20px;
+}
+
+.tab-content-asistencia h4 {
+  font-size: 1.6rem;
+  color: #343a40;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #e0e0e0;
+  padding-bottom: 10px;
+}
+
+/* Estilos de la tabla de asistencia */
+.asistencia-table {
+  width: 100%;
+  margin-bottom: 1rem;
+  color: #212529;
+  border-collapse: collapse;
+}
+
+.asistencia-table th,
+.asistencia-table td {
+  padding: 0.75rem;
+  vertical-align: middle; /* Centra verticalmente */
+  border-top: 1px solid #dee2e6;
+  text-align: center;
+}
+
+.asistencia-table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #dee2e6;
+  background-color: #f2f2f2;
+  font-weight: 700;
+  color: #495057;
+}
+
+.asistencia-table tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.03); /* Rayas para filas impares */
+}
+
+/* Colores para los estados de asistencia */
+.estado-presente {
+  color: #28a745; /* Verde */
+  font-weight: bold;
+}
+
+.estado-tardanza {
+  color: #ffc107; /* Amarillo/Naranja */
+  font-weight: bold;
+}
+
+.estado-ausente {
+  color: #dc3545; /* Rojo */
+  font-weight: bold;
+}
+
+/* Resumen final de asistencia */
+.resumen-final-asistencia {
+  background-color: #e9ecef; /* Fondo gris claro */
+  border-radius: 8px;
+  padding: 20px;
+  margin-top: 30px;
+  border: 1px solid #ced4da;
+  text-align: left; /* Alineación del texto dentro del resumen */
+}
+
+.resumen-final-asistencia h5 {
+  color: #343a40;
+  font-size: 1.4rem;
+  margin-bottom: 15px;
+  border-bottom: 1px solid #adb5bd;
+  padding-bottom: 10px;
+}
+
+.resumen-final-asistencia p {
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+  color: #495057;
+}
+
+.resumen-final-asistencia .porcentaje-total {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: #8B0000;
+  margin-top: 15px;
+  padding-top: 10px;
+  border-top: 1px dashed #adb5bd;
+}
+
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .contenido-principal-asistencia-estudiante {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  .cursos-lista {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .curso-card {
+    width: 90%;
+  }
 }

@@ -2,7 +2,7 @@
 .sidebar {
   width: 220px; /* ancho fijo */
   height: 100vh;
-  background-color: #343a40;
+  background-color: #8B0000;
   color: white;
   padding: 1rem;
   position: fixed; /* importante para que no empuje el contenido */
@@ -22,5 +22,5 @@
 }
 
 .nav-link:hover {
-  color: #17a2b8;
+  color: #8B0000;
 }

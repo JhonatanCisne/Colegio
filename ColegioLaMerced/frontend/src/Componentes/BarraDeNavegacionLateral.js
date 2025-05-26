@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import "./EstilosBarraLateral.css";
+import "./EstilosBarraLateralAlumno.css";
 
 function BarraDeNavegacionLateral() {
   return (
@@ -20,7 +20,7 @@ function BarraDeNavegacionLateral() {
           <Link to="/anuncios" className="nav-link">Anuncios</Link>
         </li>
         <li className="nav-item">
-          <Link to="/login" className="nav-link">Cerrar sesión</Link>
+          <Link to="/LoginAlumno" className="nav-link">Cerrar sesión</Link>
         </li>
       </ul>
     </div>

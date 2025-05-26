@@ -1,76 +1,89 @@
-import React, { useState } from "react";
-import BarraDeNavegacionLateral from "../../Componentes/BarraDeNavegacionLateral";
+import React, { useState, useEffect } from "react";
+import BarraDeNavegacionLateralEstudiante from "../../Componentes/BarraDeNavegacionLateral";
 import "./Anuncios.css";
 
-function AnunciosProfesor() {
+function Anuncios() {
+  // Datos simulados de anuncios, ahora solo publicados por profesores
   const [anuncios, setAnuncios] = useState([
     {
-      titulo: "Salida Escolar",
-      descripcion: "El próximo viernes habrá una salida educativa al museo de historia. Traer autorización firmada."
+      id: 1,
+      titulo: "Recordatorio: Examen Final de Matemática",
+      contenido: "El examen final de Matemática se realizará el 15 de junio a las 10:00 AM en el aula 301. ¡No olviden repasar!",
+      fecha: "2025-05-24",
+      profesor: "Prof. Juan Pérez", // Publicado por un profesor
+      curso: "Matemática 2° Sec"
     },
     {
-      titulo: "Entrega de Boletas",
-      descripcion: "La entrega de boletas será el lunes 27 en horario de tutoría. Asistencia obligatoria de padres."
+      id: 2,
+      titulo: "Nueva tarea de Lenguaje: Análisis Literario",
+      contenido: "Se ha publicado una nueva tarea en el aula virtual sobre el análisis de 'Cien años de soledad'. Fecha límite de entrega: 5 de junio.",
+      fecha: "2025-05-23",
+      profesor: "Prof. María Gómez", // Publicado por un profesor
+      curso: "Lenguaje 2° Sec"
     },
     {
-      titulo: "Reunión de Padres",
-      descripcion: "Se convoca a reunión virtual el jueves a las 6:00 p.m. por Zoom para tratar temas del segundo bimestre."
-    }
+      id: 3,
+      titulo: "Charla de Orientación Vocacional",
+      contenido: "El próximo martes 27 de mayo tendremos una charla online con un orientador vocacional. Enlace y hora se enviarán por correo electrónico. (Comunicado transmitido por profesores)",
+      fecha: "2025-05-22",
+      profesor: "Prof. Ana Torres", // Ahora un profesor transmite el anuncio
+      curso: "Literatura" // Anuncio general
+    },
+    {
+      id: 4,
+      titulo: "Suspensión de clases por feriado",
+      contenido: "Se comunica que el día lunes 26 de mayo no habrá clases debido al feriado por el Día de la Bandera. (Comunicado transmitido por profesores)",
+      fecha: "2025-05-20",
+      profesor: "Prof. Carlos Sánchez", // Ahora un profesor transmite el anuncio
+      curso: "General"
+    },
+    {
+      id: 5,
+      titulo: "Reunión de Padres y Apoderados",
+      contenido: "Invitamos a todos los padres y apoderados a la reunión mensual el viernes 30 de mayo a las 5:00 PM vía Zoom. (Comunicado transmitido por profesores)",
+      fecha: "2025-05-18",
+      profesor: "Prof. Laura Fernández", // Ahora un profesor transmite el anuncio
+      curso: "General"
+    },
   ]);
-
-  const [nuevoTitulo, setNuevoTitulo] = useState("");
-  const [nuevaDescripcion, setNuevaDescripcion] = useState("");
-
-  const manejarEnvio = (e) => {
-    e.preventDefault();
-    if (nuevoTitulo && nuevaDescripcion) {
-      setAnuncios([...anuncios, { titulo: nuevoTitulo, descripcion: nuevaDescripcion }]);
-      setNuevoTitulo("");
-      setNuevaDescripcion("");
-    }
-  };
 
   return (
     <div className="d-flex">
-      <BarraDeNavegacionLateral />
-      <div className="contenido-principal p-4">
-        <h2 className="mb-4">Publicar Anuncios</h2>
+      <BarraDeNavegacionLateralEstudiante />
+      <div className="contenido-principal-anuncios">
+        <h2 className="mb-4" style={{ fontWeight: 700, color: "#8B0000" }}>
+          Anuncios
+        </h2>
 
-        <form onSubmit={manejarEnvio} className="mb-5">
-          <div className="mb-3">
-            <label className="form-label">Título del Anuncio</label>
-            <input
-              type="text"
-              className="form-control"
-              value={nuevoTitulo}
-              onChange={(e) => setNuevoTitulo(e.target.value)}
-              required
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label">Descripción</label>
-            <textarea
-              className="form-control"
-              value={nuevaDescripcion}
-              onChange={(e) => setNuevaDescripcion(e.target.value)}
-              required
-            ></textarea>
-          </div>
-          <button type="submit" className="btn btn-primary">Publicar Anuncio</button>
-        </form>
-
-        <h3 className="mb-3">Anuncios Publicados</h3>
-        <div className="anuncios-vertical">
-          {anuncios.map((anuncio, index) => (
-            <div key={index} className="anuncio mb-4 p-3 border rounded">
-              <h5>{anuncio.titulo}</h5>
-              <p>{anuncio.descripcion}</p>
-            </div>
-          ))}
+        <div className="anuncios-estudiante-container">
+          {anuncios.length === 0 ? (
+            <div className="alert alert-info">No hay anuncios disponibles en este momento.</div>
+          ) : (
+            anuncios
+              .sort((a, b) => new Date(b.fecha) - new Date(a.fecha)) // Ordena por fecha descendente
+              .map((anuncio) => (
+                <div key={anuncio.id} className="anuncio-card-estudiante">
+                  <div className="anuncio-header">
+                    <h5 className="anuncio-titulo">{anuncio.titulo}</h5>
+                    <span className="anuncio-fecha">{new Date(anuncio.fecha).toLocaleDateString()}</span>
+                  </div>
+                  <p className="anuncio-contenido">{anuncio.contenido}</p>
+                  <div className="anuncio-footer">
+                    <span className="anuncio-profesor">Publicado por: **{anuncio.profesor}**</span>
+                    {anuncio.curso && anuncio.curso !== "General" && (
+                      <span className="anuncio-curso">Curso: **{anuncio.curso}**</span>
+                    )}
+                    {anuncio.curso && anuncio.curso === "General" && (
+                      <span className="anuncio-curso general">**Anuncio General**</span>
+                    )}
+                  </div>
+                </div>
+              ))
+          )}
         </div>
       </div>
     </div>
   );
 }
 
-export default AnunciosProfesor;
+export default Anuncios;

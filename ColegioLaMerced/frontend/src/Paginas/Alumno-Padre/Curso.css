@@ -1,16 +1,149 @@
+/* CursoEstudiante.css - Modificado para tema Rojo Oscuro sin azul */
+
+/* Variables para colores */
+:root {
+  --dark-red-primary: #8B0000; /* Rojo Oscuro principal (Dark Red) */
+  --dark-red-secondary: #A52A2A; /* Un tono más claro de marrón/rojo */
+  --dark-red-light: #CD5C5C; /* Un rojo ladrillo, más claro */
+  --dark-red-background-subtle: #FFF0F0; /* Fondo muy claro rojizo */
+  --dark-red-border-light: #FFC0CB; /* Rosa claro para bordes sutiles */
+  --dark-red-selected-bg: #FFDCDC; /* Fondo para elemento seleccionado */
+  --neutral-gray: #e0e0e0; /* Gris neutro para bordes y separadores */
+  --dark-text: #343a40; /* Texto oscuro principal */
+  --medium-text: #555; /* Texto medio */
+}
+
+/* Contenedor principal de la página */
 .contenido-principal {
-  flex-grow: 1;
+  flex-grow: 1; /* Permite que el contenido principal ocupe el espacio restante */
   padding: 20px;
-  background-color: #f4f4f4;
-  min-height: 100vh;
+  background-color: #f8f9fa; /* Un fondo claro para la página */
+  min-height: 100vh; /* Asegura que ocupe al menos la altura completa de la vista */
+  margin-left: 250px; /* Ajusta esto si tu barra lateral tiene un ancho diferente */
+  width: calc(100% - 250px); /* Ajusta para que ocupe el espacio restante */
+  box-sizing: border-box; /* Incluye padding y borde en el ancho total */
 }
 
-.btn {
-  min-width: 140px;
-}
-
-.table td,
-.table th {
-  vertical-align: middle;
+/* Estilos para el título de la sección */
+.contenido-principal h2 {
+  margin-bottom: 30px;
+  font-size: 2.2rem;
+  color: var(--dark-red-primary); /* Título en rojo oscuro */
   text-align: center;
+}
+
+/* Contenedor de la lista de cursos */
+.cursos-lista {
+  display: flex;
+  flex-wrap: wrap; /* Permite que las tarjetas se envuelvan a la siguiente línea */
+  gap: 20px; /* Espacio entre las tarjetas */
+  margin-bottom: 30px;
+  justify-content: center; /* Centra las tarjetas */
+}
+
+/* Estilos individuales de la tarjeta de curso */
+.curso-card {
+  background-color: #ffffff;
+  border: 1px solid var(--neutral-gray);
+  border-radius: 12px;
+  padding: 20px 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
+  transition: all 0.3s ease;
+  width: 220px; /* Ancho fijo para las tarjetas */
+  text-align: center;
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: #333;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.curso-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
+  border-color: var(--dark-red-border-light); /* Borde rojo claro en hover */
+}
+
+.curso-card.selected {
+  border-color: var(--dark-red-primary); /* Borde rojo oscuro para el curso seleccionado */
+  box-shadow: 0 4px 15px rgba(139, 0, 0, 0.3); /* Sombra rojiza más pronunciada */
+  background-color: var(--dark-red-selected-bg); /* Fondo ligeramente rojo para el seleccionado */
+  color: var(--dark-red-secondary); /* Color de texto más oscuro */
+}
+
+.curso-card span[role="img"] {
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+/* Estilos para el contenido de la pestaña (donde se muestran las notas) */
+.tab-content {
+  background-color: #ffffff;
+  border: 1px solid var(--neutral-gray);
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  margin-top: 20px;
+}
+
+.tab-content h4 {
+  font-size: 1.6rem;
+  color: var(--dark-text);
+  margin-bottom: 20px;
+  border-bottom: 2px solid var(--neutral-gray);
+  padding-bottom: 10px;
+}
+
+/* Estilos de la tabla de notas */
+.table {
+  width: 100%;
+  margin-bottom: 1rem;
+  color: #212529;
+  border-collapse: collapse; /* Asegura que los bordes de la tabla se colapsen */
+}
+
+.table th,
+.table td {
+  padding: 0.75rem;
+  vertical-align: top;
+  border-top: 1px solid #dee2e6;
+  text-align: center; /* Centra el texto en las celdas */
+}
+
+.table thead th {
+  vertical-align: bottom;
+  border-bottom: 2px solid #dee2e6;
+  background-color: #f2f2f2; /* Fondo para el encabezado de la tabla */
+  font-weight: 700;
+  color: #495057;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+  background-color: rgba(0, 0, 0, 0.05); /* Rayas para filas impares */
+}
+
+/* Asegura que el promedio se vea bien */
+.table td:last-child {
+  font-weight: 600;
+  color: var(--dark-red-primary); /* Promedio en rojo oscuro */
+}
+
+/* Estilos responsivos (opcional pero recomendado) */
+@media (max-width: 768px) {
+  .contenido-principal {
+    margin-left: 0; /* Deshabilita el margen para pantallas pequeñas si la barra lateral se oculta */
+    width: 100%;
+  }
+
+  .cursos-lista {
+    flex-direction: column; /* Apila las tarjetas en pantallas pequeñas */
+    align-items: center; /* Centra las tarjetas apiladas */
+  }
+
+  .curso-card {
+    width: 90%; /* Ajusta el ancho de las tarjetas para pantallas pequeñas */
+  }
 }
