@@ -16,9 +16,6 @@ public class Administrador {
     @Column(name = "Contraseña", nullable = false, length = 255)
     private String contrasena;
 
-    public Administrador() {
-    }
-
     public String getUsuario() {
         return usuario;
     }

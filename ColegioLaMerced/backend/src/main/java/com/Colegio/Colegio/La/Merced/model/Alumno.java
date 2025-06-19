@@ -1,12 +1,11 @@
 package com.Colegio.Colegio.La.Merced.model;
 
-
-import java.time.LocalDate;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -19,25 +18,23 @@ public class Alumno {
     @Column(name = "ID_Alumno")
     private Integer idAlumno;
 
-    @Column(name = "ID_Padre", nullable = false)
+    @ManyToOne 
+    @JoinColumn(name = "ID_Padre", referencedColumnName = "ID_Padre", nullable=false)
     private Integer idPadre;
 
-    @Column(name = "ID_Seccion", nullable = false)
-    private Integer idSeccion;
-
-    @Column(name = "Nombre", nullable = false)
+    @Column(name = "Nombre", nullable = false, length=40)
     private String nombre;
 
-    @Column(name = "Apellido", nullable = false)
+    @Column(name = "Apellido", nullable = false, length=40)
     private String apellido;
 
-    @Column(name = "DNI", nullable = false, unique = true)
+    @Column(name = "DNI", nullable = false, unique = true, length=8)
     private String dni;
+    
+    @Column(name = "Correo", nullable = false, length=90)
+    private String correo;
 
-    @Column(name = "Fecha_De_Nacimiento", nullable = false)
-    private LocalDate fechaDeNacimiento;
-
-    @Column(name = "Contrasena")
+    @Column(name = "contraseña", nullable = false, length=50)
     private String contrasena;
 
     public Integer getIdAlumno() {
@@ -54,14 +51,6 @@ public class Alumno {
 
     public void setIdPadre(Integer idPadre) {
         this.idPadre = idPadre;
-    }
-
-    public Integer getIdSeccion() {
-        return idSeccion;
-    }
-
-    public void setIdSeccion(Integer idSeccion) {
-        this.idSeccion = idSeccion;
     }
 
     public String getNombre() {
@@ -88,19 +77,19 @@ public class Alumno {
         this.dni = dni;
     }
 
-    public LocalDate getFechaDeNacimiento() {
-        return fechaDeNacimiento;
-    }
-
-    public void setFechaDeNacimiento(LocalDate fechaDeNacimiento) {
-        this.fechaDeNacimiento = fechaDeNacimiento;
-    }
-
     public String getContrasena() {
         return contrasena;
     }
 
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 }
