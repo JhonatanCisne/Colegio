@@ -16,7 +16,7 @@ public class Curso {
     @Column(name = "ID_Curso")
     private Integer idCurso;
 
-    @Column(name = "Nombre", nullable = false)
+    @Column(name = "Nombre", nullable = false, length=30)
     private String nombre;
 
     public Integer getIdCurso() {
@@ -33,5 +33,13 @@ public class Curso {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    @Override
+    public String toString() {
+        return "Curso{" +
+                "idCurso=" + idCurso +
+                ", nombre='" + nombre + '\'' +
+                '}';
     }
 }
