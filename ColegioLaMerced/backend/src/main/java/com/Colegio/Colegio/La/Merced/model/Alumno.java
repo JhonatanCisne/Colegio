@@ -19,22 +19,22 @@ public class Alumno {
     private Integer idAlumno;
 
     @ManyToOne 
-    @JoinColumn(name = "ID_Padre", referencedColumnName = "ID_Padre", nullable=false)
-    private Integer idPadre;
+    @JoinColumn(name = "ID_Padre", referencedColumnName = "ID_Padre", nullable = false)
+    private Padre padre;
 
-    @Column(name = "Nombre", nullable = false, length=40)
+    @Column(name = "Nombre", nullable = false, length = 40)
     private String nombre;
 
-    @Column(name = "Apellido", nullable = false, length=40)
+    @Column(name = "Apellido", nullable = false, length = 40)
     private String apellido;
 
-    @Column(name = "DNI", nullable = false, unique = true, length=12)
+    @Column(name = "DNI", nullable = false, unique = true, length = 12)
     private String dni;
     
-    @Column(name = "Correo", nullable = false, length=90)
+    @Column(name = "Correo", nullable = false, length = 90)
     private String correo;
 
-    @Column(name = "contraseña", nullable = false, length=50)
+    @Column(name = "contraseña", nullable = false, length = 50)
     private String contrasena;
 
     public Integer getIdAlumno() {
@@ -45,12 +45,12 @@ public class Alumno {
         this.idAlumno = idAlumno;
     }
 
-    public Integer getIdPadre() {
-        return idPadre;
+    public Padre getIdPadre() { 
+        return padre;
     }
 
-    public void setIdPadre(Integer idPadre) {
-        this.idPadre = idPadre;
+    public void setIdPadre(Padre padre) { 
+        this.padre = padre;
     }
 
     public String getNombre() {
@@ -97,7 +97,7 @@ public class Alumno {
     public String toString() {
         return "Alumno{" +
                 "idAlumno=" + idAlumno +
-                ", idPadre=" + idPadre +
+                ", padre=" + padre +
                 ", nombre='" + nombre + '\'' +
                 ", apellido='" + apellido + '\'' +
                 ", dni='" + dni + '\'' +

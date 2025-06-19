@@ -20,7 +20,6 @@ public class AlumnoService {
 
     @Autowired
 
-    private static final int ID_PADRE_DEFAULT = 1;
 
     public List<AlumnoDTO> listarAlumnos() {
         return alumnoRepository.findAll().stream()
@@ -44,7 +43,6 @@ public class AlumnoService {
         alumno.setNombre(dto.getNombre());
         alumno.setApellido(dto.getApellido());
         alumno.setDni(dto.getDni());
-        alumno.setIdPadre(ID_PADRE_DEFAULT);
         alumno.setContrasena(null); 
 
         Alumno guardado = alumnoRepository.save(alumno);

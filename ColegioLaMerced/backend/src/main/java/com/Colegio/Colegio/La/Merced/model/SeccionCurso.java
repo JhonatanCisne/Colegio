@@ -20,15 +20,15 @@ public class SeccionCurso {
 
     @OneToOne
     @JoinColumn(name = "ID_Curso", referencedColumnName = "ID_Curso", nullable=false)
-    private Integer idCurso;
+    private Curso curso;
 
     @OneToOne
     @JoinColumn(name="ID_Profesor", referencedColumnName = "ID_Profesor", nullable=false)
-    private Integer idProfesor;
+    private Profesor profesor;
 
     @OneToOne
     @JoinColumn(name = "ID_Seccion", referencedColumnName = "ID_Seccion", nullable=false)
-    private Integer idSeccion;
+    private Seccion seccion;
 
     public Integer getIdSeccionCurso(){
         return idSeccionCurso;
@@ -38,37 +38,37 @@ public class SeccionCurso {
         this.idSeccionCurso = idSeccionCurso;
     }
 
-    public Integer getIdCurso() {
-        return idCurso;
+    public Curso getIdCurso() {
+        return curso;
     }
 
-    public void setIdCurso(Integer idCurso) {
-        this.idCurso = idCurso;
+    public void setIdCurso(Curso curso) {
+        this.curso = curso;
     }
 
-    public Integer getIdProfesor() {
-        return idProfesor;
+    public Profesor getIdProfesor() {
+        return profesor;
     }
 
-    public void setIdProfesor(Integer idProfesor) {
-        this.idProfesor = idProfesor;
+    public void setIdProfesor(Profesor profesor) {
+        this.profesor = profesor;
     }
 
-    public Integer getIdSeccion() {
-        return idSeccion;
+    public Seccion getIdSeccion() {
+        return seccion;
     }
 
-    public void setIdSeccion(Integer idSeccion) {
-        this.idSeccion = idSeccion;
+    public void setIdSeccion(Seccion seccion) {
+        this.seccion = seccion;
     }
 
     @Override
     public String toString() {
         return "SeccionCurso{" +
                 "idSeccionCurso=" + idSeccionCurso +
-                ", idCurso=" + idCurso +
-                ", idProfesor=" + idProfesor +
-                ", idSeccion=" + idSeccion +
+                ", idCurso=" + curso +
+                ", idProfesor=" + profesor +
+                ", idSeccion=" + seccion +
                 '}';
     }
 

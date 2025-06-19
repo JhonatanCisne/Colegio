@@ -26,7 +26,7 @@ public class CursoUnico {
     private float examen2;
 
     @Column(name = "Examen3", nullable = true)
-    private float  examen3;
+    private float examen3;
 
     @Column(name = "Examen4", nullable = true)
     private float examen4;
@@ -35,16 +35,16 @@ public class CursoUnico {
     private float examenFinal;
 
     @ManyToOne 
-    @JoinColumn(name = "ID_Seccion_Curso", referencedColumnName = "ID_Seccion_Curso", nullable=false)
-    private Integer idSeccionCurso;
+    @JoinColumn(name = "ID_Seccion_Curso", referencedColumnName = "ID_Seccion_Curso", nullable = false)
+    private SeccionCurso seccionCurso;
 
     @OneToOne 
-    @JoinColumn(name = "ID_Alumno", referencedColumnName = "ID_Alumno", nullable=false)
-    private Integer idAlumno;
+    @JoinColumn(name = "ID_Alumno", referencedColumnName = "ID_Alumno", nullable = false)
+    private Alumno alumno;
 
     @ManyToOne 
-    @JoinColumn(name = "ID_Horario", referencedColumnName = "ID_Horario", nullable=false)
-    private Integer idHorario;
+    @JoinColumn(name = "ID_Horario", referencedColumnName = "ID_Horario", nullable = false)
+    private Horario horario;
     
     public Integer getIdCursoUnico() {
         return idCursoUnico;
@@ -94,42 +94,42 @@ public class CursoUnico {
         this.examenFinal = examenFinal;
     }
 
-    public Integer getIdSeccionCurso() {
-        return idSeccionCurso;
+    public SeccionCurso getSeccionCurso() {
+        return seccionCurso;
     }
 
-    public void setIdSeccionCurso(Integer idSeccionCurso) {
-        this.idSeccionCurso = idSeccionCurso;
+    public void setSeccionCurso(SeccionCurso seccionCurso) {
+        this.seccionCurso = seccionCurso;
     }
 
-    public Integer getIdAlumno() {
-        return idAlumno;
+    public Alumno getAlumno() {
+        return alumno;
     }
 
-    public void setIdAlumno(Integer idAlumno) {
-        this.idAlumno = idAlumno;
+    public void setAlumno(Alumno alumno) {
+        this.alumno = alumno;
     }
 
-    public Integer getIdHorario() {
-        return idHorario;
+    public Horario getHorario() {
+        return horario;
     }
 
-    public void setIdHorario(Integer idHorario) {
-        this.idHorario = idHorario;
+    public void setHorario(Horario horario) {
+        this.horario = horario;
     }
 
     @Override
     public String toString() {
         return "CursoUnico{" +
-                "idCursoUnico=" + idCursoUnico +
-                ", examen1=" + examen1 +
-                ", examen2=" + examen2 +
-                ", examen3=" + examen3 +
-                ", examen4=" + examen4 +
-                ", examenFinal=" + examenFinal +
-                ", idSeccionCurso=" + idSeccionCurso +
-                ", idAlumno=" + idAlumno +
-                ", idHorario=" + idHorario +
-                '}';
+               "idCursoUnico=" + idCursoUnico +
+               ", examen1=" + examen1 +
+               ", examen2=" + examen2 +
+               ", examen3=" + examen3 +
+               ", examen4=" + examen4 +
+               ", examenFinal=" + examenFinal +
+               ", seccionCursoId=" + (seccionCurso != null ? seccionCurso.getIdSeccionCurso() : "null") +
+               ", alumnoId=" + (alumno != null ? alumno.getIdAlumno() : "null") +
+               ", horarioId=" + (horario != null ? horario.getIdHorario() : "null") +
+               '}';
     }
 }

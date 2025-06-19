@@ -25,7 +25,7 @@ public class Asistencia{
 
     @OneToOne
     @JoinColumn(name = "ID_Curso_Unico", referencedColumnName = "ID_Curso_Unico", nullable=false)
-    private Integer idCursoUnico;
+    private CursoUnico cursoUnico;
 
     public Integer getIdAsistencia() {
         return idAsistencia;
@@ -51,12 +51,12 @@ public class Asistencia{
         this.estado = estado;
     }
 
-    public Integer getIdCursoUnico() {
-        return idCursoUnico;
+    public CursoUnico getIdCursoUnico() {
+        return cursoUnico;
     }
 
-    public void setIdCursoUnico(Integer idCursoUnico) {
-        this.idCursoUnico = idCursoUnico;
+    public void setIdCursoUnico(CursoUnico cursoUnico) {
+        this.cursoUnico = cursoUnico;
     }
 
     @Override
@@ -65,7 +65,7 @@ public class Asistencia{
                 "idAsistencia=" + idAsistencia +
                 ", fecha='" + fecha + '\'' +
                 ", estado='" + estado + '\'' +
-                ", idCursoUnico=" + idCursoUnico +
+                ", idCursoUnico=" + cursoUnico +
                 '}';
     }
 }

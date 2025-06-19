@@ -25,11 +25,11 @@ public class Horario{
 
     @OneToOne
     @JoinColumn(name = "ID_Seccion", referencedColumnName = "ID_Seccion", nullable=false)
-    private Integer idSeccion;
+    private Seccion seccion;
 
     @OneToOne
     @JoinColumn(name="ID_Profesor", referencedColumnName = "ID_Profesor", nullable=false)
-    private Integer idProfesor;
+    private Profesor profesor;
 
     public Integer getIdHorario() {
         return idHorario;
@@ -55,20 +55,20 @@ public class Horario{
         this.dia = dia;
     }
 
-    public Integer getIdSeccion() {
-        return idSeccion;
+    public Seccion getIdSeccion() {
+        return seccion;
     }
 
-    public void setIdSeccion(Integer idSeccion) {
-        this.idSeccion = idSeccion;
+    public void setIdSeccion(Seccion seccion) {
+        this.seccion = seccion;
     }
 
-    public Integer getIdProfesor() {
-        return idProfesor;
+    public Profesor getIdProfesor() {
+        return profesor;
     }
 
-    public void setIdProfesor(Integer idProfesor) {
-        this.idProfesor = idProfesor;
+    public void setIdProfesor(Profesor profesor) {
+        this.profesor = profesor;
     }
 
     @Override
@@ -77,8 +77,8 @@ public class Horario{
                 "idHorario=" + idHorario +
                 ", hora='" + hora + '\'' +
                 ", dia='" + dia + '\'' +
-                ", idSeccion=" + idSeccion +
-                ", idProfesor=" + idProfesor +
+                ", idSeccion=" + seccion +
+                ", idProfesor=" + profesor +
                 '}';
     }
 
