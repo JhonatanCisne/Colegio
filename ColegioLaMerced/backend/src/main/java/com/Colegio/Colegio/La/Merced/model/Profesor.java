@@ -16,31 +16,20 @@ public class Profesor {
     @Column(name = "ID_Profesor")
     private Integer idProfesor;
 
-    @Column(name = "DNI", nullable = false, unique = true)
+    @Column(name = "DNI", nullable = false, unique = true, length=12)
     private String dni;
 
-    @Column(name = "Nombre", nullable = false)
+    @Column(name = "Nombre", nullable = false, length=50)
     private String nombre;
 
-    @Column(name = "Apellido", nullable = false)
+    @Column(name = "Apellido", nullable = false, length=50)
     private String apellido;
 
-    @Column(name = "Especialidad")
-    private String especialidad;
+    @Column(name = "Estado", length=20)
+    private String estado;
 
-    @Column(name = "Contrasena", nullable = false)
+    @Column(name = "Contrasena", nullable = false, length=155)
     private String contrasena;
-
-    public Profesor() {}
-
-    public Profesor(Integer idProfesor, String dni, String nombre, String apellido, String especialidad, String contrasena) {
-        this.idProfesor = idProfesor;
-        this.dni = dni;
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.especialidad = especialidad;
-        this.contrasena = contrasena;
-    }
 
     public Integer getIdProfesor() {
         return idProfesor;
@@ -70,11 +59,11 @@ public class Profesor {
         this.apellido = apellido;
     }
 
-    public String getEspecialidad() {
-        return especialidad;
+    public String getEstado() {
+        return estado;
     }
-    public void setEspecialidad(String especialidad) {
-        this.especialidad = especialidad;
+    public void setEstado(String estado) {
+        this.estado = estado;
     }
 
     public String getContrasena() {
@@ -82,5 +71,17 @@ public class Profesor {
     }
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
+    }
+
+    @Override
+    public String toString() {
+        return "Profesor{" +
+                "idProfesor=" + idProfesor +
+                ", dni='" + dni + '\'' +
+                ", nombre='" + nombre + '\'' +
+                ", apellido='" + apellido + '\'' +
+                ", estado='" + estado + '\'' +
+                ", contrasena='" + contrasena + '\'' +
+                '}';
     }
 }

@@ -21,7 +21,6 @@ public class ProfesorService {
             profesor.getDni(),
             profesor.getNombre(),
             profesor.getApellido(),
-            profesor.getEspecialidad(),
             profesor.getContrasena()
         );
     }
@@ -31,8 +30,6 @@ public class ProfesorService {
         profesor.setDni(dto.getDni());
         profesor.setNombre(dto.getNombre());
         profesor.setApellido(dto.getApellido());
-        profesor.setEspecialidad(dto.getEspecialidad());
-        profesor.setContrasena(dto.getContrasena());
         return profesor;
     }
 
@@ -63,8 +60,6 @@ public class ProfesorService {
                 .orElseThrow(() -> new RuntimeException("Profesor no encontrado"));
         existente.setNombre(dto.getNombre());
         existente.setApellido(dto.getApellido());
-        existente.setEspecialidad(dto.getEspecialidad());
-        existente.setContrasena(dto.getContrasena());
         Profesor actualizado = profesorRepository.save(existente);
         return mapToDTO(actualizado);
     }

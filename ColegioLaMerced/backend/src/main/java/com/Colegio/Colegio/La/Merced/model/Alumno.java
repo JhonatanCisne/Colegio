@@ -4,9 +4,9 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
@@ -28,7 +28,7 @@ public class Alumno {
     @Column(name = "Apellido", nullable = false, length=40)
     private String apellido;
 
-    @Column(name = "DNI", nullable = false, unique = true, length=8)
+    @Column(name = "DNI", nullable = false, unique = true, length=12)
     private String dni;
     
     @Column(name = "Correo", nullable = false, length=90)
@@ -91,5 +91,18 @@ public class Alumno {
 
     public void setCorreo(String correo) {
         this.correo = correo;
+    }
+
+    @Override
+    public String toString() {
+        return "Alumno{" +
+                "idAlumno=" + idAlumno +
+                ", idPadre=" + idPadre +
+                ", nombre='" + nombre + '\'' +
+                ", apellido='" + apellido + '\'' +
+                ", dni='" + dni + '\'' +
+                ", correo='" + correo + '\'' +
+                ", contrasena='" + contrasena + '\'' +
+                '}';
     }
 }

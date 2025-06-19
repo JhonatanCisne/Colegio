@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -16,29 +18,24 @@ public class SeccionCurso {
     @Column(name = "ID_Seccion_Curso")
     private Integer idSeccionCurso;
 
-    @Column(name = "ID_Seccion", nullable = false)
-    private Integer idSeccion;
-
-    @Column(name = "ID_Curso", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "ID_Curso", referencedColumnName = "ID_Curso", nullable=false)
     private Integer idCurso;
 
-    @Column(name = "ID_Profesor", nullable = false)
+    @OneToOne
+    @JoinColumn(name="ID_Profesor", referencedColumnName = "ID_Profesor", nullable=false)
     private Integer idProfesor;
 
-    public Integer getIdSeccionCurso() {
+    @OneToOne
+    @JoinColumn(name = "ID_Seccion", referencedColumnName = "ID_Seccion", nullable=false)
+    private Integer idSeccion;
+
+    public Integer getIdSeccionCurso(){
         return idSeccionCurso;
     }
 
     public void setIdSeccionCurso(Integer idSeccionCurso) {
         this.idSeccionCurso = idSeccionCurso;
-    }
-
-    public Integer getIdSeccion() {
-        return idSeccion;
-    }
-
-    public void setIdSeccion(Integer idSeccion) {
-        this.idSeccion = idSeccion;
     }
 
     public Integer getIdCurso() {
@@ -56,4 +53,23 @@ public class SeccionCurso {
     public void setIdProfesor(Integer idProfesor) {
         this.idProfesor = idProfesor;
     }
+
+    public Integer getIdSeccion() {
+        return idSeccion;
+    }
+
+    public void setIdSeccion(Integer idSeccion) {
+        this.idSeccion = idSeccion;
+    }
+
+    @Override
+    public String toString() {
+        return "SeccionCurso{" +
+                "idSeccionCurso=" + idSeccionCurso +
+                ", idCurso=" + idCurso +
+                ", idProfesor=" + idProfesor +
+                ", idSeccion=" + idSeccion +
+                '}';
+    }
+
 }

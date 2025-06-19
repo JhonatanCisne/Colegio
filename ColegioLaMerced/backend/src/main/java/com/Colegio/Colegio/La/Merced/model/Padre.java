@@ -24,7 +24,7 @@ public class Padre {
     @Column(name = "Telefono", nullable = false, length = 12)
     private String  telefono;
 
-    @Column(name = "DNI", nullable = false, length = 8)
+    @Column(name = "DNI", nullable = false, length = 12)
     private String  dni;    
 
     @Column(name = "Correo", nullable = false, length = 120)
@@ -76,5 +76,17 @@ public class Padre {
 
     public void setCorreo(String correo) {
         this.correo = correo;
+    }
+
+    @Override
+    public String toString() {
+        return "Padre{" +
+                "idPrade=" + idPrade +
+                ", nombre='" + nombre + '\'' +
+                ", apellido='" + apellido + '\'' +
+                ", telefono='" + telefono + '\'' +
+                ", dni='" + dni + '\'' +
+                ", correo='" + correo + '\'' +
+                '}';
     }
 }

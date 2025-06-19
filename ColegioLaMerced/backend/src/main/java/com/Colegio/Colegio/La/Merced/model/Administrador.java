@@ -13,7 +13,7 @@ public class Administrador {
     @Column(name = "Usuario", nullable = false, length = 50)
     private String usuario;
 
-    @Column(name = "Contraseña", nullable = false, length = 255)
+    @Column(name = "Contraseña", nullable = false, length = 155)
     private String contrasena;
 
     public String getUsuario() {
@@ -30,5 +30,13 @@ public class Administrador {
 
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
+    }
+
+    @Override
+    public String toString() {
+        return "Administrador{" +
+                "usuario='" + usuario + '\'' +
+                ", contrasena='" + contrasena + '\'' +
+                '}';
     }
 }

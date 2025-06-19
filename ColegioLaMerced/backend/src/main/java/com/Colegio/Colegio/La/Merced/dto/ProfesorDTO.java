@@ -4,16 +4,14 @@ public class ProfesorDTO {
     private String dni;
     private String nombre;
     private String apellido;
-    private String especialidad;
     private String contrasena;
 
     public ProfesorDTO() {}
 
-    public ProfesorDTO(String dni, String nombre, String apellido, String especialidad, String contrasena) {
+    public ProfesorDTO(String dni, String nombre, String apellido, String contrasena) {
         this.dni = dni;
         this.nombre = nombre;
         this.apellido = apellido;
-        this.especialidad = especialidad;
         this.contrasena = contrasena;
     }
 
@@ -25,9 +23,6 @@ public class ProfesorDTO {
 
     public String getApellido() { return apellido; }
     public void setApellido(String apellido) { this.apellido = apellido; }
-
-    public String getEspecialidad() { return especialidad; }
-    public void setEspecialidad(String especialidad) { this.especialidad = especialidad; }
 
     public String getContrasena() { return contrasena; }
     public void setContrasena(String contrasena) { this.contrasena = contrasena; }
