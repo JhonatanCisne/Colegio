@@ -9,8 +9,5 @@ import com.Colegio.Colegio.La.Merced.model.Administrador;
 
 @Repository
 public interface AdministradorRepository extends JpaRepository<Administrador, String> {
-    
     Optional<Administrador> findByUsuario(String usuario);
-    
-    Optional<Administrador> findByUsuarioAndContrasena(String usuario, String contrasena);
 }

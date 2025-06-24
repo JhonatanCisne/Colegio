@@ -16,19 +16,19 @@ public class Profesor {
     @Column(name = "ID_Profesor")
     private Integer idProfesor;
 
-    @Column(name = "DNI", nullable = false, unique = true, length=12)
+    @Column(name = "DNI", nullable = false, length = 12, unique = true)
     private String dni;
 
-    @Column(name = "Nombre", nullable = false, length=50)
+    @Column(name = "Nombre", nullable = false, length = 52)
     private String nombre;
 
-    @Column(name = "Apellido", nullable = false, length=50)
+    @Column(name = "Apellido", nullable = false, length = 50)
     private String apellido;
 
-    @Column(name = "Estado", length=20)
+    @Column(name = "Estado", nullable = false, length = 20)
     private String estado;
 
-    @Column(name = "Contrasena", nullable = false, length=155)
+    @Column(name = "Contrasena", nullable = false)
     private String contrasena;
 
     public Integer getIdProfesor() {
@@ -62,8 +62,8 @@ public class Profesor {
     public String getEstado() {
         return estado;
     }
-    public void setEstado(String estado) {
-        this.estado = estado;
+    public void setEstado(String especialidad) {
+        this.estado = especialidad;
     }
 
     public String getContrasena() {
@@ -71,17 +71,5 @@ public class Profesor {
     }
     public void setContrasena(String contrasena) {
         this.contrasena = contrasena;
-    }
-
-    @Override
-    public String toString() {
-        return "Profesor{" +
-                "idProfesor=" + idProfesor +
-                ", dni='" + dni + '\'' +
-                ", nombre='" + nombre + '\'' +
-                ", apellido='" + apellido + '\'' +
-                ", estado='" + estado + '\'' +
-                ", contrasena='" + contrasena + '\'' +
-                '}';
     }
 }

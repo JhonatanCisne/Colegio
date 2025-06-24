@@ -1,16 +1,38 @@
 package com.Colegio.Colegio.La.Merced.dto;
 
-
-import java.time.LocalDate;
-
 public class AlumnoDTO {
 
+    private Integer idAlumno;
+    private Integer idPadre; 
+    private String dni;
     private String nombre;
     private String apellido;
-    private String dni;
-    private LocalDate fechaNacimiento;
-    private String grado;
-    private String seccion;
+    private String correo;
+    private String contrasena;
+
+    public Integer getIdAlumno() {
+        return idAlumno;
+    }
+
+    public void setIdAlumno(Integer idAlumno) {
+        this.idAlumno = idAlumno;
+    }
+
+    public Integer getIdPadre() {
+        return idPadre;
+    }
+
+    public void setIdPadre(Integer idPadre) {
+        this.idPadre = idPadre;
+    }
+
+    public String getDni() {
+        return dni;
+    }
+
+    public void setDni(String dni) {
+        this.dni = dni;
+    }
 
     public String getNombre() {
         return nombre;
@@ -28,35 +50,19 @@ public class AlumnoDTO {
         this.apellido = apellido;
     }
 
-    public String getDni() {
-        return dni;
+    public String getCorreo() {
+        return correo;
     }
 
-    public void setDni(String dni) {
-        this.dni = dni;
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
-    public LocalDate getFechaNacimiento() {
-        return fechaNacimiento;
+    public String getContrasena() {
+        return contrasena;
     }
 
-    public void setFechaNacimiento(LocalDate fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
-    }
-
-    public String getGrado() {
-        return grado;
-    }
-
-    public void setGrado(String grado) {
-        this.grado = grado;
-    }
-
-    public String getSeccion() {
-        return seccion;
-    }
-
-    public void setSeccion(String seccion) {
-        this.seccion = seccion;
+    public void setContrasena(String contrasena) {
+        this.contrasena = contrasena;
     }
 }

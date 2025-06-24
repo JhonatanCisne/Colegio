@@ -18,19 +18,19 @@ public class SeccionCurso {
     @Column(name = "ID_Seccion_Curso")
     private Integer idSeccionCurso;
 
-    @OneToOne
-    @JoinColumn(name = "ID_Curso", referencedColumnName = "ID_Curso", nullable=false)
-    private Curso curso;
-
-    @OneToOne
-    @JoinColumn(name="ID_Profesor", referencedColumnName = "ID_Profesor", nullable=false)
-    private Profesor profesor;
-
-    @OneToOne
+    @OneToOne 
     @JoinColumn(name = "ID_Seccion", referencedColumnName = "ID_Seccion", nullable=false)
-    private Seccion seccion;
+    private Integer idSeccion;
 
-    public Integer getIdSeccionCurso(){
+    @OneToOne 
+    @JoinColumn(name = "ID_Profesor", referencedColumnName = "ID_Profesor", nullable=false)
+    private Integer idProfesor;
+
+    @OneToOne 
+    @JoinColumn(name = "ID_Curso", referencedColumnName = "ID_Curso", nullable=false)
+    private Integer idCurso;
+
+    public Integer getIdSeccionCurso() {
         return idSeccionCurso;
     }
 
@@ -38,38 +38,27 @@ public class SeccionCurso {
         this.idSeccionCurso = idSeccionCurso;
     }
 
-    public Curso getIdCurso() {
-        return curso;
+    public Integer getIdSeccion() {
+        return idSeccion;
     }
 
-    public void setIdCurso(Curso curso) {
-        this.curso = curso;
+    public void setIdSeccion(Integer idSeccion) {
+        this.idSeccion = idSeccion;
     }
 
-    public Profesor getIdProfesor() {
-        return profesor;
+    public Integer getIdCurso() {
+        return idCurso;
     }
 
-    public void setIdProfesor(Profesor profesor) {
-        this.profesor = profesor;
+    public void setIdCurso(Integer idCurso) {
+        this.idCurso = idCurso;
     }
 
-    public Seccion getIdSeccion() {
-        return seccion;
+    public Integer getIdProfesor() {
+        return idProfesor;
     }
 
-    public void setIdSeccion(Seccion seccion) {
-        this.seccion = seccion;
+    public void setIdProfesor(Integer idProfesor) {
+        this.idProfesor = idProfesor;
     }
-
-    @Override
-    public String toString() {
-        return "SeccionCurso{" +
-                "idSeccionCurso=" + idSeccionCurso +
-                ", idCurso=" + curso +
-                ", idProfesor=" + profesor +
-                ", idSeccion=" + seccion +
-                '}';
-    }
-
 }

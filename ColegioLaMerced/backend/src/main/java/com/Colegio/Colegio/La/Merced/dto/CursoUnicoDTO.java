@@ -1,47 +1,15 @@
-package com.Colegio.Colegio.La.Merced.model;
+package com.Colegio.Colegio.La.Merced.dto;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
-import jakarta.persistence.Table;
+public class CursoUnicoDTO {
 
-@Entity
-@Table(name = "Seccion_Curso")
-public class CursoUnico {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "ID_Seccion_Curso")
     private Integer idCursoUnico;
-
-    @Column(name = "Examen1", nullable = true)
     private float examen1;
-
-    @Column(name = "Examen2", nullable = true)
     private float examen2;
-    
-    @Column(name = "Examen3", nullable = true)
     private float examen3;
-
-    @Column(name = "Examen4", nullable = true)
     private float examen4;
-
-    @Column(name = "ExamenFinal", nullable = true)
     private float examenFinal;
-
-    @OneToOne 
-    @JoinColumn(name = "ID_Seccion_Curso", referencedColumnName = "ID_Seccion_Curso", nullable=false)
     private Integer idSeccionCurso;
-
-    @OneToOne 
-    @JoinColumn(name = "ID_Alumno", referencedColumnName = "ID_Alumno", nullable=false)
     private Integer idAlumno;
-
-    @OneToOne 
-    @JoinColumn(name = "ID_Horario", referencedColumnName = "ID_Horario", nullable=false)
     private Integer idHorario;
 
     public Integer getIdCursoUnico() {
@@ -115,5 +83,4 @@ public class CursoUnico {
     public void setIdHorario(Integer idHorario) {
         this.idHorario = idHorario;
     }
-
 }

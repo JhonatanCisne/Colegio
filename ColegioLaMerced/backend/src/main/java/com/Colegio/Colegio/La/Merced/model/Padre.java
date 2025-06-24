@@ -13,29 +13,31 @@ public class Padre {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID_Padre")
-    private Integer idPrade;
+    private Integer idPadre;
 
     @Column(name = "Nombre", nullable = false, length = 50)
-    private String  nombre;
+    private String nombre;
 
     @Column(name = "Apellido", nullable = false, length = 50)
-    private String  apellido;
+    private String apellido;
 
     @Column(name = "Telefono", nullable = false, length = 12)
-    private String  telefono;
+    private String telefono;
 
     @Column(name = "DNI", nullable = false, length = 12)
-    private String  dni;    
+    private String dni;     
 
     @Column(name = "Correo", nullable = false, length = 120)
-    private String  correo;
+    private String correo;
 
-    public Integer getIdPrade() {
-        return idPrade;
+    // Campo contrasena eliminado según tu especificación
+
+    public Integer getIdPadre() {
+        return idPadre;
     }
 
-    public void setIdPrade(Integer idPrade) {
-        this.idPrade = idPrade;
+    public void setIdPadre(Integer idPadre) {
+        this.idPadre = idPadre;
     }
 
     public String getNombre() {
@@ -81,7 +83,7 @@ public class Padre {
     @Override
     public String toString() {
         return "Padre{" +
-                "idPrade=" + idPrade +
+                "idPadre=" + idPadre +
                 ", nombre='" + nombre + '\'' +
                 ", apellido='" + apellido + '\'' +
                 ", telefono='" + telefono + '\'' +

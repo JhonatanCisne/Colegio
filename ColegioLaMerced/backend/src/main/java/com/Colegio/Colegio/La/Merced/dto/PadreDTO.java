@@ -1,20 +1,20 @@
 package com.Colegio.Colegio.La.Merced.dto;
 
-public class ProfesorDTO {
-
-    private Integer idProfesor;
+public class PadreDTO{
+    private Integer idPadre;
     private String dni;
     private String nombre;
     private String apellido;
-    private String estado;
+    private String telefono; 
+    private String correo;   
     private String contrasena;
 
-    public Integer getIdProfesor() {
-        return idProfesor;
+    public Integer getIdPadre() {
+        return idPadre;
     }
 
-    public void setIdProfesor(Integer idProfesor) {
-        this.idProfesor = idProfesor;
+    public void setIdPadre(Integer idPadre) {
+        this.idPadre = idPadre;
     }
 
     public String getDni() {
@@ -41,12 +41,20 @@ public class ProfesorDTO {
         this.apellido = apellido;
     }
 
-    public String getEstado() {
-        return estado;
+    public String getTelefono() {
+        return telefono;
     }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
+
+    public String getCorreo() {
+        return correo;
+    }
+
+    public void setCorreo(String correo) {
+        this.correo = correo;
     }
 
     public String getContrasena() {

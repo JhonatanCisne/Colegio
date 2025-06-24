@@ -16,11 +16,18 @@ public class Seccion {
     @Column(name = "ID_Seccion")
     private Integer idSeccion;
 
-    @Column(name = "Grado", nullable = false, length= 20)
+    @Column(name = "Grado", nullable = false, length=30)
     private String grado;
 
-    @Column(name = "Nombre", nullable = false, length=10)
+    @Column(name = "Nombre", nullable = false, length=4)
     private String nombre;
+
+    public Seccion() {}
+
+    public Seccion(String grado, String nombre) {
+        this.grado = grado;
+        this.nombre = nombre;
+    }
 
     public Integer getIdSeccion() {
         return idSeccion;
@@ -45,12 +52,5 @@ public class Seccion {
     public void setNombre(String nombre) {
         this.nombre = nombre;
     }
-    @Override
-    public String toString() {
-        return "Seccion{" +
-                "idSeccion=" + idSeccion +
-                ", grado='" + grado + '\'' +
-                ", nombre='" + nombre + '\'' +
-                '}';
-    }
+
 }

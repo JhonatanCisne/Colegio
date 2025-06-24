@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.Colegio.Colegio.La.Merced.dto.AdministradorDTO;
 import com.Colegio.Colegio.La.Merced.model.Administrador;
 import com.Colegio.Colegio.La.Merced.repository.AdministradorRepository;
 
@@ -14,18 +15,16 @@ public class AdministradorService {
     @Autowired
     private AdministradorRepository administradorRepository;
 
-    /**
-      
-      @param usuario 
-      @param contrasena 
-      @return 
-     */
-    public boolean validarCredenciales(String usuario, String contrasena) {
-        Optional<Administrador> adminOpt = administradorRepository.findByUsuario(usuario);
-        if (adminOpt.isPresent()) {
-            Administrador admin = adminOpt.get();
-            return admin.getContrasena().equals(contrasena);
-        }
-        return false;
+    private AdministradorDTO convertToDto(Administrador administrador) {
+        AdministradorDTO dto = new AdministradorDTO();
+        dto.setUsuario(administrador.getUsuario());
+        dto.setContrasena(administrador.getContrasena());
+        return dto;
+    }
+
+    public Optional<AdministradorDTO> validarCredenciales(String usuario, String contrasena) {
+        return administradorRepository.findByUsuario(usuario)
+                .filter(admin -> admin.getContrasena().equals(contrasena))
+                .map(this::convertToDto);
     }
 }

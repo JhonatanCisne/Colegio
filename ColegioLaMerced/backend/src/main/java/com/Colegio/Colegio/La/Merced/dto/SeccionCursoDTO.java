@@ -1,19 +1,9 @@
 package com.Colegio.Colegio.La.Merced.dto;
 
-public class SeccionCursoDTO {
+public class SeccionCursoDTO{
     private Integer idSeccionCurso;
     private Integer idSeccion;
     private Integer idCurso;
-    private Integer idProfesor;
-
-    public SeccionCursoDTO() {}
-
-    public SeccionCursoDTO(Integer idSeccionCurso, Integer idSeccion, Integer idCurso, Integer idProfesor) {
-        this.idSeccionCurso = idSeccionCurso;
-        this.idSeccion = idSeccion;
-        this.idCurso = idCurso;
-        this.idProfesor = idProfesor;
-    }
 
     public Integer getIdSeccionCurso() {
         return idSeccionCurso;
@@ -37,13 +27,5 @@ public class SeccionCursoDTO {
 
     public void setIdCurso(Integer idCurso) {
         this.idCurso = idCurso;
-    }
-
-    public Integer getIdProfesor() {
-        return idProfesor;
-    }
-
-    public void setIdProfesor(Integer idProfesor) {
-        this.idProfesor = idProfesor;
     }
 }

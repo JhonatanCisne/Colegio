@@ -20,7 +20,7 @@ public class Alumno {
 
     @ManyToOne 
     @JoinColumn(name = "ID_Padre", referencedColumnName = "ID_Padre", nullable = false)
-    private Padre padre;
+    private Padre padre; 
 
     @Column(name = "Nombre", nullable = false, length = 40)
     private String nombre;
@@ -45,11 +45,11 @@ public class Alumno {
         this.idAlumno = idAlumno;
     }
 
-    public Padre getIdPadre() { 
+    public Padre getPadre() { 
         return padre;
     }
 
-    public void setIdPadre(Padre padre) { 
+    public void setPadre(Padre padre) { 
         this.padre = padre;
     }
 
