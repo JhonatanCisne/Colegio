@@ -1,16 +1,27 @@
 package com.Colegio.Colegio.La.Merced.dto;
 
 public class CursoUnicoDTO {
-
     private Integer idCursoUnico;
     private float examen1;
     private float examen2;
     private float examen3;
     private float examen4;
     private float examenFinal;
-    private Integer idSeccionCurso;
-    private Integer idAlumno;
-    private Integer idHorario;
+    private Integer idSeccionCurso; 
+    private Integer idAlumno;      
+    public CursoUnicoDTO() {
+    }
+
+    public CursoUnicoDTO(Integer idCursoUnico, float examen1, float examen2, float examen3, float examen4, float examenFinal, Integer idSeccionCurso, Integer idAlumno) {
+        this.idCursoUnico = idCursoUnico;
+        this.examen1 = examen1;
+        this.examen2 = examen2;
+        this.examen3 = examen3;
+        this.examen4 = examen4;
+        this.examenFinal = examenFinal;
+        this.idSeccionCurso = idSeccionCurso;
+        this.idAlumno = idAlumno;
+    }
 
     public Integer getIdCursoUnico() {
         return idCursoUnico;
@@ -76,11 +87,4 @@ public class CursoUnicoDTO {
         this.idAlumno = idAlumno;
     }
 
-    public Integer getIdHorario() {
-        return idHorario;
-    }
-
-    public void setIdHorario(Integer idHorario) {
-        this.idHorario = idHorario;
-    }
 }

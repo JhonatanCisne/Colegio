@@ -2,17 +2,11 @@ import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "../Administrador/AdminAlumnos.css";
 
-const grados = [
-  "Primero de primaria",
-  "Segundo de primaria",
-  "Tercero de primaria",
-  "Cuarto de primaria",
-  "Quinto de primaria",
-  "Sexto de primaria",
-];
-const secciones = ["A1", "B2"];
-
-const API_BASE = "http://localhost:8080/api/alumnos"; 
+const API_BASE_ALUMNOS = "http://localhost:8080/api/alumnos";
+const API_BASE_PADRES = "http://localhost:8080/api/padres";
+const API_BASE_SECCIONES = "http://localhost:8080/api/secciones";
+const API_BASE_CURSOS_UNICOS = "http://localhost:8080/api/cursosunicos";
+const API_BASE_SECCION_CURSOS = "http://localhost:8080/api/seccioncursos";
 
 const AdminAlumnos = () => {
   const navigate = useNavigate();
@@ -23,35 +17,53 @@ const AdminAlumnos = () => {
     nombre: "",
     apellido: "",
     dni: "",
-    fechaNacimiento: "",
-    grado: "",
-    seccion: "",
+    correo: "",
+    contrasena: "",
+    idPadre: "",
   });
-  const [dniBuscar, setDniBuscar] = useState("");
-  const [alumnoEncontrado, setAlumnoEncontrado] = useState(null);
-  const [errorBuscar, setErrorBuscar] = useState("");
-  const [listaAlumnos, setListaAlumnos] = useState([]);
-  const [filtroGrado, setFiltroGrado] = useState("");
-  const [filtroSeccion, setFiltroSeccion] = useState("");
-  const [cargando, setCargando] = useState(false);
+  const [listaPadres, setListaPadres] = useState([]);
+  const [listaSecciones, setListaSecciones] = useState([]);
+
+  const [mostrarFormNuevoPadre, setMostrarFormNuevoPadre] = useState(false);
+  const [nuevoPadre, setNuevoPadre] = useState({
+    nombre: "",
+    apellido: "",
+    telefono: "",
+    dni: "",
+    correo: "",
+  });
+
+  const [mostrarAsignarSeccionModal, setMostrarAsignarSeccionModal] = useState(false);
+  const [alumnoRecienCreado, setAlumnoRecienCreado] = useState(null);
+  const [seccionSeleccionadaModal, setSeccionSeleccionadaModal] = useState("");
 
   useEffect(() => {
-    if (seccionBotones === "Ver") {
-      cargarAlumnos();
-    }
-  }, [seccionBotones]);
+    cargarPadres();
+    cargarSecciones();
+  }, []);
 
-  const cargarAlumnos = async () => {
-    setCargando(true);
+  const cargarPadres = async () => {
     try {
-      const resp = await fetch(API_BASE);
-      if (!resp.ok) throw new Error("Error al cargar alumnos");
+      const resp = await fetch(API_BASE_PADRES);
+      if (!resp.ok) throw new Error("Error al cargar padres");
       const data = await resp.json();
-      setListaAlumnos(data);
+      setListaPadres(data);
     } catch (error) {
-      alert("Error al cargar alumnos: " + error.message);
+      console.error("Error al cargar padres:", error.message);
+      alert("Error al cargar la lista de padres.");
     }
-    setCargando(false);
+  };
+
+  const cargarSecciones = async () => {
+    try {
+      const resp = await fetch(API_BASE_SECCIONES);
+      if (!resp.ok) throw new Error("Error al cargar secciones");
+      const data = await resp.json();
+      setListaSecciones(data);
+    } catch (error) {
+      console.error("Error al cargar secciones:", error.message);
+      alert("Error al cargar la lista de secciones.");
+    }
   };
 
   const handleChange = (e) => {
@@ -59,21 +71,67 @@ const AdminAlumnos = () => {
     setAlumno((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAgregar = async (e) => {
+  const handleNuevoPadreChange = (e) => {
+    const { name, value } = e.target;
+    setNuevoPadre((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleCrearPadre = async (e) => {
     e.preventDefault();
     try {
-      const resp = await fetch(API_BASE, {
+      const resp = await fetch(API_BASE_PADRES, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(alumno),
+        body: JSON.stringify(nuevoPadre),
       });
+      if (!resp.ok) {
+        const errorData = await resp.json();
+        throw new Error(errorData.message || "Error al crear nuevo padre");
+      }
+      const data = await resp.json();
+      alert("Padre creado exitosamente!");
+      await cargarPadres();
+      setAlumno((prev) => ({ ...prev, idPadre: data.idPadre.toString() }));
+      setMostrarFormNuevoPadre(false);
+      setNuevoPadre({ nombre: "", apellido: "", telefono: "", dni: "", correo: "" });
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
+  const handleAgregar = async (e) => {
+    e.preventDefault();
+    if (!alumno.idPadre) {
+      alert("Por favor, seleccione un padre para el alumno.");
+      return;
+    }
+
+    try {
+      const alumnoParaBackend = {
+        nombre: alumno.nombre,
+        apellido: alumno.apellido,
+        dni: alumno.dni,
+        correo: alumno.correo,
+        contrasena: alumno.contrasena,
+        idPadre: parseInt(alumno.idPadre),
+      };
+
+      const resp = await fetch(API_BASE_ALUMNOS, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(alumnoParaBackend),
+      });
+
       if (!resp.ok) {
         const errorData = await resp.json();
         throw new Error(errorData.message || "Error al agregar alumno");
       }
-      alert("Alumno agregado!");
+      const data = await resp.json();
+
+      alert("Alumno agregado exitosamente. Ahora asigna una sección.");
+      setAlumnoRecienCreado(data);
+      setMostrarAsignarSeccionModal(true);
       limpiarFormulario();
-      if (seccionBotones === "Ver") cargarAlumnos();
     } catch (error) {
       alert(error.message);
     }
@@ -84,99 +142,65 @@ const AdminAlumnos = () => {
       nombre: "",
       apellido: "",
       dni: "",
-      fechaNacimiento: "",
-      grado: "",
-      seccion: "",
+      correo: "",
+      contrasena: "",
+      idPadre: "",
     });
-    setAlumnoEncontrado(null);
-    setDniBuscar("");
-    setErrorBuscar("");
+    setMostrarFormNuevoPadre(false);
+    setNuevoPadre({ nombre: "", apellido: "", telefono: "", dni: "", correo: "" });
+    setSeccionSeleccionadaModal("");
   };
 
-  const buscarAlumnoPorDni = async () => {
-    if (!dniBuscar.trim()) {
-      setErrorBuscar("Ingrese un DNI válido");
+  const handleAsignarSeccionYCursosUnicos = async () => {
+    if (!alumnoRecienCreado || !seccionSeleccionadaModal) {
       return;
     }
-    setErrorBuscar("");
+
     try {
-      const resp = await fetch(`${API_BASE}/${dniBuscar.trim()}`);
-      if (resp.status === 404) {
-        setAlumnoEncontrado(null);
-        setErrorBuscar("Alumno no encontrado");
+      const respSeccionCursos = await fetch(`${API_BASE_SECCION_CURSOS}/porSeccion/${seccionSeleccionadaModal}`);
+      if (!respSeccionCursos.ok) {
+        const errorData = await respSeccionCursos.json();
+        throw new Error(errorData.message || "Error al obtener los cursos de la sección.");
+      }
+      const seccionCursos = await respSeccionCursos.json();
+
+      if (seccionCursos.length === 0) {
+        alert("No se encontraron cursos para esta sección. No se generarán Cursos Únicos.");
+        setMostrarAsignarSeccionModal(false);
+        setAlumnoRecienCreado(null);
+        setSeccionSeleccionadaModal("");
         return;
       }
-      if (!resp.ok) throw new Error("Error en la búsqueda");
-      const data = await resp.json();
-      setAlumnoEncontrado(data);
-      setAlumno(data);
-    } catch (error) {
-      setAlumnoEncontrado(null);
-      setErrorBuscar(error.message);
-    }
-  };
 
-  const handleModificar = async (e) => {
-    e.preventDefault();
-    if (!alumnoEncontrado) return;
+      const cursosUnicosParaCrear = seccionCursos.map(sc => ({
+        idAlumno: alumnoRecienCreado.idAlumno,
+        idSeccionCurso: sc.idSeccionCurso,
+        examen1: 0.0,
+        examen2: 0.0,
+        examen3: 0.0,
+        examen4: 0.0,
+        examenFinal: 0.0
+      }));
 
-    try {
-      const resp = await fetch(`${API_BASE}/${alumno.dni}`, {
-        method: "PUT",
+      const respCursosUnicos = await fetch(API_BASE_CURSOS_UNICOS, {
+        method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(alumno),
+        body: JSON.stringify(cursosUnicosParaCrear),
       });
-      if (!resp.ok) {
-        const errorData = await resp.json();
-        throw new Error(errorData.message || "Error al modificar alumno");
+
+      if (!respCursosUnicos.ok) {
+        const errorData = await respCursosUnicos.json();
+        throw new Error(errorData.message || `Error al crear los cursos únicos. Estado: ${respCursosUnicos.status}`);
       }
-      alert("Alumno modificado!");
-      limpiarFormulario();
-      if (seccionBotones === "Ver") cargarAlumnos();
+
+      alert("Sección asignada y cursos únicos generados exitosamente!");
+      setMostrarAsignarSeccionModal(false);
+      setAlumnoRecienCreado(null);
+      setSeccionSeleccionadaModal("");
     } catch (error) {
       alert(error.message);
     }
   };
-
-const handleEliminar = async (e) => {
-  e.preventDefault();
-  if (!dniBuscar.trim()) {
-    setErrorBuscar("Ingrese un DNI para eliminar.");
-    return;
-  }
-  setErrorBuscar("");
-  try {
-    const resp = await fetch(`${API_BASE}/${dniBuscar.trim()}`, {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
-    });
-
-    if (resp.status === 404) {
-      setErrorBuscar("Alumno no encontrado");
-      return;
-    }
-
-    if (!resp.ok) {
-      throw new Error(`Error al eliminar alumno. Status: ${resp.status}`);
-    }
-
-    alert("Alumno eliminado!");
-    limpiarFormulario();
-    if (seccionBotones === "Ver") cargarAlumnos();
-
-  } catch (error) {
-    alert(error.message);
-  }
-};
-
-  const alumnosFiltrados = listaAlumnos.filter(
-    (a) =>
-      (filtroGrado === "" || a.grado === filtroGrado) &&
-      (filtroSeccion === "" || a.seccion === filtroSeccion)
-  );
 
   return (
     <div className="contenedor-principal">
@@ -224,6 +248,9 @@ const handleEliminar = async (e) => {
                 onClick={() => {
                   setSeccionBotones(opcion);
                   limpiarFormulario();
+                  if (opcion === "Modificar") navigate("/AdminAlumnoModificar");
+                  if (opcion === "Eliminar") navigate("/AdminAlumnoEliminar");
+                  if (opcion === "Ver") navigate("/AdminAlumnoVer");
                 }}
               >
                 {opcion}
@@ -268,47 +295,73 @@ const handleEliminar = async (e) => {
                   />
                 </div>
                 <div className="grupo">
-                  <label>Fecha de Nacimiento</label>
+                  <label>Correo</label>
                   <input
-                    type="date"
-                    name="fechaNacimiento"
-                    value={alumno.fechaNacimiento}
+                    type="email"
+                    name="correo"
+                    value={alumno.correo}
                     onChange={handleChange}
                     required
                   />
                 </div>
                 <div className="grupo">
-                  <label>Grado</label>
-                  <select
-                    name="grado"
-                    value={alumno.grado}
+                  <label>Contraseña</label>
+                  <input
+                    type="password"
+                    name="contrasena"
+                    value={alumno.contrasena}
                     onChange={handleChange}
                     required
-                  >
-                    <option value="">Selecciona un grado</option>
-                    {grados.map((g, i) => (
-                      <option key={i} value={g}>
-                        {g}
-                      </option>
-                    ))}
-                  </select>
+                  />
                 </div>
+
                 <div className="grupo">
-                  <label>Sección</label>
+                  <label>Padre</label>
                   <select
-                    name="seccion"
-                    value={alumno.seccion}
+                    name="idPadre"
+                    value={alumno.idPadre}
                     onChange={handleChange}
                     required
                   >
-                    <option value="">Selecciona una sección</option>
-                    {secciones.map((s, i) => (
-                      <option key={i} value={s}>
-                        {s}
+                    <option value="">Selecciona un padre</option>
+                    {listaPadres.map((padre) => (
+                      <option key={padre.idPadre} value={padre.idPadre}>
+                        {padre.nombre} {padre.apellido} ({padre.dni})
                       </option>
                     ))}
                   </select>
+                  <button type="button" onClick={() => setMostrarFormNuevoPadre(true)} className="btn-crear-nuevo-padre">
+                    Crear Nuevo Padre
+                  </button>
                 </div>
+
+                {mostrarFormNuevoPadre && (
+                  <div className="formulario-nuevo-padre">
+                    <h3>Nuevo Padre</h3>
+                    <div className="grupo">
+                      <label>Nombre Padre</label>
+                      <input type="text" name="nombre" value={nuevoPadre.nombre} onChange={handleNuevoPadreChange} required />
+                    </div>
+                    <div className="grupo">
+                      <label>Apellido Padre</label>
+                      <input type="text" name="apellido" value={nuevoPadre.apellido} onChange={handleNuevoPadreChange} required />
+                    </div>
+                    <div className="grupo">
+                      <label>Teléfono Padre</label>
+                      <input type="text" name="telefono" value={nuevoPadre.telefono} onChange={handleNuevoPadreChange} required />
+                    </div>
+                    <div className="grupo">
+                      <label>DNI Padre</label>
+                      <input type="text" name="dni" value={nuevoPadre.dni} onChange={handleNuevoPadreChange} required />
+                    </div>
+                    <div className="grupo">
+                      <label>Correo Padre</label>
+                      <input type="email" name="correo" value={nuevoPadre.correo} onChange={handleNuevoPadreChange} required />
+                    </div>
+                    <button type="button" onClick={handleCrearPadre}>Guardar Padre</button>
+                    <button type="button" onClick={() => setMostrarFormNuevoPadre(false)}>Cancelar</button>
+                  </div>
+                )}
 
                 <button type="submit" className="btn-registrar">
                   Registrar Alumno
@@ -316,193 +369,51 @@ const handleEliminar = async (e) => {
               </form>
             </>
           )}
-
-          {seccionSidebar === "Alumnos" && seccionBotones === "Modificar" && (
-            <>
-              <h2>Modificar Alumno</h2>
-              <div className="grupo buscar-dni">
-                <label>Buscar por DNI</label>
-                <input
-                  type="text"
-                  value={dniBuscar}
-                  onChange={(e) => setDniBuscar(e.target.value)}
-                  placeholder="Ingrese DNI"
-                />
-                <button
-                  className="btn-buscar"
-                  onClick={buscarAlumnoPorDni}
-                  disabled={!dniBuscar.trim()}
-                >
-                  Buscar
-                </button>
-                {errorBuscar && <p className="error">{errorBuscar}</p>}
-              </div>
-
-              {alumnoEncontrado && (
-                <form onSubmit={handleModificar}>
-                  <div className="grupo">
-                    <label>Nombre</label>
-                    <input
-                      type="text"
-                      name="nombre"
-                      value={alumno.nombre}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                  <div className="grupo">
-                    <label>Apellido</label>
-                    <input
-                      type="text"
-                      name="apellido"
-                      value={alumno.apellido}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                  <div className="grupo">
-                    <label>DNI (no editable)</label>
-                    <input type="text" value={alumno.dni} disabled />
-                  </div>
-                  <div className="grupo">
-                    <label>Fecha de Nacimiento</label>
-                    <input
-                      type="date"
-                      name="fechaNacimiento"
-                      value={alumno.fechaNacimiento}
-                      onChange={handleChange}
-                      required
-                    />
-                  </div>
-                  <div className="grupo">
-                    <label>Grado</label>
-                    <select
-                      name="grado"
-                      value={alumno.grado}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="">Selecciona un grado</option>
-                      {grados.map((g, i) => (
-                        <option key={i} value={g}>
-                          {g}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="grupo">
-                    <label>Sección</label>
-                    <select
-                      name="seccion"
-                      value={alumno.seccion}
-                      onChange={handleChange}
-                      required
-                    >
-                      <option value="">Selecciona una sección</option>
-                      {secciones.map((s, i) => (
-                        <option key={i} value={s}>
-                          {s}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <button type="submit" className="btn-modificar">
-                    Guardar Cambios
-                  </button>
-                </form>
-              )}
-            </>
-          )}
-
-          {seccionSidebar === "Alumnos" && seccionBotones === "Eliminar" && (
-            <>
-              <h2>Eliminar Alumno</h2>
-              <div className="grupo buscar-dni">
-                <label>Ingrese DNI del alumno a eliminar</label>
-                <input
-                  type="text"
-                  value={dniBuscar}
-                  onChange={(e) => setDniBuscar(e.target.value)}
-                  placeholder="Ingrese DNI"
-                />
-                <button
-                  className="btn-eliminar"
-                  onClick={handleEliminar}
-                  disabled={!dniBuscar.trim()}
-                >
-                  Eliminar
-                </button>
-                {errorBuscar && <p className="error">{errorBuscar}</p>}
-              </div>
-            </>
-          )}
-
-          {seccionSidebar === "Alumnos" && seccionBotones === "Ver" && (
-            <>
-              <h2>Lista de Alumnos</h2>
-              {cargando ? (
-                <p>Cargando alumnos...</p>
-              ) : (
-                <>
-                  <div className="filtros">
-                    <label>Filtrar por grado:</label>
-                    <select
-                      value={filtroGrado}
-                      onChange={(e) => setFiltroGrado(e.target.value)}
-                    >
-                      <option value="">Todos</option>
-                      {grados.map((g, i) => (
-                        <option key={i} value={g}>
-                          {g}
-                        </option>
-                      ))}
-                    </select>
-
-                    <label>Filtrar por sección:</label>
-                    <select
-                      value={filtroSeccion}
-                      onChange={(e) => setFiltroSeccion(e.target.value)}
-                    >
-                      <option value="">Todas</option>
-                      {secciones.map((s, i) => (
-                        <option key={i} value={s}>
-                          {s}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <table className="tabla-alumnos">
-                    <thead>
-                      <tr>
-                        <th>DNI</th>
-                        <th>Nombre</th>
-                        <th>Apellido</th>
-                        <th>Fecha Nacimiento</th>
-                        <th>Grado</th>
-                        <th>Sección</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {alumnosFiltrados.map((a) => (
-                        <tr key={a.dni}>
-                          <td>{a.dni}</td>
-                          <td>{a.nombre}</td>
-                          <td>{a.apellido}</td>
-                          <td>{a.fechaNacimiento}</td>
-                          <td>{a.grado}</td>
-                          <td>{a.seccion}</td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </>
-              )}
-            </>
-          )}
         </main>
       </div>
+
+      {mostrarAsignarSeccionModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Asignar Sección a {alumnoRecienCreado?.nombre} {alumnoRecienCreado?.apellido}</h3>
+            <p>ID del Alumno recién creado: <strong>{alumnoRecienCreado?.idAlumno}</strong> (Disponible para asignación)</p>
+
+            <div className="grupo">
+              <label>Selecciona una Sección:</label>
+              <select
+                value={seccionSeleccionadaModal}
+                onChange={(e) => setSeccionSeleccionadaModal(e.target.value)}
+                required
+              >
+                <option value="">Selecciona...</option>
+                {listaSecciones.map((seccion) => (
+                  <option key={seccion.idSeccion} value={seccion.idSeccion}>
+                    {seccion.grado} "{seccion.nombre}"
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="modal-acciones">
+              <button
+                onClick={handleAsignarSeccionYCursosUnicos}
+                disabled={!seccionSeleccionadaModal}
+              >
+                Asignar y Generar Cursos
+              </button>
+              <button
+                onClick={() => {
+                  setMostrarAsignarSeccionModal(false);
+                  setAlumnoRecienCreado(null);
+                  setSeccionSeleccionadaModal("");
+                }}
+              >
+                Cancelar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

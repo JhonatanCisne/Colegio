@@ -1,99 +1,105 @@
-/* InicioEstudiante.css - Modificado para tema Rojo Oscuro sin azul */
-
 /* Variables para colores */
 :root {
-  --dark-red-primary: #8B0000; /* Rojo Oscuro principal (Dark Red) */
-  --dark-red-secondary: #A52A2A; /* Un tono más claro de marrón/rojo */
-  --dark-red-light: #CD5C5C; /* Un rojo ladrillo, más claro */
-  --dark-red-background: #FFF0F0; /* Fondo muy claro rojizo */
-  --dark-red-border-light: #FFC0CB; /* Rosa claro para bordes sutiles */
-  --neutral-gray: #e0e0e0; /* Gris neutro para bordes y separadores */
-  --dark-text: #343a40; /* Texto oscuro principal */
-  --medium-text: #555; /* Texto medio */
+  --dark-red-primary: #8B0000;
+  --dark-red-secondary: #A52A2A;
+  --dark-red-light: #CD5C5C;
+  --dark-red-background: #FFF0F0;
+  --dark-red-border-light: #FFC0CB;
+  --neutral-gray: #e0e0e0;
+  --dark-text: #343a40;
+  --medium-text: #555;
+  --light-gray-bg: #f8f9fa;
+  --white: #ffffff;
 }
 
-
-/* Contenedor principal de la página de inicio del estudiante */
 .contenido-principal-inicio-estudiante {
   flex-grow: 1;
-  padding: 20px;
-  background-color: #f8f9fa; /* Fondo general de la página */
+  padding: 30px; /* Increased padding */
+  background-color: var(--light-gray-bg);
   min-height: 100vh;
-  margin-left: 250px; /* Adjust based on your sidebar width */
+  margin-left: 250px;
   width: calc(100% - 250px);
   box-sizing: border-box;
 }
 
-/* Título de bienvenida */
 .contenido-principal-inicio-estudiante h2 {
-  margin-bottom: 30px;
-  font-size: 2.2rem;
-  color: var(--dark-red-primary); /* Title in dark red */
+  margin-bottom: 40px; /* More space below the welcome title */
+  font-size: 2.5rem; /* Larger font size */
+  color: var(--dark-red-primary);
   text-align: center;
+  text-transform: uppercase; /* Uppercase for a stronger presence */
+  letter-spacing: 1px;
 }
 
-/* Contenedores para las secciones (horario, anuncios) */
 .seccion-inicio-estudiante {
-  background-color: #ffffff;
+  background-color: var(--white);
   border: 1px solid var(--neutral-gray);
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  border-radius: 15px; /* More rounded corners */
+  padding: 30px; /* Increased padding */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* More pronounced shadow */
   margin-bottom: 30px;
 }
 
 .seccion-inicio-estudiante h3 {
-  font-size: 1.8rem;
+  font-size: 2rem; /* Larger headings for sections */
   color: var(--dark-text);
-  margin-bottom: 20px;
-  border-bottom: 2px solid var(--neutral-gray);
-  padding-bottom: 10px;
+  margin-bottom: 25px; /* More space below section titles */
+  border-bottom: 2px solid var(--dark-red-border-light); /* Reddish border */
+  padding-bottom: 12px;
+  font-weight: 600; /* Semi-bold */
 }
 
-/* Estilos para la tarjeta de información del grado */
 .info-grado-card {
-  background-color: var(--dark-red-background); /* Light red background */
-  border: 1px solid var(--dark-red-border-light); /* Subtle red border */
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  background-color: var(--dark-red-background);
+  border: 1px solid var(--dark-red-border-light);
+  border-radius: 15px; /* More rounded corners */
+  padding: 30px; /* Increased padding */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
   text-align: center;
-  margin-bottom: 30px;
-  color: var(--dark-red-primary); /* Text in dark red */
+  margin-bottom: 40px; /* More space below this card */
+  color: var(--dark-red-primary);
 }
 
 .info-grado-card h3 {
-  font-size: 1.8rem;
-  margin-bottom: 15px;
-  color: var(--dark-red-secondary); /* Heading in secondary dark red */
+  font-size: 2rem;
+  margin-bottom: 20px; /* More space below heading */
+  color: var(--dark-red-secondary);
+  font-weight: 700;
 }
 
 .info-grado-card p {
-  font-size: 1.1rem;
-  margin-bottom: 8px;
+  font-size: 1.2rem; /* Larger font for info text */
+  margin-bottom: 10px;
+  line-height: 1.6;
+  color: var(--dark-text);
 }
 
-/* Contenedor del horario */
 .horario-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); /* Responsive columns */
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px; /* Increased gap */
 }
 
 .horario-dia-card {
-  background-color: var(--dark-red-background); /* Very light red background */
+  background-color: var(--white); /* Changed to white for consistency and cleaner look */
   border: 1px solid var(--dark-red-border-light);
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border-radius: 12px;
+  padding: 25px; /* Increased padding */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06); /* Softer shadow */
+  transition: transform 0.2s ease; /* Hover effect */
+}
+
+.horario-dia-card:hover {
+  transform: translateY(-5px);
 }
 
 .horario-dia-card h5 {
-  font-size: 1.3rem;
-  color: var(--dark-red-primary); /* Day headings in dark red */
+  font-size: 1.4rem; /* Larger day headings */
+  color: var(--dark-red-primary);
   margin-bottom: 15px;
-  border-bottom: 1px solid var(--neutral-gray);
-  padding-bottom: 8px;
+  border-bottom: 2px solid var(--dark-red-background); /* Lighter red border */
+  padding-bottom: 10px;
+  font-weight: 600;
 }
 
 .horario-dia-card ul {
@@ -103,61 +109,152 @@
 }
 
 .horario-dia-card li {
-  margin-bottom: 8px;
-  font-size: 1rem;
+  margin-bottom: 10px;
+  font-size: 1.1rem; /* Slightly larger list items */
   color: var(--medium-text);
-  line-height: 1.4;
+  line-height: 1.5;
+  display: flex;
+  align-items: baseline;
+}
+
+.horario-dia-card li::before {
+  content: "•"; /* Custom bullet point */
+  color: var(--dark-red-secondary);
+  display: inline-block;
+  width: 1em;
+  margin-left: -1em;
+  font-weight: bold;
 }
 
 .horario-dia-card li span {
-  font-weight: 600;
+  font-weight: 700; /* Bolder time */
   color: var(--dark-text);
+  margin-right: 8px; /* Space between time and course */
 }
 
-/* Contenedor de anuncios */
 .anuncios-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); /* Slightly larger min-width for announcements */
+  gap: 25px;
 }
 
 .anuncio-card {
-  background-color: #fff;
-  border: 1px solid var(--neutral-gray);
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background-color: var(--white);
+  border: 1px solid var(--dark-red-border-light);
+  border-radius: 12px;
+  padding: 25px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+  transition: transform 0.2s ease;
+}
+
+.anuncio-card:hover {
+  transform: translateY(-5px);
 }
 
 .anuncio-card h5 {
-  font-size: 1.2rem;
-  color: var(--dark-text);
+  font-size: 1.3rem;
+  color: var(--dark-red-secondary); /* Announcement titles in secondary red */
   margin-bottom: 10px;
+  font-weight: 600;
 }
 
 .anuncio-card .anuncio-fecha {
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   color: #777;
-  margin-bottom: 10px;
-  border-bottom: 1px solid #eee;
-  padding-bottom: 5px;
+  margin-bottom: 15px; /* More space below date */
+  border-bottom: 1px dashed var(--neutral-gray); /* Dashed border */
+  padding-bottom: 8px;
 }
 
 .anuncio-card p {
-  font-size: 1rem;
+  font-size: 1.05rem;
   color: var(--medium-text);
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
-/* Responsive styles */
-@media (max-width: 768px) {
+.alert-info {
+  background-color: #e3f2fd; /* Light blue for info alerts, stands out from red theme */
+  color: #2196f3; /* Blue text */
+  border-color: #90caf9;
+  border-radius: 10px;
+  padding: 15px;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+/* Loading spinner */
+.spinner-border {
+  color: var(--dark-red-primary) !important;
+  width: 3rem;
+  height: 3rem;
+}
+
+/* Error alert */
+.alert-danger {
+  background-color: #fce4ec; /* Light pink for errors */
+  color: #d32f2f; /* Dark red for error text */
+  border-color: #ef9a9a;
+  border-radius: 10px;
+  padding: 15px;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+@media (max-width: 992px) {
   .contenido-principal-inicio-estudiante {
     margin-left: 0;
     width: 100%;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .contenido-principal-inicio-estudiante h2 {
+    font-size: 2rem;
+  }
+
+  .seccion-inicio-estudiante h3,
+  .info-grado-card h3 {
+    font-size: 1.6rem;
   }
 
   .horario-container,
   .anuncios-container {
-    grid-template-columns: 1fr; /* Single column on small screens */
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+
+  .formulario-login {
+    padding: 30px;
+  }
+}
+
+@media (max-width: 576px) {
+  .contenido-principal-inicio-estudiante {
+    padding: 15px;
+  }
+
+  .seccion-inicio-estudiante,
+  .info-grado-card,
+  .horario-dia-card,
+  .anuncio-card {
+    padding: 20px;
+    border-radius: 10px;
+  }
+
+  .contenido-principal-inicio-estudiante h2 {
+    font-size: 1.8rem;
+    margin-bottom: 30px;
+  }
+
+  .seccion-inicio-estudiante h3,
+  .info-grado-card h3 {
+    font-size: 1.4rem;
+  }
+
+  .info-grado-card p,
+  .horario-dia-card li,
+  .anuncio-card p {
+    font-size: 1rem;
   }
 }

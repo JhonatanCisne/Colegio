@@ -1,0 +1,161 @@
+/* AdminAlumnoVer.css */
+
+/* Reset básico para asegurar que no haya márgenes/padding predeterminados del navegador */
+body, html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+}
+
+/* El contenedor principal ya no necesita ser un flex container directamente para el layout
+   porque el sidebar será fijo. Puede ser útil para otros propósitos, pero el main layout
+   se gestiona con position: fixed + margin-left. */
+.admin-container {
+  /* No display:flex ni gap aquí, ya que el sidebar es fixed */
+  /* El background-color del body servirá de fondo general */
+  min-height: 100vh; /* Asegura que el contenedor principal ocupe toda la altura */
+  font-family: 'Arial', sans-serif;
+  position: relative; /* Si necesitas posicionar algo absoluto dentro en el futuro */
+}
+
+.sidebar {
+  width: 250px; /* Ancho fijo para el sidebar */
+  background-color: #8B0000;
+  color: #ffffff;
+  padding: 20px;
+  box-sizing: border-box; /* Importante para que el padding no añada ancho extra */
+  height: 100vh; /* Ocupa toda la altura de la ventana */
+  position: fixed; /* ¡La clave! Fija el sidebar en la pantalla */
+  left: 0; /* Lo fija al borde izquierdo */
+  top: 0; /* Lo fija al borde superior */
+  z-index: 1000; /* Asegura que esté por encima de otros contenidos */
+  box-shadow: 2px 0 8px rgba(139,0,0,0.10); /* Sombra para darle profundidad */
+  display: flex; /* Mantiene flex para la organización interna de los elementos del sidebar */
+  flex-direction: column;
+}
+
+.sidebar h2 {
+  text-align: center;
+  color: #ffffff;
+  margin-bottom: 30px;
+  font-size: 1.5em;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ffffff;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  flex-grow: 1; /* Permite que la lista de botones crezca */
+}
+
+.sidebar ul li {
+  margin-bottom: 15px;
+}
+
+.sidebar ul li button {
+  background-color: #8B0000;
+  color: #ffffff;
+  border: none;
+  padding: 12px 15px;
+  width: 100%;
+  text-align: left;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1em;
+  transition: background-color 0.3s, color 0.3s, transform 0.2s;
+}
+
+.sidebar ul li button:hover {
+  background-color: #ffffff;
+  color: #8B0000;
+  transform: translateX(5px);
+}
+
+.content {
+  /* ¡LA SOLUCIÓN PARA EL ESPACIADO! */
+  margin-left: 270px; /* Ancho del sidebar (250px) + un espacio extra (20px) */
+  padding: 20px; /* Padding interno para el contenido de esta sección */
+  flex-grow: 1; /* Ocupa el espacio restante horizontalmente */
+  min-height: 100vh; /* Ocupa toda la altura de la ventana */
+  background-color: #ffffff;
+  border-radius: 8px; /* Un poco de redondeo para el contenido */
+  box-shadow: 0 4px 8px rgba(139,0,0,0.05);
+  box-sizing: border-box; /* Muy importante para que el padding no haga que el content se desborde */
+
+  /* Para una mejor organización interna, especialmente para centrar elementos */
+  display: flex;
+  flex-direction: column;
+}
+
+
+.content h1 {
+  color: #8B0000;
+  margin-bottom: 25px;
+  text-align: center;
+  font-size: 2em;
+  border-bottom: 2px solid #8B0000;
+  padding-bottom: 10px;
+}
+
+.alumnos-table-container {
+  overflow-x: auto; /* Asegura el scroll horizontal si la tabla es más ancha que el contenedor */
+  margin-top: 20px;
+  flex-grow: 1; /* La tabla puede crecer y ocupar el espacio restante */
+}
+
+.alumnos-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+  box-shadow: 0 2px 8px rgba(139,0,0,0.08);
+  background-color: #ffffff;
+}
+
+.alumnos-table th,
+.alumnos-table td {
+  border: 1.5px solid #8B0000;
+  padding: 12px 15px;
+  text-align: left;
+  color: #8B0000;
+  background: #ffffff;
+}
+
+.alumnos-table th {
+  background-color: #8B0000;
+  color: #ffffff;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.9em;
+}
+
+.alumnos-table tr:nth-child(even) {
+  background-color: #ffffff;
+}
+
+.alumnos-table tr:hover {
+  background-color: #fbeaea;
+}
+
+.success-message {
+  color: #8B0000;
+  background-color: #ffffff;
+  border: 1.5px solid #8B0000;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 20px;
+  text-align: center;
+}
+
+.error-message {
+  color: #8B0000;
+  background-color: #ffffff;
+  border: 1.5px solid #8B0000;
+  padding: 10px;
+  border-radius: 5px;
+  margin-top: 20px;
+  text-align: center;
+}

@@ -6,7 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne; // Cambiado de OneToOne a ManyToOne
 import jakarta.persistence.Table;
 
 @Entity
@@ -17,19 +17,29 @@ public class Horario{
     @Column(name = "ID_Horario")
     private Integer idHorario;
 
-    @Column(name = "hora", nullable = false, length=20)
+    @Column(name = "hora", nullable = false, length = 20)
     private String hora;
 
-    @Column(name = "dia", nullable = false, length=20)
+    @Column(name = "dia", nullable = false, length = 20)
     private String dia;
 
-    @OneToOne
-    @JoinColumn(name = "ID_Seccion", referencedColumnName = "ID_Seccion", nullable=false)
+    // Relación de Muchos a Uno: Muchos Horarios pueden pertenecer a UNA Sección.
+    // La columna ID_Seccion en la tabla Horario hará referencia al ID_Seccion de la tabla Seccion.
+    @ManyToOne
+    @JoinColumn(name = "ID_Seccion", referencedColumnName = "ID_Seccion", nullable = false)
     private Seccion seccion;
 
-    @OneToOne
-    @JoinColumn(name="ID_Profesor", referencedColumnName = "ID_Profesor", nullable=false)
+    // Relación de Muchos a Uno: Muchos Horarios pueden ser impartidos por UN Profesor.
+    // La columna ID_Profesor en la tabla Horario hará referencia al ID_Profesor de la tabla Profesor.
+    @ManyToOne
+    @JoinColumn(name = "ID_Profesor", referencedColumnName = "ID_Profesor", nullable = true)
     private Profesor profesor;
+
+    // Constructor vacío (requerido por JPA)
+    public Horario() {
+    }
+
+    // --- Getters y Setters ---
 
     public Integer getIdHorario() {
         return idHorario;
@@ -55,19 +65,20 @@ public class Horario{
         this.dia = dia;
     }
 
-    public Seccion getIdSeccion() {
+    // Getters y Setters para las entidades relacionadas (nomenclatura estándar)
+    public Seccion getSeccion() {
         return seccion;
     }
 
-    public void setIdSeccion(Seccion seccion) {
+    public void setSeccion(Seccion seccion) {
         this.seccion = seccion;
     }
 
-    public Profesor getIdProfesor() {
+    public Profesor getProfesor() {
         return profesor;
     }
 
-    public void setIdProfesor(Profesor profesor) {
+    public void setProfesor(Profesor profesor) {
         this.profesor = profesor;
     }
 
@@ -77,10 +88,8 @@ public class Horario{
                 "idHorario=" + idHorario +
                 ", hora='" + hora + '\'' +
                 ", dia='" + dia + '\'' +
-                ", idSeccion=" + seccion +
-                ", idProfesor=" + profesor +
+                ", seccion=" + (seccion != null ? seccion.getIdSeccion() : "null") + // Mostrar solo ID para evitar ciclos
+                ", profesor=" + (profesor != null ? profesor.getIdProfesor() : "null") + // Mostrar solo ID
                 '}';
     }
-
 }
-

@@ -2,13 +2,13 @@
   display: flex;
   min-height: 100vh;
   font-family: Arial, sans-serif;
-  background-color: #f7f7f7;
+  background-color: #ffffff;
 }
 
 .sidebar {
   width: 220px;
-  background-color: #800020; 
-  color: white;
+  background-color: #8b0000;
+  color: #ffffff;
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -18,6 +18,7 @@
   font-size: 1.4rem;
   margin-bottom: 1rem;
   user-select: none;
+  color: #ffffff;
 }
 
 .sidebar ul {
@@ -33,31 +34,37 @@
   user-select: none;
   border-radius: 6px;
   margin-bottom: 8px;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, color 0.2s;
+  color: #ffffff;
 }
 
 .sidebar li:hover {
-  background-color: #a52a2a;
+  background-color: #ffffff;
+  color: #8b0000;
 }
 
 .sidebar .activo {
-  background-color: #a52a2a;
+  background-color: #ffffff;
+  color: #8b0000;
   font-weight: bold;
 }
 
 .sidebar .cerrar-sesion {
   margin-top: auto;
-  background-color: #b22222;
+  background-color: #8b0000;
   text-align: center;
   padding: 10px;
   border-radius: 6px;
   cursor: pointer;
   font-weight: bold;
   user-select: none;
+  color: #ffffff;
+  transition: background 0.2s, color 0.2s;
 }
 
 .sidebar .cerrar-sesion:hover {
-  background-color: #800000;
+  background-color: #ffffff;
+  color: #8b0000;
 }
 
 .contenido-principal {
@@ -65,6 +72,7 @@
   display: flex;
   flex-direction: column;
   padding: 20px 30px;
+  background: #ffffff;
 }
 
 .barra-botones {
@@ -74,39 +82,41 @@
 }
 
 .barra-botones button {
-  background-color: #800020;
+  background-color: #8b0000;
   border: none;
   padding: 10px 22px;
   border-radius: 6px;
-  color: white;
+  color: #ffffff;
   font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s;
+  transition: background-color 0.3s, color 0.2s, box-shadow 0.2s;
   user-select: none;
   font-size: 1rem;
 }
 
 .barra-botones button:hover {
-  background-color: #a52a2a;
+  background-color: #ffffff;
+  color: #8b0000;
 }
 
 .barra-botones .btn-activo {
-  background-color: #a52a2a;
+  background-color: #ffffff;
+  color: #8b0000;
   font-weight: bold;
-  box-shadow: 0 0 8px #a52a2a;
+  box-shadow: 0 0 8px #8b0000;
 }
 
 .contenido-alumno {
-  background-color: white;
+  background-color: #ffffff;
   padding: 25px 30px;
   border-radius: 8px;
-  box-shadow: 0 0 15px rgb(0 0 0 / 0.1);
+  box-shadow: 0 0 15px rgba(139, 0, 0, 0.08);
   overflow-y: auto;
   flex-grow: 1;
 }
 
 .contenido-alumno h2 {
-  color: #343a40;
+  color: #8b0000;
   margin-bottom: 30px;
 }
 
@@ -118,6 +128,7 @@
   display: block;
   margin-bottom: 6px;
   font-weight: bold;
+  color: #8b0000;
 }
 
 .grupo input,
@@ -125,32 +136,35 @@
   width: 100%;
   padding: 10px;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  border: 1.5px solid #8b0000;
   font-size: 1rem;
+  color: #8b0000;
+  background: #ffffff;
 }
 
 .btn-registrar,
 .btn-eliminar,
 .btn-buscar {
-  background-color: #800020;
-  color: white;
+  background-color: #8b0000;
+  color: #ffffff;
   padding: 10px 20px;
   border: none;
   border-radius: 6px;
   cursor: pointer;
   font-size: 1rem;
   margin-top: 10px;
-  transition: background-color 0.2s;
+  transition: background-color 0.2s, color 0.2s;
 }
 
 .btn-registrar:hover,
 .btn-eliminar:hover,
 .btn-buscar:hover {
-  background-color: #a52a2a;
+  background-color: #ffffff;
+  color: #8b0000;
 }
 
 .error {
-  color: red;
+  color: #8b0000;
   margin-top: 8px;
 }
 
@@ -171,28 +185,33 @@
 .filtros select {
   padding: 8px;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  border: 1.5px solid #8b0000;
   font-size: 1rem;
+  color: #8b0000;
+  background: #ffffff;
 }
 
 .tabla-alumnos {
   width: 100%;
   border-collapse: collapse;
   max-width: 100%;
+  background: #ffffff;
 }
 
 .tabla-alumnos th,
 .tabla-alumnos td {
-  border: 1px solid #ccc;
+  border: 1.5px solid #8b0000;
   padding: 10px;
   text-align: left;
+  color: #8b0000;
+  background: #ffffff;
 }
 
 .tabla-alumnos th {
-  background-color: #800020;
-  color: white;
+  background-color: #8b0000;
+  color: #ffffff;
 }
 
 .tabla-alumnos tbody tr:nth-child(even) {
-  background-color: #f2f2f2;
+  background-color: #ffffff;
 }

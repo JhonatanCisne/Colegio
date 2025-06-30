@@ -6,7 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -18,17 +18,21 @@ public class SeccionCurso {
     @Column(name = "ID_Seccion_Curso")
     private Integer idSeccionCurso;
 
-    @OneToOne 
+    @ManyToOne
     @JoinColumn(name = "ID_Seccion", referencedColumnName = "ID_Seccion", nullable=false)
-    private Integer idSeccion;
+    private Seccion seccion;
 
-    @OneToOne 
-    @JoinColumn(name = "ID_Profesor", referencedColumnName = "ID_Profesor", nullable=false)
-    private Integer idProfesor;
+    @ManyToOne
+    @JoinColumn(name = "ID_Profesor", referencedColumnName = "ID_Profesor", nullable=true)
+    private Profesor profesor;
 
-    @OneToOne 
+    @ManyToOne
     @JoinColumn(name = "ID_Curso", referencedColumnName = "ID_Curso", nullable=false)
-    private Integer idCurso;
+    private Curso curso;
+
+    @ManyToOne
+    @JoinColumn(name = "ID_Horario", referencedColumnName = "ID_Horario", nullable=true)
+    private Horario horario;
 
     public Integer getIdSeccionCurso() {
         return idSeccionCurso;
@@ -38,27 +42,35 @@ public class SeccionCurso {
         this.idSeccionCurso = idSeccionCurso;
     }
 
-    public Integer getIdSeccion() {
-        return idSeccion;
+    public Seccion getSeccion() {
+        return seccion;
     }
 
-    public void setIdSeccion(Integer idSeccion) {
-        this.idSeccion = idSeccion;
+    public void setSeccion(Seccion seccion) {
+        this.seccion = seccion;
     }
 
-    public Integer getIdCurso() {
-        return idCurso;
+    public Profesor getProfesor() {
+        return profesor;
     }
 
-    public void setIdCurso(Integer idCurso) {
-        this.idCurso = idCurso;
+    public void setProfesor(Profesor profesor) {
+        this.profesor = profesor;
     }
 
-    public Integer getIdProfesor() {
-        return idProfesor;
+    public Curso getCurso() {
+        return curso;
     }
 
-    public void setIdProfesor(Integer idProfesor) {
-        this.idProfesor = idProfesor;
+    public void setCurso(Curso curso) {
+        this.curso = curso;
+    }
+
+    public Horario getHorario() {
+        return horario;
+    }
+
+    public void setHorario(Horario horario) {
+        this.horario = horario;
     }
 }

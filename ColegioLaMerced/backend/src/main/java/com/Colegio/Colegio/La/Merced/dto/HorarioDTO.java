@@ -1,13 +1,22 @@
 package com.Colegio.Colegio.La.Merced.dto;
 
 public class HorarioDTO {
-
     private Integer idHorario;
+    private String hora;
     private String dia;
-    private String horaInicio;
-    private String horaFin;
-    private Integer idCurso;
-    private Integer idProfesor;
+    private Integer idSeccion;  // ID de la entidad Seccion
+    private Integer idProfesor; // ID de la entidad Profesor
+
+    public HorarioDTO() {
+    }
+
+    public HorarioDTO(Integer idHorario, String hora, String dia, Integer idSeccion, Integer idProfesor) {
+        this.idHorario = idHorario;
+        this.hora = hora;
+        this.dia = dia;
+        this.idSeccion = idSeccion;
+        this.idProfesor = idProfesor;
+    }
 
     public Integer getIdHorario() {
         return idHorario;
@@ -15,6 +24,14 @@ public class HorarioDTO {
 
     public void setIdHorario(Integer idHorario) {
         this.idHorario = idHorario;
+    }
+
+    public String getHora() {
+        return hora;
+    }
+
+    public void setHora(String hora) {
+        this.hora = hora;
     }
 
     public String getDia() {
@@ -25,28 +42,12 @@ public class HorarioDTO {
         this.dia = dia;
     }
 
-    public String getHoraInicio() {
-        return horaInicio;
+    public Integer getIdSeccion() {
+        return idSeccion;
     }
 
-    public void setHoraInicio(String horaInicio) {
-        this.horaInicio = horaInicio;
-    }
-
-    public String getHoraFin() {
-        return horaFin;
-    }
-
-    public void setHoraFin(String horaFin) {
-        this.horaFin = horaFin;
-    }
-
-    public Integer getIdCurso() {
-        return idCurso;
-    }
-
-    public void setIdCurso(Integer idCurso) {
-        this.idCurso = idCurso;
+    public void setIdSeccion(Integer idSeccion) {
+        this.idSeccion = idSeccion;
     }
 
     public Integer getIdProfesor() {
@@ -56,5 +57,4 @@ public class HorarioDTO {
     public void setIdProfesor(Integer idProfesor) {
         this.idProfesor = idProfesor;
     }
-
 }

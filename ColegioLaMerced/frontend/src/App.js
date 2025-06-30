@@ -12,6 +12,14 @@ import LoginAdmin from "./Paginas/Administrador/LoginAdmin";
 import AdminAlumnos from "./Paginas/Administrador/AdminAlumnos";
 import AdminProfesores from "./Paginas/Administrador/AdminProfesores";
 
+import AdminAlumnoModificar from "./Paginas/Administrador/AdminAlumnoModificar";
+import AdminAlumnoEliminar from "./Paginas/Administrador/AdminAlumnoEliminar";
+import AdminAlumnoVer from "./Paginas/Administrador/AdminAlumnoVer";
+
+import AdminProfesoresModificar from "./Paginas/Administrador/AdminProfesoresModificar";
+import AdminProfesoresEliminar from "./Paginas/Administrador/AdminProfesoresEliminar";
+import AdminProfesoresVer from "./Paginas/Administrador/AdminProfesoresVer";
+
 import InicioProfesor from "./Paginas/Profesor/InicioProfesor";
 import CursoProfesor from "./Paginas/Profesor/CursoProfesor";
 import AsistenciaProfesor from "./Paginas/Profesor/AsistenciaProfesor";
@@ -24,9 +32,9 @@ import "./index.css";
 
 function Layout() {
   const location = useLocation();
-  console.log("Ruta actual:", location.pathname); 
+  console.log("Ruta actual:", location.pathname);
 
-  const ocultarBarraLateral = ["/", "/login", "/loginAlumno"].some(ruta =>
+  const ocultarBarraLateral = ["/", "/login", "/loginAlumno", "/LoginAdmin"].some(ruta =>
     location.pathname.startsWith(ruta)
   );
 
@@ -42,9 +50,18 @@ function Layout() {
           <Route path="/cursos" element={<Curso />} />
           <Route path="/asistencia" element={<Asistencia />} />
           <Route path="/anuncios" element={<Anuncios />} />
-          <Route path="/LoginAdmin" element={<LoginAdmin />} />   
-          <Route path="/AdminAlumnos" element={<AdminAlumnos />} /> 
-          <Route path="/AdminProfesores" element={<AdminProfesores />} />   
+          <Route path="/LoginAdmin" element={<LoginAdmin />} />
+          <Route path="/AdminAlumnos" element={<AdminAlumnos />} />
+          <Route path="/AdminProfesores" element={<AdminProfesores />} />
+
+          <Route path="/AdminAlumnoModificar" element={<AdminAlumnoModificar />} />
+          <Route path="/AdminAlumnoEliminar" element={<AdminAlumnoEliminar />} />
+          <Route path="/AdminAlumnoVer" element={<AdminAlumnoVer />} />
+
+          <Route path="/AdminProfesoresModificar" element={<AdminProfesoresModificar />} />
+          <Route path="/AdminProfesoresEliminar" element={<AdminProfesoresEliminar />} />
+          <Route path="/AdminProfesoresVer" element={<AdminProfesoresVer />} />
+
           <Route path="/inicioProfesor" element={<InicioProfesor />} />
           <Route path="/cursosProfesor" element={<CursoProfesor />} />
           <Route path="/asistenciaProfesor" element={<AsistenciaProfesor />} />

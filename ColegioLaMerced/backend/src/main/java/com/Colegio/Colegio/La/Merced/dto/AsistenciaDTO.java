@@ -1,11 +1,20 @@
 package com.Colegio.Colegio.La.Merced.dto;
 
 public class AsistenciaDTO {
-
     private Integer idAsistencia;
-    private Integer idAlumno;
     private String fecha;
     private String estado;
+    private Integer idCursoUnico;
+
+    public AsistenciaDTO() {
+    }
+
+    public AsistenciaDTO(Integer idAsistencia, String fecha, String estado, Integer idCursoUnico) {
+        this.idAsistencia = idAsistencia;
+        this.fecha = fecha;
+        this.estado = estado;
+        this.idCursoUnico = idCursoUnico;
+    }
 
     public Integer getIdAsistencia() {
         return idAsistencia;
@@ -13,14 +22,6 @@ public class AsistenciaDTO {
 
     public void setIdAsistencia(Integer idAsistencia) {
         this.idAsistencia = idAsistencia;
-    }
-
-    public Integer getIdAlumno() {
-        return idAlumno;
-    }
-
-    public void setIdAlumno(Integer idAlumno) {
-        this.idAlumno = idAlumno;
     }
 
     public String getFecha() {
@@ -37,5 +38,13 @@ public class AsistenciaDTO {
 
     public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public Integer getIdCursoUnico() {
+        return idCursoUnico;
+    }
+
+    public void setIdCursoUnico(Integer idCursoUnico) {
+        this.idCursoUnico = idCursoUnico;
     }
 }

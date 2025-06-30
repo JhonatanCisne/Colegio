@@ -15,17 +15,28 @@ function Login() {
     setError(null);
 
     try {
-      const response = await axios.post('http://localhost:8080/api/profesores/login', {
-        dni,
-        contrasena,
-      });
+      const response = await axios.get('http://localhost:8080/api/profesores');
+      const allProfesores = response.data;
 
-      localStorage.setItem('profesorLogged', JSON.stringify(response.data));
+      const profesorEncontrado = allProfesores.find(prof =>
+        prof.dni === dni && prof.contrasena === contrasena
+      );
 
-      navigate('/inicioProfesor');
+      if (profesorEncontrado) {
+        const profesorParaLocalStorage = {
+            idProfesor: profesorEncontrado.idProfesor,
+            nombre: profesorEncontrado.nombre,
+            apellido: profesorEncontrado.apellido,
+            dni: profesorEncontrado.dni,
+            estado: profesorEncontrado.estado
+        };
+        localStorage.setItem('profesorLogged', JSON.stringify(profesorParaLocalStorage));
+        navigate('/inicioProfesor');
+      } else {
+        setError('DNI o contraseña incorrectos');
+      }
     } catch (err) {
-      setError('DNI o contraseña incorrectos');
-      console.error('Error en login:', err);
+      setError('Ocurrió un error al intentar cargar los datos. Asegúrate de que el servidor esté funcionando.');
     }
   };
 

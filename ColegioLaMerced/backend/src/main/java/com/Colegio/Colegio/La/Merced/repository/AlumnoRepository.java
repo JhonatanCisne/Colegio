@@ -9,5 +9,6 @@ import com.Colegio.Colegio.La.Merced.model.Alumno;
 
 @Repository
 public interface AlumnoRepository extends JpaRepository<Alumno, Integer> {
+
     Optional<Alumno> findByDni(String dni);
 }

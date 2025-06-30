@@ -1,127 +1,532 @@
-.contenedor-profesores {
+/* AdminProfesores.css */
+
+/* Solo rojo escarlata (#8B0000) y blanco (#ffffff) */
+
+body, html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  background-color: #ffffff;
+}
+
+.contenedor-principal {
+  min-height: 100vh;
+  font-family: 'Arial', sans-serif;
+  position: relative;
+}
+
+.sidebar {
+  width: 250px;
+  background-color: #8B0000;
+  color: #ffffff;
+  padding: 20px;
+  box-sizing: border-box;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  box-shadow: 2px 0 8px rgba(139,0,0,0.10);
   display: flex;
   flex-direction: column;
-  background-color: white;
-  padding: 25px 30px;
-  border-radius: 8px;
-  box-shadow: 0 0 15px rgb(0 0 0 / 0.1);
-  height: 100%;
-  max-height: 100vh;
-  overflow-y: auto;
 }
 
-.barra-botones {
-  display: flex;
-  gap: 12px;
-  margin-bottom: 20px;
+.sidebar h2 {
+  text-align: center;
+  color: #ffffff;
+  margin-bottom: 30px;
+  font-size: 1.5em;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ffffff;
 }
 
-.barra-botones button {
-  background-color: #800020;
-  border: none;
-  padding: 10px 22px;
-  border-radius: 6px;
-  color: white;
-  font-weight: 600;
+.sidebar ul {
+  list-style: none;
+  padding: 0;
+  flex-grow: 1;
+}
+
+.sidebar ul li {
+  margin-bottom: 15px;
   cursor: pointer;
-  transition: background-color 0.3s;
-  user-select: none;
-  font-size: 1rem;
+  padding: 12px 15px;
+  border-radius: 5px;
+  transition: background-color 0.3s, transform 0.2s;
+  color: #ffffff;
 }
 
-.barra-botones button:hover {
-  background-color: #a52a2a;
+.sidebar ul li:hover {
+  background-color: #ffffff;
+  color: #8B0000;
+  transform: translateX(5px);
 }
 
-.barra-botones .btn-activo {
-  background-color: #a52a2a;
+/* Sub-navegación para Alumnos/Profesores */
+.sidebar ul li.parent-menu-item {
+    font-weight: bold;
+    color: #ffffff; /* Color del texto padre */
+    margin-bottom: 5px;
+    cursor: default; /* No es un enlace clicable en sí mismo, sino un encabezado */
+    padding: 12px 15px; /* Mismo padding que otros li para consistencia */
+    background-color: transparent; /* Fondo transparente por defecto */
+    transition: none; /* No aplicar transiciones de hover a este padre directamente */
+    transform: none;
+}
+
+.sidebar ul li.parent-menu-item:hover {
+    background-color: transparent; /* Asegurar que no cambie al hacer hover */
+    transform: none;
+}
+
+.sidebar ul li.parent-menu-item > ul { /* Estilos para la lista anidada */
+    list-style: none;
+    padding-left: 15px; /* Indentar las opciones secundarias */
+    margin-top: 5px;
+    margin-bottom: 0;
+}
+
+.sidebar ul li.parent-menu-item > ul li {
+    font-weight: normal; /* Asegura que los hijos no sean negrita a menos que se especifique */
+    cursor: pointer;
+    padding: 8px 0; /* Padding más pequeño para los elementos hijos */
+    border-radius: 4px;
+    padding-left: 10px; /* Para que haya espacio para el hover */
+    margin-bottom: 5px; /* Espacio entre elementos hijos */
+    color: #ffffff; /* Color de texto para sub-elementos */
+    background-color: transparent; /* Asegurar fondo transparente */
+}
+
+.sidebar ul li.parent-menu-item > ul li:hover {
+    background-color: #ffffff; /* Color de fondo en hover para sub-elementos */
+    color: #8B0000; /* Color de texto en hover para sub-elementos */
+    transform: translateX(3px); /* Ligera traslación para sub-elementos */
+}
+
+.sidebar ul li.activo {
+  background-color: #ffffff; /* Color de resaltado para la sección activa */
+  color: #8B0000;
   font-weight: bold;
-  box-shadow: 0 0 8px #a52a2a;
+}
+
+.sidebar ul li.activo:hover {
+    background-color: #ffffff; /* Tono más oscuro al hacer hover sobre un elemento activo */
+    color: #8B0000;
+    transform: translateX(5px); /* Mantener la traducción al hacer hover en activo */
+}
+
+/* Estilos para el elemento activo dentro de la sub-navegación */
+.sidebar ul li.parent-menu-item > ul li.activo {
+    background-color: #ffffff; /* Color activo para sub-elementos */
+    color: #8B0000;
+    font-weight: bold;
+}
+
+.sidebar ul li.parent-menu-item > ul li.activo:hover {
+    background-color: #ffffff; /* Tono más oscuro al hacer hover sobre un sub-elemento activo */
+    color: #8B0000;
+    transform: translateX(3px); /* Mantener la traducción para sub-elemento activo */
+}
+
+
+.sidebar .cerrar-sesion {
+  margin-top: auto; /* Empuja el botón "Cerrar Sesión" al final */
+  background-color: #8B0000; /* Color para cerrar sesión */
+  text-align: center;
+  color: #ffffff;
+  border-radius: 5px;
+  padding: 10px 0;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.sidebar .cerrar-sesion:hover {
+  background-color: #ffffff;
+  color: #8B0000;
+  transform: none;
+}
+
+
+/* Contenido principal */
+.contenido-principal {
+  margin-left: 270px; /* Ancho del sidebar (250px) + un margen (20px) */
+  padding: 30px; /* Padding interno para el contenido */
+  flex-grow: 1; /* Ocupa el espacio restante horizontalmente */
+  min-height: 100vh; /* Altura mínima para asegurar que el fondo se extienda */
+  background-color: #ffffff;
+  border-radius: 8px; /* Bordes redondeados para el contenedor del contenido */
+  box-shadow: 0 4px 15px rgba(139,0,0,0.08); /* Sombra para darle profundidad */
+  box-sizing: border-box; /* Padding incluido en el ancho/alto */
+  margin-right: 20px; /* Margen derecho para que no pegue al borde de la pantalla */
+  margin-top: 20px; /* Margen superior para que no pegue al borde superior */
+  margin-bottom: 20px; /* Margen inferior */
+}
+
+.contenido-profesor {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Espacio entre los elementos del contenido */
+}
+
+.contenido-profesor h1 { /* Título principal de la página */
+    color: #8B0000;
+    margin-bottom: 20px;
+    text-align: center;
+    font-size: 2.2em;
+    border-bottom: 2px solid #8B0000;
+    padding-bottom: 10px;
+}
+
+.contenido-profesor h2 { /* Subtítulos de secciones */
+  color: #8B0000;
+  margin-bottom: 20px;
+  /* text-align: center; -- Removido para alineación a la izquierda si es subtítulo de sección */
+  font-size: 1.8em;
+  border-bottom: 1px solid #8B0000; /* Borde más sutil para subtítulos */
+  padding-bottom: 8px;
+}
+
+/* Mensajes de éxito/error */
+.mensaje {
+  padding: 12px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: bold;
+  opacity: 0; /* Inicialmente oculto para animación */
+  transform: translateY(-10px); /* Ligeramente arriba para animación */
+  animation: fadeInDown 0.5s forwards; /* Animación de entrada */
+}
+
+.mensaje-exito {
+  background-color: #ffffff;
+  color: #8B0000;
+  border: 1.5px solid #8B0000;
+}
+
+.mensaje-error {
+  background-color: #ffffff;
+  color: #8B0000;
+  border: 1.5px solid #8B0000;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+
+/* Formularios y grupos */
+form {
+  background-color: #ffffff;
+  padding: 25px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(139,0,0,0.05);
+  border: 1.5px solid #8B0000;
 }
 
 .grupo {
-  margin-bottom: 18px;
+  margin-bottom: 20px;
 }
 
 .grupo label {
   display: block;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
   font-weight: bold;
+  color: #8B0000;
 }
 
-.grupo input,
+.grupo input[type="text"],
+.grupo input[type="password"],
 .grupo select {
-  width: 100%;
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
+  width: calc(100% - 24px); /* Ancho completo menos padding */
+  padding: 12px;
+  border: 1.5px solid #8B0000;
+  border-radius: 5px;
+  font-size: 1em;
+  box-sizing: border-box; /* Incluye padding en el ancho */
+  color: #8B0000;
+  background: #ffffff;
+  transition: border-color 0.3s, box-shadow 0.3s;
 }
 
-.btn-registrar,
-.btn-eliminar,
-.btn-buscar {
-  background-color: #800020;
-  color: white;
-  padding: 10px 20px;
+.grupo input:focus,
+.grupo select:focus {
+  border-color: #8B0000;
+  box-shadow: 0 0 0 0.2rem rgba(139,0,0,0.10);
+  outline: none;
+}
+
+/* Botón Registrar */
+.btn-registrar {
+  background-color: #8B0000;
+  color: #ffffff;
+  padding: 12px 25px;
   border: none;
-  border-radius: 6px;
+  border-radius: 5px;
   cursor: pointer;
-  font-size: 1rem;
-  margin-top: 10px;
-  transition: background-color 0.2s;
+  font-size: 1.1em;
+  transition: background-color 0.3s, transform 0.2s;
+  display: block; /* Para centrar el botón si se desea */
+  margin: 20px auto 0; /* Centrar y añadir margen superior */
 }
 
-.btn-registrar:hover,
-.btn-eliminar:hover,
-.btn-buscar:hover {
-  background-color: #a52a2a;
+.btn-registrar:hover {
+  background-color: #ffffff;
+  color: #8B0000;
+  border: 1.5px solid #8B0000;
+  transform: translateY(-2px);
 }
 
-.error {
-  color: red;
-  margin-top: 8px;
+/* ------------------------------------------- */
+/* Estilos Específicos para MODIFICAR y ELIMINAR */
+/* ------------------------------------------- */
+
+/* Estilos para el formulario de modificación de datos del profesor */
+.modification-form {
+    margin-top: 30px;
+    padding: 25px; /* Más padding para que se vea consistente con el formulario de creación */
+    border: 1.5px solid #8B0000;
+    border-radius: 8px;
+    background-color: #ffffff; /* Fondo similar al formulario */
+    box-shadow: 0 2px 10px rgba(139,0,0,0.05); /* Sombra consistente */
 }
 
-.buscar-dni {
-  display: flex;
-  align-items: flex-end;
-  gap: 10px;
-  max-width: 380px;
+.modification-form h2 {
+    color: #8B0000; /* Color de título consistente */
+    margin-bottom: 20px;
+    border-bottom: 2px solid #8B0000; /* Borde consistente */
+    padding-bottom: 10px;
 }
 
-.filtros {
-  margin-bottom: 20px;
-  display: flex;
-  gap: 10px;
-  max-width: 380px;
+/* Estilos para las secciones de asignación y desasignación */
+.assignment-section {
+    margin-top: 30px;
+    padding: 25px; /* Padding consistente */
+    border: 1.5px solid #8B0000;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(139,0,0,0.03);
 }
 
-.filtros select {
-  padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 1rem;
+.assignment-section h2 {
+    color: #8B0000; /* Color de título consistente */
+    margin-bottom: 15px;
+    border-bottom: 1px solid #8B0000; /* Borde sutil */
+    padding-bottom: 8px;
 }
 
-.tabla-profesores {
-  width: 100%;
-  border-collapse: collapse;
-  max-width: 100%;
+.assignment-list {
+    list-style: none;
+    padding: 0;
 }
 
-.tabla-profesores th,
-.tabla-profesores td {
-  border: 1px solid #ccc;
-  padding: 10px;
-  text-align: left;
+.assignment-item {
+    background-color: #ffffff;
+    padding: 12px 18px;
+    margin-bottom: 10px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border: 1.5px solid #8B0000;
+    font-size: 0.95em;
+    color: #8B0000;
+    box-shadow: 0 1px 3px rgba(139,0,0,0.02);
 }
 
-.tabla-profesores th {
-  background-color: #800020;
-  color: white;
+.assignment-item button {
+    background-color: #8B0000;
+    color: #ffffff;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.85em;
+    transition: background-color 0.2s;
 }
 
-.tabla-profesores tbody tr:nth-child(even) {
-  background-color: #f2f2f2;
+.assignment-item button:hover {
+    background-color: #ffffff;
+    color: #8B0000;
+    border: 1.5px solid #8B0000;
+}
+
+.assignment-form .grupo select,
+.assignment-form .grupo button {
+    margin-top: 10px;
+}
+
+.btn-assign {
+    background-color: #8B0000;
+    color: #ffffff;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s, transform 0.2s;
+    display: block;
+    margin: 20px auto 0;
+}
+
+.btn-assign:hover {
+    background-color: #ffffff;
+    color: #8B0000;
+    border: 1.5px solid #8B0000;
+    transform: translateY(-2px);
+}
+
+/* Estilos para el botón de eliminar (AdminProfesorEliminar.js) */
+.delete-button {
+    background-color: #8B0000;
+    color: #ffffff;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    transition: background-color 0.3s, transform 0.2s;
+    margin-top: 20px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.delete-button:hover {
+    background-color: #ffffff;
+    color: #8B0000;
+    border: 1.5px solid #8B0000;
+    transform: translateY(-2px);
+}
+
+.delete-button:disabled {
+    background-color: #ffffff;
+    color: #8B0000;
+    border: 1.5px solid #8B0000;
+    cursor: not-allowed;
+    transform: translateY(0); /* Sin animación si está deshabilitado */
+}
+
+/* Estilos para mostrar los detalles del profesor seleccionado antes de eliminar */
+.professor-details-display {
+    margin-top: 20px;
+    padding: 25px;
+    border: 1.5px solid #8B0000;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 2px 4px rgba(139,0,0,0.05);
+}
+
+.professor-details-display h2 {
+    color: #8B0000;
+    margin-bottom: 15px;
+    font-size: 1.2em;
+    border-bottom: 1px solid #8B0000;
+    padding-bottom: 10px;
+}
+
+.professor-details-display p {
+    margin-bottom: 8px;
+    font-size: 1.05em;
+    color: #8B0000;
+}
+
+.professor-details-display p strong {
+    color: #8B0000;
+}
+
+
+/* ------------------------------------------- */
+/* Estilos Específicos para VER Profesores (Tablas) */
+/* ------------------------------------------- */
+
+/* Contenedor de la tabla */
+.profesor-table-container {
+    margin-top: 30px;
+    padding: 20px;
+    border: 1.5px solid #8B0000;
+    border-radius: 8px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 15px rgba(139,0,0,0.08); /* Sombra similar al contenido principal */
+    overflow-x: auto; /* Permite scroll horizontal si la tabla es muy ancha */
+}
+
+.profesor-table-container h1 { /* Si tienes un h1 dentro del contenedor de tabla */
+    text-align: left; /* Alinea el título de la tabla a la izquierda */
+    margin-bottom: 20px;
+    border-bottom: 2px solid #8B0000;
+    padding-bottom: 10px;
+    color: #8B0000;
+}
+
+.profesor-table-container h2 { /* Si tienes un h2 dentro del contenedor de tabla */
+    color: #8B0000;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    border-bottom: 1px solid #8B0000;
+    padding-bottom: 8px;
+}
+
+/* Tabla principal */
+.profesor-list-table {
+    width: 100%;
+    border-collapse: collapse; /* Colapsa los bordes de la tabla para un aspecto más limpio */
+    margin-top: 20px;
+    background-color: #ffffff; /* Fondo blanco para la tabla */
+    border-radius: 8px; /* Bordes redondeados para la tabla */
+    overflow: hidden; /* Asegura que los bordes redondeados se apliquen bien */
+}
+
+.profesor-list-table th,
+.profesor-list-table td {
+    border: 1.5px solid #8B0000; /* Bordes de celdas más suaves */
+    padding: 12px 15px; /* Más padding para legibilidad */
+    text-align: left;
+    vertical-align: top; /* Alinea el contenido al top en celdas con listas */
+    font-size: 0.95em; /* Tamaño de fuente ligeramente más grande */
+    color: #8B0000; /* Color de texto para el contenido */
+}
+
+.profesor-list-table th {
+    background-color: #8B0000; /* Fondo para encabezados */
+    font-weight: bold;
+    color: #ffffff; /* Color de texto más oscuro para encabezados */
+    text-transform: uppercase; /* Mayúsculas para encabezados */
+    letter-spacing: 0.5px; /* Espaciado entre letras */
+}
+
+/* Estilo de filas alternas */
+.profesor-list-table tr:nth-child(even) {
+    background-color: #ffffff; /* Un blanco más puro o muy ligero */
+}
+
+/* Efecto hover en filas */
+.profesor-list-table tr:hover {
+    background-color: #fbeaea; /* Tono suave en hover */
+}
+
+/* Estilos para las listas de cursos/horarios dentro de las celdas */
+.profesor-list-table td ul {
+    list-style: none; /* Quita los puntos de la lista */
+    padding: 0;
+    margin: 0;
+    font-size: 0.9em;
+}
+
+.profesor-list-table td ul li {
+    margin-bottom: 3px;
+    color: #8B0000;
+    line-height: 1.4; /* Espaciado de línea para legibilidad */
+}
+
+.profesor-list-table td ul li:last-child {
+    margin-bottom: 0; /* Sin margen en el último elemento */
 }

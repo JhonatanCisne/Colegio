@@ -1,58 +1,114 @@
+/* General container for the main content area */
 .contenido-principal {
-  flex: 1;
-  background-color: #f8f9fa;
-  padding: 20px;
-  min-height: 100vh;
-  overflow-y: auto;
-}
-
-.anuncio {
-  border: none;
-  background: #f4f8fd;
-  box-shadow: 0 2px 8px rgba(30, 60, 120, 0.07);
-  border-radius: 14px;
-  transition: box-shadow 0.2s;
-}
-
-.anuncio:hover {
-  box-shadow: 0 4px 16px rgba(30, 60, 120, 0.13);
-  background: #eaf4ff;
-}
-
-.anuncios-vertical {
+  flex-grow: 1; /* Allows the content to fill available space */
+  padding: 30px; /* Ample padding around the content */
+  background-color: #f8f9fa; /* Light background for the content area */
+  min-height: 100vh; /* Ensures the background covers the full viewport height */
   display: flex;
   flex-direction: column;
 }
 
-.anuncio h5 {
-  margin-bottom: 10px;
-  color: #fd0d0d;
-}
-
-.anuncio p {
-  margin: 0;
-  color: #333;
+/* Styles for the announcement form */
+.anuncio-form {
+  background: #ffffff; /* White background for the form card */
+  padding: 30px; /* Padding inside the form */
+  border-radius: 12px; /* Slightly rounded corners */
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Soft, noticeable shadow */
+  margin-bottom: 40px; /* Space below the form */
 }
 
 .anuncio-form .form-label {
-  color: #1976d2;
-  font-weight: 600;
+  font-size: 1.05em; /* Slightly larger labels */
+  margin-bottom: 8px; /* Space between label and input */
+  color: #343a40; /* Darker text for labels */
 }
 
-.anuncio-form input,
-.anuncio-form textarea {
+.anuncio-form .form-control,
+.anuncio-form .form-select {
+  border-radius: 8px; /* Rounded borders for inputs and selects */
+  border: 1px solid #ced4da; /* Subtle border color */
+  padding: 10px 15px; /* Comfortable padding */
+  font-size: 1em; /* Standard font size */
+  transition: all 0.3s ease; /* Smooth transition for focus effects */
+}
+
+.anuncio-form .form-control:focus,
+.anuncio-form .form-select:focus {
+  border-color: #007bff; /* Primary color border on focus */
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Glow effect on focus */
+}
+
+.anuncio-form textarea.form-control {
+  resize: vertical; /* Allow vertical resizing of textareas */
+}
+
+.anuncio-form .btn-primary {
+  background-color: #007bff; /* Primary button color */
+  border-color: #007bff; /* Matching border color */
+  padding: 12px 25px; /* Generous padding for the button */
+  font-size: 1.1em; /* Larger font size for the button text */
+  border-radius: 8px; /* Rounded button corners */
+  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+}
+
+.anuncio-form .btn-primary:hover {
+  background-color: #0056b3; /* Darker shade on hover */
+  border-color: #0056b3;
+  transform: translateY(-2px); /* Slight lift effect on hover */
+}
+
+/* Styles for the list of published announcements */
+.anuncios-vertical {
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* Space between each announcement card */
+}
+
+.anuncio {
+  background: #ffffff; /* White background for each announcement card */
+  padding: 25px; /* Padding inside the announcement card */
+  border-radius: 12px; /* Rounded corners */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06); /* Softer shadow */
+  border-left: 5px solid #1976d2; /* Left border accent color */
+  transition: transform 0.2s ease; /* Smooth transition for hover effect */
+}
+
+.anuncio:hover {
+  transform: translateY(-3px); /* Lift effect on hover */
+}
+
+.anuncio h5 {
+  color: #1976d2; /* Blue color for the title */
+  font-size: 1.3em; /* Larger title font size */
+  margin-bottom: 0;
+  display: flex;
+  align-items: center;
+}
+
+.anuncio h5 span {
+  margin-right: 10px; /* Space between emoji and title */
+}
+
+.anuncio p {
+  color: #555; /* Slightly darker text for description */
+  line-height: 1.6; /* Improved readability for paragraphs */
+  margin-top: 10px; /* Space above description */
+  padding-left: 42px; /* Align description with title text */
+}
+
+.anuncio .ms-auto {
+  font-size: 0.9em; /* Smaller font for date */
+  color: #888; /* Muted color for date */
+  white-space: nowrap; /* Prevent date from wrapping */
+}
+
+/* Styles for loading and error messages */
+.spinner-border {
+  width: 3rem;
+  height: 3rem;
+}
+
+.alert {
+  padding: 15px;
   border-radius: 8px;
-  border: 1.5px solid #b6c7e3;
-}
-
-.anuncio-form input:focus,
-.anuncio-form textarea:focus {
-  border-color: #1976d2;
-  box-shadow: 0 0 0 2px #e3eafc;
-}
-
-@media (max-width: 768px) {
-  .contenido-principal {
-    padding: 15px;
-  }
 }

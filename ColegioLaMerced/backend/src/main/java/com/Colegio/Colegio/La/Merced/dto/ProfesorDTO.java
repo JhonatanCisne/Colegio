@@ -1,13 +1,24 @@
 package com.Colegio.Colegio.La.Merced.dto;
 
 public class ProfesorDTO {
-
     private Integer idProfesor;
     private String dni;
     private String nombre;
     private String apellido;
     private String estado;
     private String contrasena;
+
+    public ProfesorDTO() {
+    }
+
+    public ProfesorDTO(Integer idProfesor, String dni, String nombre, String apellido, String estado, String contrasena) {
+        this.idProfesor = idProfesor;
+        this.dni = dni;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.estado = estado;
+        this.contrasena = contrasena;
+    }
 
     public Integer getIdProfesor() {
         return idProfesor;

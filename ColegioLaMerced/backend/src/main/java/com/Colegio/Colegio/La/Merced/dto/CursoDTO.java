@@ -1,9 +1,16 @@
 package com.Colegio.Colegio.La.Merced.dto;
 
 public class CursoDTO {
-
     private Integer idCurso;
     private String nombre;
+
+    public CursoDTO() {
+    }
+
+    public CursoDTO(Integer idCurso, String nombre) {
+        this.idCurso = idCurso;
+        this.nombre = nombre;
+    }
 
     public Integer getIdCurso() {
         return idCurso;

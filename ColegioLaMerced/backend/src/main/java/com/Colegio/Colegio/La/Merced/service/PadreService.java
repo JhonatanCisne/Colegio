@@ -20,10 +20,10 @@ public class PadreService {
     private PadreDTO convertToDto(Padre padre) {
         PadreDTO dto = new PadreDTO();
         dto.setIdPadre(padre.getIdPadre());
-        dto.setDni(padre.getDni());
         dto.setNombre(padre.getNombre());
         dto.setApellido(padre.getApellido());
         dto.setTelefono(padre.getTelefono());
+        dto.setDni(padre.getDni());
         dto.setCorreo(padre.getCorreo());
         return dto;
     }
@@ -31,10 +31,10 @@ public class PadreService {
     private Padre convertToEntity(PadreDTO dto) {
         Padre padre = new Padre();
         padre.setIdPadre(dto.getIdPadre());
-        padre.setDni(dto.getDni());
         padre.setNombre(dto.getNombre());
         padre.setApellido(dto.getApellido());
         padre.setTelefono(dto.getTelefono());
+        padre.setDni(dto.getDni());
         padre.setCorreo(dto.getCorreo());
         return padre;
     }
@@ -58,10 +58,10 @@ public class PadreService {
 
     public Optional<PadreDTO> updatePadre(Integer id, PadreDTO padreDTO) {
         return padreRepository.findById(id).map(existingPadre -> {
-            existingPadre.setDni(padreDTO.getDni());
             existingPadre.setNombre(padreDTO.getNombre());
             existingPadre.setApellido(padreDTO.getApellido());
             existingPadre.setTelefono(padreDTO.getTelefono());
+            existingPadre.setDni(padreDTO.getDni());
             existingPadre.setCorreo(padreDTO.getCorreo());
             Padre updatedPadre = padreRepository.save(existingPadre);
             return convertToDto(updatedPadre);

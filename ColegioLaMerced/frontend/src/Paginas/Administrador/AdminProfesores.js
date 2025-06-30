@@ -1,105 +1,209 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../Administrador/AdminProfesores.css";
-
-const cargos = ["Profesor Titular", "Profesor Auxiliar", "Profesor Invitado"];
+import "../Administrador/AdminProfesores.css"; // Asegúrate de que este CSS tenga estilos para los nuevos botones en el sidebar
 
 const AdminProfesores = () => {
   const navigate = useNavigate();
-  const [seccionSidebar, setSeccionSidebar] = useState("Profesores");
-  const [seccionBotones, setSeccionBotones] = useState("Añadir");
   const [profesor, setProfesor] = useState({
     nombre: "",
     apellido: "",
     dni: "",
-    especialidad: "",
     contrasena: "",
   });
-  const [dniBuscar, setDniBuscar] = useState("");
-  const [profesorEncontrado, setProfesorEncontrado] = useState(null);
-  const [errorBuscar, setErrorBuscar] = useState("");
-  const [listaProfesores, setListaProfesores] = useState([]);
+  const [mensaje, setMensaje] = useState({ type: "", text: "" });
+
+  const [showAsignarModal, setShowAsignarModal] = useState(false);
+  const [profesorIdParaAsignar, setProfesorIdParaAsignar] = useState(null);
+
+  const [seccionesCursosDisponibles, setSeccionesCursosDisponibles] = useState([]);
+  const [horariosDisponibles, setHorariosDisponibles] = useState([]);
+  const [seccionCursoSeleccionada, setSeccionCursoSeleccionada] = useState("");
+  const [horarioSeleccionado, setHorarioSeleccionado] = useState("");
+
+  const [seccionesMap, setSeccionesMap] = useState(new Map());
+  const [cursosMap, setCursosMap] = useState(new Map());
 
   useEffect(() => {
-    axios.get("http://localhost:8080/api/profesores")
-      .then((res) => setListaProfesores(res.data))
-      .catch((err) => console.error("Error al obtener profesores:", err));
+    const fetchNombresData = async () => {
+      try {
+        const [seccionesRes, cursosRes] = await Promise.all([
+          axios.get("http://localhost:8080/api/secciones"),
+          axios.get("http://localhost:8080/api/cursos"),
+        ]);
+
+        const newSeccionesMap = new Map(seccionesRes.data.map(s => [s.idSeccion, s.nombre]));
+        const newCursosMap = new Map(cursosRes.data.map(c => [c.idCurso, c.nombre]));
+
+        setSeccionesMap(newSeccionesMap);
+        setCursosMap(newCursosMap);
+      } catch (error) {
+        console.error("Error al cargar nombres de secciones o cursos:", error);
+        setMensaje({ type: "error", text: "Error al cargar datos de secciones y cursos." });
+      }
+    };
+    fetchNombresData();
   }, []);
+
+  const fetchSeccionesCursos = async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/api/seccioncursos");
+      const disponibles = response.data.filter(
+        (sc) => sc.idProfesor === null || sc.idProfesor === 0 || sc.idProfesor === undefined
+      );
+
+      const disponiblesConNombres = disponibles.map(sc => ({
+        ...sc,
+        nombreSeccion: seccionesMap.get(sc.idSeccion) || `Sección ID: ${sc.idSeccion}`,
+        nombreCurso: cursosMap.get(sc.idCurso) || `Curso ID: ${sc.idCurso}`
+      }));
+      setSeccionesCursosDisponibles(disponiblesConNombres);
+    } catch (err) {
+      console.error("Error al obtener secciones de cursos:", err);
+      setMensaje({ type: "error", text: "Error al cargar secciones de cursos disponibles." });
+    }
+  };
+
+  useEffect(() => {
+    if (showAsignarModal && seccionesMap.size > 0 && cursosMap.size > 0) {
+      fetchSeccionesCursos();
+    }
+  }, [showAsignarModal, seccionesMap, cursosMap]);
+
+  useEffect(() => {
+    const fetchHorarios = async () => {
+      setHorariosDisponibles([]);
+      setHorarioSeleccionado("");
+
+      if (seccionCursoSeleccionada) {
+        try {
+          const response = await axios.get("http://localhost:8080/api/horarios");
+          const seccionCursoObj = seccionesCursosDisponibles.find(
+            (sc) => sc.idSeccionCurso === parseInt(seccionCursoSeleccionada)
+          );
+
+          if (seccionCursoObj) {
+            const disponibles = response.data.filter(
+              (h) =>
+                (h.idProfesor === null || h.idProfesor === 0 || h.idProfesor === undefined) &&
+                h.idSeccion === seccionCursoObj.idSeccion
+            );
+            setHorariosDisponibles(disponibles);
+          }
+        } catch (err) {
+          console.error("Error al obtener horarios:", err);
+          setMensaje({ type: "error", text: "Error al cargar horarios disponibles." });
+        }
+      }
+    };
+
+    if (showAsignarModal) {
+      fetchHorarios();
+    }
+  }, [seccionCursoSeleccionada, seccionesCursosDisponibles, showAsignarModal]);
 
   const handleChange = (e) => {
     setProfesor({ ...profesor, [e.target.name]: e.target.value });
   };
 
-  const handleAgregar = (e) => {
+  const handleCrearProfesor = async (e) => {
     e.preventDefault();
-    axios.post("http://localhost:8080/api/profesores", profesor)
-      .then((res) => {
-        alert("Profesor agregado!");
-        setListaProfesores([...listaProfesores, res.data]);
-        setProfesor({
-          nombre: "",
-          apellido: "",
-          dni: "",
-          especialidad: "",
-          contrasena: "",
-        });
-      })
-      .catch((err) => {
-        alert("Error al agregar profesor.");
-        console.error(err);
+    setMensaje({ type: "", text: "" });
+
+    try {
+      const newProfesorData = {
+        nombre: profesor.nombre,
+        apellido: profesor.apellido,
+        dni: profesor.dni,
+        contrasena: profesor.contrasena,
+        estado: "Activo",
+      };
+      const resProfesor = await axios.post("http://localhost:8080/api/profesores", newProfesorData);
+      const idNuevoProfesor = resProfesor.data.idProfesor;
+
+      setProfesorIdParaAsignar(idNuevoProfesor);
+      setShowAsignarModal(true);
+
+      setMensaje({ type: "success", text: "Profesor creado exitosamente. Ahora asigne un curso y horario." });
+      setProfesor({
+        nombre: "",
+        apellido: "",
+        dni: "",
+        contrasena: "",
       });
+    } catch (err) {
+      console.error("Error al crear profesor:", err);
+      setMensaje({ type: "error", text: `Error al crear profesor: ${err.message || err.response?.data || "Verifique la consola."}` });
+    }
   };
 
-  const buscarProfesorPorDni = () => {
-    axios.get(`http://localhost:8080/api/profesores/${dniBuscar}`)
-      .then((res) => {
-        setProfesorEncontrado(res.data);
-        setProfesor(res.data);
-        setErrorBuscar("");
-      })
-      .catch(() => {
-        setProfesorEncontrado(null);
-        setErrorBuscar("Profesor no encontrado");
-      });
-  };
-
-  const handleModificar = (e) => {
+  const handleAsignarCursoHorario = async (e) => {
     e.preventDefault();
-    axios.put(`http://localhost:8080/api/profesores/${profesor.dni}`, profesor)
-      .then(() => {
-        alert("Profesor modificado!");
-        setListaProfesores(
-          listaProfesores.map((p) => (p.dni === profesor.dni ? profesor : p))
+    setMensaje({ type: "", text: "" });
+
+    if (!seccionCursoSeleccionada || !horarioSeleccionado) {
+      setMensaje({ type: "error", text: "Por favor, seleccione una Sección/Curso y un Horario." });
+      return;
+    }
+
+    try {
+      const seccionCursoToUpdate = seccionesCursosDisponibles.find(
+        (sc) => sc.idSeccionCurso === parseInt(seccionCursoSeleccionada)
+      );
+
+      if (seccionCursoToUpdate) {
+        const updatedSeccionCurso = {
+          ...seccionCursoToUpdate,
+          idProfesor: profesorIdParaAsignar,
+          idHorario: parseInt(horarioSeleccionado)
+        };
+        delete updatedSeccionCurso.nombreSeccion;
+        delete updatedSeccionCurso.nombreCurso;
+
+        await axios.put(
+          `http://localhost:8080/api/seccioncursos/${seccionCursoToUpdate.idSeccionCurso}`,
+          updatedSeccionCurso
         );
-        setProfesorEncontrado(null);
-        setDniBuscar("");
-        setProfesor({
-          nombre: "",
-          apellido: "",
-          dni: "",
-          especialidad: "",
-          contrasena: "",
-        });
-      })
-      .catch((err) => {
-        alert("Error al modificar profesor.");
-        console.error(err);
-      });
+      } else {
+        throw new Error(`Sección/Curso con ID ${seccionCursoSeleccionada} no encontrada en la lista de disponibles.`);
+      }
+
+      const horarioToUpdate = horariosDisponibles.find(
+        (h) => h.idHorario === parseInt(horarioSeleccionado)
+      );
+      if (horarioToUpdate) {
+        const updatedHorario = { ...horarioToUpdate, idProfesor: profesorIdParaAsignar };
+        await axios.put(
+          `http://localhost:8080/api/horarios/${horarioToUpdate.idHorario}`,
+          updatedHorario
+        );
+      } else {
+        throw new Error("Horario seleccionado no encontrado.");
+      }
+
+      setMensaje({ type: "success", text: "Curso y horario asignados exitosamente." });
+      setShowAsignarModal(false);
+      setProfesorIdParaAsignar(null);
+      setSeccionCursoSeleccionada("");
+      setHorarioSeleccionado("");
+      fetchSeccionesCursos();
+      setHorariosDisponibles([]);
+    } catch (err) {
+      console.error("Error al asignar curso/horario:", err);
+      let errorMessage = `Error al asignar curso y horario: ${err.message || "Verifique la consola."}`;
+      if (err.response && err.response.status === 404) {
+        errorMessage = `Error 404: El recurso no fue encontrado en el servidor. Esto puede significar que el ID de la Sección/Curso (${seccionCursoSeleccionada}) no existe o no está disponible en el backend para ser actualizado.`;
+      }
+      setMensaje({ type: "error", text: errorMessage });
+    }
   };
 
-  const handleEliminar = (e) => {
-    e.preventDefault();
-    axios.delete(`http://localhost:8080/api/profesores/${dniBuscar}`)
-      .then(() => {
-        alert("Profesor eliminado!");
-        setListaProfesores(listaProfesores.filter((p) => p.dni !== dniBuscar));
-        setDniBuscar("");
-        setErrorBuscar("");
-      })
-      .catch(() => {
-        setErrorBuscar("Profesor no encontrado");
-      });
+  const closeModal = () => {
+    setShowAsignarModal(false);
+    setProfesorIdParaAsignar(null);
+    setSeccionCursoSeleccionada("");
+    setHorarioSeleccionado("");
+    setMensaje({ type: "", text: "" });
   };
 
   return (
@@ -107,169 +211,112 @@ const AdminProfesores = () => {
       <aside className="sidebar">
         <h2>Panel</h2>
         <ul>
-          <li onClick={() => { setSeccionSidebar("Alumnos"); navigate("/AdminAlumnos"); }}>Alumnos</li>
-          <li className={seccionSidebar === "Profesores" ? "activo" : ""} onClick={() => {
-            setSeccionSidebar("Profesores");
-            setSeccionBotones("Añadir");
-            setProfesorEncontrado(null);
-            setDniBuscar("");
-            setErrorBuscar("");
-          }}>Profesores</li>
+          <li onClick={() => navigate("/AdminAlumnos")}>Alumnos</li>
+          {/* Sección de Profesores con sub-navegación */}
+          <li className="parent-menu-item">
+            Profesores
+            <ul>
+              <li className="activo" onClick={() => navigate("/AdminProfesores")}>Crear Profesor</li>
+              <li onClick={() => navigate("/AdminProfesoresVer")}>Ver Profesores</li>
+              <li onClick={() => navigate("/AdminProfesoresModificar")}>Modificar Profesor</li>
+              <li onClick={() => navigate("/AdminProfesoresEliminar")}>Eliminar Profesor</li>
+            </ul>
+          </li>
           <li className="cerrar-sesion" onClick={() => { localStorage.clear(); navigate("/"); }}>Cerrar sesión</li>
         </ul>
       </aside>
 
       <div className="contenido-principal">
-        <div className="barra-botones">
-          {["Añadir", "Modificar", "Eliminar", "Ver"].map((opcion) => (
-            <button
-              key={opcion}
-              className={seccionBotones === opcion ? "btn-activo" : ""}
-              onClick={() => {
-                setSeccionBotones(opcion);
-                setProfesorEncontrado(null);
-                setDniBuscar("");
-                setErrorBuscar("");
-                setProfesor({
-                  nombre: "",
-                  apellido: "",
-                  dni: "",
-                  especialidad: "",
-                  contrasena: "",
-                });
-              }}
-            >
-              {opcion}
-            </button>
-          ))}
-        </div>
-
         <main className="contenido-profesor">
-          {seccionBotones === "Añadir" && (
-            <>
-              <h2>Registrar Nuevo Profesor</h2>
-              <form onSubmit={handleAgregar}>
-                <div className="grupo">
-                  <label>Nombre</label>
-                  <input type="text" name="nombre" value={profesor.nombre} onChange={handleChange} required />
-                </div>
-                <div className="grupo">
-                  <label>Apellido</label>
-                  <input type="text" name="apellido" value={profesor.apellido} onChange={handleChange} required />
-                </div>
-                <div className="grupo">
-                  <label>DNI</label>
-                  <input type="text" name="dni" value={profesor.dni} onChange={handleChange} required />
-                </div>
-                <div className="grupo">
-                  <label>Especialidad</label>
-                  <input type="text" name="especialidad" value={profesor.especialidad} onChange={handleChange} required />
-                </div>
-                <div className="grupo">
-                  <label>Contraseña</label>
-                  <input type="password" name="contrasena" value={profesor.contrasena} onChange={handleChange} required />
-                </div>
-                <button type="submit" className="btn-registrar">Registrar Profesor</button>
-              </form>
-            </>
+          <h2>Registrar Nuevo Profesor</h2>
+          {mensaje.text && mensaje.type !== "modal-error" && (
+            <div className={`mensaje ${mensaje.type === "success" ? "mensaje-exito" : "mensaje-error"}`}>
+              {mensaje.text}
+            </div>
           )}
-
-          {seccionBotones === "Modificar" && (
-            <>
-              <h2>Modificar Profesor</h2>
-              <div className="grupo buscar-dni">
-                <label>Buscar por DNI</label>
-                <input
-                  type="text"
-                  value={dniBuscar}
-                  onChange={(e) => setDniBuscar(e.target.value)}
-                  placeholder="Ingrese DNI"
-                />
-                <button className="btn-buscar" onClick={buscarProfesorPorDni} disabled={!dniBuscar}>
-                  Buscar
-                </button>
-                {errorBuscar && <p className="error">{errorBuscar}</p>}
-              </div>
-
-              {profesorEncontrado && (
-                <form onSubmit={handleModificar}>
-                  <div className="grupo">
-                    <label>Nombre</label>
-                    <input type="text" name="nombre" value={profesor.nombre} onChange={handleChange} required />
-                  </div>
-                  <div className="grupo">
-                    <label>Apellido</label>
-                    <input type="text" name="apellido" value={profesor.apellido} onChange={handleChange} required />
-                  </div>
-                  <div className="grupo">
-                    <label>DNI (no editable)</label>
-                    <input type="text" name="dni" value={profesor.dni} readOnly />
-                  </div>
-                  <div className="grupo">
-                    <label>Especialidad</label>
-                    <input type="text" name="especialidad" value={profesor.especialidad} onChange={handleChange} required />
-                  </div>
-                  <div className="grupo">
-                    <label>Contraseña</label>
-                    <input type="password" name="contrasena" value={profesor.contrasena} onChange={handleChange} required />
-                  </div>
-                  <button type="submit" className="btn-registrar">Guardar Cambios</button>
-                </form>
-              )}
-            </>
-          )}
-
-          {seccionBotones === "Eliminar" && (
-            <>
-              <h2>Eliminar Profesor</h2>
-              <form onSubmit={handleEliminar}>
-                <div className="grupo">
-                  <label>Ingrese DNI para eliminar</label>
-                  <input
-                    type="text"
-                    value={dniBuscar}
-                    onChange={(e) => setDniBuscar(e.target.value)}
-                    placeholder="DNI"
-                    required
-                  />
-                </div>
-                {errorBuscar && <p className="error">{errorBuscar}</p>}
-                <button type="submit" className="btn-eliminar">Eliminar Profesor</button>
-              </form>
-            </>
-          )}
-
-          {seccionBotones === "Ver" && (
-            <>
-              <h2>Lista de Profesores</h2>
-              <table className="tabla-profesores">
-                <thead>
-                  <tr>
-                    <th>DNI</th>
-                    <th>Nombre</th>
-                    <th>Apellido</th>
-                    <th>Especialidad</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {listaProfesores.length > 0 ? (
-                    listaProfesores.map((p) => (
-                      <tr key={p.dni}>
-                        <td>{p.dni}</td>
-                        <td>{p.nombre}</td>
-                        <td>{p.apellido}</td>
-                        <td>{p.especialidad}</td>
-                      </tr>
-                    ))
-                  ) : (
-                    <tr><td colSpan="4">No hay profesores para mostrar.</td></tr>
-                  )}
-                </tbody>
-              </table>
-            </>
-          )}
+          <form onSubmit={handleCrearProfesor}>
+            <div className="grupo">
+              <label htmlFor="nombre">Nombre</label>
+              <input type="text" id="nombre" name="nombre" value={profesor.nombre} onChange={handleChange} required />
+            </div>
+            <div className="grupo">
+              <label htmlFor="apellido">Apellido</label>
+              <input type="text" id="apellido" name="apellido" value={profesor.apellido} onChange={handleChange} required />
+            </div>
+            <div className="grupo">
+              <label htmlFor="dni">DNI</label>
+              <input type="text" id="dni" name="dni" value={profesor.dni} onChange={handleChange} required />
+            </div>
+            <div className="grupo">
+              <label htmlFor="contrasena">Contraseña</label>
+              <input type="password" id="contrasena" name="contrasena" value={profesor.contrasena} onChange={handleChange} required />
+            </div>
+            <button type="submit" className="btn-registrar">Crear Profesor</button>
+          </form>
         </main>
       </div>
+
+      {showAsignarModal && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <h3>Asignar Curso y Horario al Nuevo Profesor</h3>
+            {mensaje.text && mensaje.type === "error" && (
+              <div className="mensaje mensaje-error">
+                {mensaje.text}
+              </div>
+            )}
+            <form onSubmit={handleAsignarCursoHorario}>
+              <div className="grupo">
+                <label htmlFor="seccionCursoModal">Asignar Sección/Curso Disponible</label>
+                <select
+                  id="seccionCursoModal"
+                  value={seccionCursoSeleccionada}
+                  onChange={(e) => setSeccionCursoSeleccionada(e.target.value)}
+                  required
+                >
+                  <option value="">-- Seleccione una Sección/Curso --</option>
+                  {seccionesCursosDisponibles.length > 0 ? (
+                    seccionesCursosDisponibles.map((sc) => (
+                      <option key={sc.idSeccionCurso} value={sc.idSeccionCurso}>
+                        Sección: {sc.nombreSeccion} - Curso: {sc.nombreCurso}
+                      </option>
+                    ))
+                  ) : (
+                    <option disabled>Cargando... o No hay secciones/cursos disponibles</option>
+                  )}
+                </select>
+              </div>
+
+              <div className="grupo">
+                <label htmlFor="horarioModal">Asignar Horario Disponible</label>
+                <select
+                  id="horarioModal"
+                  value={horarioSeleccionado}
+                  onChange={(e) => setHorarioSeleccionado(e.target.value)}
+                  disabled={!seccionCursoSeleccionada || horariosDisponibles.length === 0}
+                  required
+                >
+                  <option value="">-- Seleccione un Horario --</option>
+                  {horariosDisponibles.length > 0 ? (
+                    horariosDisponibles.map((h) => (
+                      <option key={h.idHorario} value={h.idHorario}>
+                        {h.dia} {h.hora}
+                      </option>
+                    ))
+                  ) : (
+                    <option disabled>Seleccione una sección/curso para ver horarios</option>
+                  )}
+                </select>
+              </div>
+
+              <div className="modal-actions">
+                <button type="submit" className="btn-asignar">Asignar</button>
+                <button type="button" className="btn-cancelar" onClick={closeModal}>Cancelar</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

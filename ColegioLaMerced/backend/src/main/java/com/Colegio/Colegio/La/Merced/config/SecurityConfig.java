@@ -23,7 +23,17 @@ public class SecurityConfig {
                 .requestMatchers("/api/alumno/login").permitAll()
                 .requestMatchers("/api/alumnos/**").permitAll()
                 .requestMatchers("/api/profesores/login").permitAll()     
-                .requestMatchers("/api/profesores/**").permitAll()    
+                .requestMatchers("/api/profesores/**").permitAll()
+                .requestMatchers("/api/cursosunicos/**").permitAll()
+                .requestMatchers("/api/cursos/**").permitAll()
+                .requestMatchers("/api/seccioncursos/**").permitAll()
+                .requestMatchers("/api/asistencias/**").permitAll()
+                .requestMatchers("/api/horarios/**").permitAll()
+                .requestMatchers("/api/secciones/**").permitAll()
+                .requestMatchers("/api/administradores/**").permitAll()
+                .requestMatchers("/api/padres/**").permitAll()
+                .requestMatchers("/api/anuncios/**").permitAll()
+
                 .anyRequest().authenticated()
             );
 

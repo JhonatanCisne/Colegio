@@ -1,9 +1,8 @@
 package com.Colegio.Colegio.La.Merced.controller;
 
 import java.util.List;
-import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Autowired; // Necesario para los Optional de los métodos get/update
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,47 +27,46 @@ public class AlumnoController {
     @GetMapping
     public ResponseEntity<List<AlumnoDTO>> getAllAlumnos() {
         List<AlumnoDTO> alumnos = alumnoService.getAllAlumnos();
-        return ResponseEntity.ok(alumnos);
+        return new ResponseEntity<>(alumnos, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<AlumnoDTO> getAlumnoById(@PathVariable Integer id) {
         return alumnoService.getAlumnoById(id)
                 .map(alumnoDTO -> new ResponseEntity<>(alumnoDTO, HttpStatus.OK))
-                .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @PostMapping
     public ResponseEntity<AlumnoDTO> createAlumno(@RequestBody AlumnoDTO alumnoDTO) {
-        try {
-            AlumnoDTO createdAlumno = alumnoService.createAlumno(alumnoDTO);
-            return new ResponseEntity<>(createdAlumno, HttpStatus.CREATED);
-        } catch (IllegalArgumentException e) {
-            System.err.println("Error al crear alumno: " + e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
+        AlumnoDTO createdAlumno = alumnoService.createAlumno(alumnoDTO);
+        return new ResponseEntity<>(createdAlumno, HttpStatus.CREATED);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<AlumnoDTO> updateAlumno(@PathVariable Integer id, @RequestBody AlumnoDTO alumnoDTO) {
-        try {
-            Optional<AlumnoDTO> updatedAlumno = alumnoService.updateAlumno(id, alumnoDTO);
-            return updatedAlumno
-                    .map(dto -> new ResponseEntity<>(dto, HttpStatus.OK))
-                    .orElseGet(() -> new ResponseEntity<>(HttpStatus.NOT_FOUND));
-        } catch (IllegalArgumentException e) {
-            System.err.println("Error al actualizar alumno: " + e.getMessage());
-            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
-        }
+        return alumnoService.updateAlumno(id, alumnoDTO)
+                .map(updatedAlumno -> new ResponseEntity<>(updatedAlumno, HttpStatus.OK))
+                .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteAlumno(@PathVariable Integer id) {
-        boolean deleted = alumnoService.deleteAlumno(id);
-        if (deleted) {
+        if (alumnoService.deleteAlumno(id)) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    }
+
+    @DeleteMapping("/dni/{dni}")
+    public ResponseEntity<String> eliminarAlumnoPorDni(@PathVariable String dni) {
+        try {
+            alumnoService.eliminarAlumnoPorDni(dni);
+            return new ResponseEntity<>("Alumno con DNI " + dni + " y sus cursos asociados eliminados exitosamente.", HttpStatus.NO_CONTENT);
+        } catch (RuntimeException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Error interno del servidor al eliminar el alumno: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 }

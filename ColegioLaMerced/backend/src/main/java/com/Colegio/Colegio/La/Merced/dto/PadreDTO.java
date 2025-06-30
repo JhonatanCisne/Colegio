@@ -1,13 +1,24 @@
 package com.Colegio.Colegio.La.Merced.dto;
 
-public class PadreDTO{
+public class PadreDTO {
     private Integer idPadre;
-    private String dni;
     private String nombre;
     private String apellido;
-    private String telefono; 
-    private String correo;   
-    private String contrasena;
+    private String telefono;
+    private String dni;
+    private String correo;
+
+    public PadreDTO() {
+    }
+
+    public PadreDTO(Integer idPadre, String nombre, String apellido, String telefono, String dni, String correo) {
+        this.idPadre = idPadre;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.telefono = telefono;
+        this.dni = dni;
+        this.correo = correo;
+    }
 
     public Integer getIdPadre() {
         return idPadre;
@@ -15,14 +26,6 @@ public class PadreDTO{
 
     public void setIdPadre(Integer idPadre) {
         this.idPadre = idPadre;
-    }
-
-    public String getDni() {
-        return dni;
-    }
-
-    public void setDni(String dni) {
-        this.dni = dni;
     }
 
     public String getNombre() {
@@ -49,19 +52,19 @@ public class PadreDTO{
         this.telefono = telefono;
     }
 
+    public String getDni() {
+        return dni;
+    }
+
+    public void setDni(String dni) {
+        this.dni = dni;
+    }
+
     public String getCorreo() {
         return correo;
     }
 
     public void setCorreo(String correo) {
         this.correo = correo;
-    }
-
-    public String getContrasena() {
-        return contrasena;
-    }
-
-    public void setContrasena(String contrasena) {
-        this.contrasena = contrasena;
     }
 }

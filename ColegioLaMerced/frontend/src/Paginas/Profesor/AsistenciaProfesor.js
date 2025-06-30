@@ -1,113 +1,241 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import BarraDeNavegacionLateralProfesor from "../../Componentes/BarraDeNavegacionLateralProfesor";
 import { Bar } from "react-chartjs-2";
-import { Chart, BarElement, CategoryScale, LinearScale } from "chart.js";
+import { Chart, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from "chart.js";
+import axios from "axios";
 import "./AsistenciaProfesor.css";
 
-Chart.register(BarElement, CategoryScale, LinearScale);
-
-const nombresBase = [
-  "Ana López", "Carlos Pérez", "Lucía Torres", "Pedro Ramos", "Laura Gómez",
-  "Marco Torres", "Sofía Díaz", "Juan Castillo", "Valeria Ruiz", "Miguel Soto",
-  "Elena Paredes", "Andrés León", "Gabriela Salas", "Diego Vargas", "Camila Medina",
-  "Luis Ramos", "Martín Silva", "Paula Ríos", "Javier Cruz", "Rosa Flores",
-  "Daniela Vega", "Tomás Herrera", "Natalia Campos", "Emilio Bravo", "Julieta Mora",
-  "Samuel Peña", "Victoria Luna", "Esteban Rivas", "Renata Fuentes", "Ignacio Vidal",
-  "María Herrera", "Fernando Castro", "Patricia Aguirre", "Raúl Mendoza", "Cecilia Bravo",
-  "Oscar Salinas", "Mónica Cárdenas", "Hugo Zamora", "Silvia Guzmán", "Ricardo Ponce",
-  "Andrea Cabrera", "Pablo Lozano", "Lorena Espinoza", "Héctor Rojas", "Clara Navarro",
-  "Iván Molina", "Teresa Soto", "Fabián Quispe", "Rocío Vargas", "Álvaro Medina",
-  "Francisco Morales", "Isabel Castillo", "Santiago Peña", "Marina Duarte", "Felipe Guzmán",
-  "Camilo Herrera", "Alicia Romero", "Bruno Cordero", "Patricia León", "Matías Bravo",
-  "Antonia Salas", "Sebastián Ríos", "Agustina Paredes", "Cristóbal Soto", "Martina Luna",
-  "Emilia Vargas", "Benjamín Torres", "Josefina Ramos", "Tomás Salinas", "Valentina Cruz",
-  "Maximiliano Vidal", "Florencia Aguirre", "Ignacio Mendoza", "Catalina Zamora", "Vicente Espinoza",
-  "Gabriel Navarro", "Amanda Molina", "Simón Herrera", "Juliana Guzmán", "Lucas Ponce",
-  "Manuela Cabrera", "Emilio Lozano", "Paula Cárdenas", "Joaquín Quispe", "Renata Flores",
-  "Damián Rivas", "Bianca Fuentes", "Alejandro Campos", "Mía Bravo", "Lautaro Salas",
-  "Constanza León", "Facundo Torres", "Milagros Ramos", "Agustín Díaz", "Josefa Medina",
-  "Valentín Rojas", "Luciana Paredes", "Franco Salinas", "Camila Herrera", "Sofía Romero"
-];
-
-function generarNombresUnicosGlobal(cantidad, usados = new Set()) {
-  const nombres = [];
-  let idx = 0;
-  while (nombres.length < cantidad && idx < nombresBase.length) {
-    if (!usados.has(nombresBase[idx])) {
-      nombres.push(nombresBase[idx]);
-      usados.add(nombresBase[idx]);
-    }
-    idx++;
-  }
-  return nombres;
-}
-
-function generarAlumnos(baseId, nombres) {
-  return nombres.map((nombre, i) => ({
-    id: baseId + i,
-    nombre,
-    asistencia: [], 
-  }));
-}
+Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
 function AsistenciaProfesor() {
-  const cursosDelProfesor = [
-    { id: 1, nombre: "Matemática", seccion: "2° Sec" },
-    { id: 2, nombre: "Matemática", seccion: "3° Sec" },
-    { id: 3, nombre: "Matemática", seccion: "4° Pri" },
-    { id: 4, nombre: "Matemática", seccion: "5° Pri" },
-  ];
-
-  const usados = new Set();
-  const nombresCurso1 = generarNombresUnicosGlobal(20, usados);
-  const nombresCurso2 = generarNombresUnicosGlobal(20, usados);
-  const nombresCurso3 = generarNombresUnicosGlobal(20, usados);
-  const nombresCurso4 = generarNombresUnicosGlobal(20, usados);
-
-  const [alumnosPorCurso, setAlumnosPorCurso] = useState({
-    1: generarAlumnos(1, nombresCurso1),
-    2: generarAlumnos(101, nombresCurso2),
-    3: generarAlumnos(201, nombresCurso3),
-    4: generarAlumnos(301, nombresCurso4),
-  });
-
-  const [cursoSeleccionado, setCursoSeleccionado] = useState("");
-  const [fecha, setFecha] = useState(() => new Date().toISOString().slice(0, 10));
-  const [asistencia, setAsistencia] = useState({}); // {alumnoId: "Presente"|"Ausente"|"Tardanza"}
+  const [profesorId, setProfesorId] = useState(null);
+  const [cursosDelProfesor, setCursosDelProfesor] = useState([]);
+  const [seccionCursosData, setSeccionCursosData] = useState([]);
+  const [seccionesData, setSeccionesData] = useState([]);
+  const [cursosData, setCursosData] = useState([]);
+  const [alumnosData, setAlumnosData] = useState([]);
+  const [cursosUnicosData, setCursosUnicosData] = useState([]); // Datos de todos los CursoUnico
+  const [asistenciasGuardadas, setAsistenciasGuardadas] = useState([]); // Todas las asistencias registradas
+  
+  const [cursoSeleccionadoId, setCursoSeleccionadoId] = useState(""); // idSeccionCurso del selector
+  const [alumnosParaTomarAsistencia, setAlumnosParaTomarAsistencia] = useState([]); // Alumnos para la tabla
+  const [fecha, setFecha] = useState(() => new Date().toISOString().slice(0, 10)); // Fecha actual
+  const [asistenciaActual, setAsistenciaActual] = useState({}); // {idAlumno: "Presente"|"Ausente"|"Tardanza", ...} para la fecha y curso seleccionados
+  
   const [mostrarGrafica, setMostrarGrafica] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const guardarAsistencia = () => {
-    if (!cursoSeleccionado) return;
-    const nuevosAlumnos = alumnosPorCurso[cursoSeleccionado].map(alumno => {
-      const estado = asistencia[alumno.id] || "Presente";
+  // Función para cargar los datos iniciales de todas las APIs necesarias
+  useEffect(() => {
+    const loadInitialData = async () => {
+      try {
+        const profesorInfo = JSON.parse(localStorage.getItem('profesorLogged'));
+        if (!profesorInfo || !profesorInfo.idProfesor) {
+          setError("No se encontró ID de profesor. Inicie sesión nuevamente.");
+          setLoading(false);
+          return;
+        }
+        setProfesorId(profesorInfo.idProfesor);
+
+        const [
+          seccionCursosRes,
+          seccionesRes,
+          cursosRes,
+          alumnosRes,
+          cursosUnicosRes, // Necesitamos CursoUnico para asociar alumnos a secciones/cursos
+          asistenciasRes,  // Todas las asistencias registradas
+        ] = await Promise.all([
+          axios.get("http://localhost:8080/api/seccioncursos"),
+          axios.get("http://localhost:8080/api/secciones"),
+          axios.get("http://localhost:8080/api/cursos"),
+          axios.get("http://localhost:8080/api/alumnos"),
+          axios.get("http://localhost:8080/api/cursosunicos"), 
+          axios.get("http://localhost:8080/api/asistencias"),
+        ]);
+
+        setSeccionCursosData(seccionCursosRes.data);
+        setSeccionesData(seccionesRes.data);
+        setCursosData(cursosRes.data);
+        setAlumnosData(alumnosRes.data);
+        setCursosUnicosData(cursosUnicosRes.data); 
+        setAsistenciasGuardadas(asistenciasRes.data);
+
+        // Filtrar los cursos que imparte este profesor
+        const misSeccionCursos = seccionCursosRes.data.filter(
+          (sc) => sc.idProfesor === profesorInfo.idProfesor
+        );
+
+        const cursosParaMostrar = misSeccionCursos.map((sc) => {
+          const seccion = seccionesRes.data.find(
+            (s) => s.idSeccion === sc.idSeccion
+          );
+          const curso = cursosRes.data.find((c) => c.idCurso === sc.idCurso);
+          return {
+            idSeccionCurso: sc.idSeccionCurso,
+            nombre: curso ? curso.nombre : "Desconocido",
+            seccion: seccion
+              ? `${seccion.grado}° ${seccion.nombre}`
+              : "Desconocida",
+            idSeccion: sc.idSeccion,
+            idCurso: sc.idCurso,
+          };
+        });
+        setCursosDelProfesor(cursosParaMostrar);
+        setLoading(false);
+      } catch (err) {
+        console.error("Error al cargar datos iniciales:", err);
+        setError("Error al cargar los datos del sistema. Intente recargar.");
+        setLoading(false);
+      }
+    };
+
+    loadInitialData();
+  }, []);
+
+  // Efecto para cargar los alumnos de la sección seleccionada y su asistencia para la fecha
+  const loadAlumnosYAsistencia = useCallback(() => {
+    if (!cursoSeleccionadoId || !profesorId) {
+      setAlumnosParaTomarAsistencia([]);
+      setAsistenciaActual({});
+      return;
+    }
+
+    // 1. Encontrar los registros de CursoUnico para la seccionCurso seleccionada
+    const cursosUnicosEnSeccion = cursosUnicosData.filter(
+      (cu) => cu.idSeccionCurso === cursoSeleccionadoId
+    );
+
+    // 2. Obtener los detalles de los alumnos a partir de estos CursoUnicos
+    // Se mapea cada CursoUnico a un objeto de alumno con su id, nombre y el idCursoUnico
+    const alumnosEnEstaSeccion = cursosUnicosEnSeccion.map((cu) => {
+      const alumno = alumnosData.find((a) => a.idAlumno === cu.idAlumno);
       return {
-        ...alumno,
-        asistencia: [
-          ...alumno.asistencia,
-          { fecha, estado }
-        ]
+        id: cu.idAlumno, // ID del alumno para la key y para el estado de asistenciaActual
+        nombre: alumno ? `${alumno.nombre} ${alumno.apellido}` : "Alumno Desconocido",
+        idCursoUnico: cu.idCursoUnico, // Necesitamos el idCursoUnico para enviar al backend
       };
+    }).sort((a, b) => a.nombre.localeCompare(b.nombre)); // Opcional: ordenar por nombre
+
+    setAlumnosParaTomarAsistencia(alumnosEnEstaSeccion);
+
+    // 3. Cargar asistencia existente para la fecha y curso seleccionados
+    const estadosAsistencia = {};
+    asistenciasGuardadas.forEach((asist) => {
+      // Para cada asistencia guardada, buscamos su CursoUnico para ver a qué idSeccionCurso y idAlumno pertenece
+      const cuAsistencia = cursosUnicosData.find(cu => cu.idCursoUnico === asist.idCursoUnico);
+      
+      // Si el CursoUnico existe, su idSeccionCurso coincide y la fecha de la asistencia coincide
+      if (cuAsistencia && cuAsistencia.idSeccionCurso === cursoSeleccionadoId && asist.fecha === fecha) {
+        estadosAsistencia[cuAsistencia.idAlumno] = asist.estado;
+      }
     });
-    setAlumnosPorCurso({
-      ...alumnosPorCurso,
-      [cursoSeleccionado]: nuevosAlumnos
-    });
-    setAsistencia({});
+    setAsistenciaActual(estadosAsistencia);
+
+  }, [cursoSeleccionadoId, fecha, profesorId, alumnosData, cursosUnicosData, asistenciasGuardadas]);
+
+  useEffect(() => {
+    // Cuando el curso o la fecha cambian, recargamos los alumnos y la asistencia
+    loadAlumnosYAsistencia();
+  }, [loadAlumnosYAsistencia]);
+
+  // Manejador para cambiar el curso seleccionado
+  const handleCursoChange = (e) => {
+    setCursoSeleccionadoId(parseInt(e.target.value));
+    setMostrarGrafica(false); // Ocultar gráfica al cambiar de curso
   };
 
+  // Función para guardar o actualizar la asistencia individualmente
+  const guardarAsistencia = async () => {
+    if (!cursoSeleccionadoId || alumnosParaTomarAsistencia.length === 0) {
+      alert("Seleccione un curso y asegúrese de que haya alumnos matriculados.");
+      return;
+    }
+
+    try {
+        // Itera sobre cada alumno en la tabla para guardar/actualizar su asistencia
+        for (const alumno of alumnosParaTomarAsistencia) {
+            const estado = asistenciaActual[alumno.id] || "Presente"; // Por defecto "Presente"
+
+            // Busca si ya existe un registro de asistencia para este idCursoUnico y fecha
+            const existingAsistencia = asistenciasGuardadas.find(asist => 
+                asist.idCursoUnico === alumno.idCursoUnico && 
+                asist.fecha === fecha
+            );
+
+            const asistenciaData = {
+                idCursoUnico: alumno.idCursoUnico,
+                fecha: fecha,
+                estado: estado,
+            };
+
+            if (existingAsistencia) {
+                // Si existe, actualiza el registro (PUT)
+                await axios.put(`http://localhost:8080/api/asistencias/${existingAsistencia.idAsistencia}`, asistenciaData);
+            } else {
+                // Si no existe, crea un nuevo registro (POST)
+                await axios.post(`http://localhost:8080/api/asistencias`, asistenciaData);
+            }
+        }
+        
+        // Después de guardar todo, recarga todas las asistencias para que el estado global esté actualizado
+        // Esto es crucial para que la gráfica y futuras selecciones de fecha/curso reflejen los cambios
+        const updatedAsistenciasRes = await axios.get("http://localhost:8080/api/asistencias");
+        setAsistenciasGuardadas(updatedAsistenciasRes.data);
+        
+        // Re-ejecutar loadAlumnosYAsistencia para que la UI se actualice con los datos guardados
+        loadAlumnosYAsistencia(); 
+        
+        alert("Asistencia guardada con éxito.");
+    } catch (err) {
+      console.error("Error al guardar la asistencia:", err);
+      alert("Hubo un error al guardar la asistencia. Intente de nuevo.");
+    }
+  };
+
+  // Función para el resumen de asistencia para la gráfica
   const resumenAsistencia = () => {
-    if (!cursoSeleccionado) return { Presente: 0, Ausente: 0, Tardanza: 0 };
-    const alumnos = alumnosPorCurso[cursoSeleccionado];
+    if (!cursoSeleccionadoId) return { Presente: 0, Ausente: 0, Tardanza: 0 };
+
+    // Obtenemos los idCursoUnico que pertenecen al cursoSeleccionadoId
+    const idCursosUnicosDeEstaSeccion = cursosUnicosData
+      .filter(cu => cu.idSeccionCurso === cursoSeleccionadoId)
+      .map(cu => cu.idCursoUnico);
+
+    // Filtramos las asistencias guardadas que corresponden a estos idCursoUnico
+    const asistenciasDelCurso = asistenciasGuardadas.filter(asist => 
+        idCursosUnicosDeEstaSeccion.includes(asist.idCursoUnico)
+    );
+
     let Presente = 0, Ausente = 0, Tardanza = 0;
-    alumnos.forEach(alumno => {
-      alumno.asistencia.forEach(reg => {
-        if (reg.estado === "Presente") Presente++;
-        if (reg.estado === "Ausente") Ausente++;
-        if (reg.estado === "Tardanza") Tardanza++;
-      });
+    asistenciasDelCurso.forEach(reg => {
+      if (reg.estado === "Presente") Presente++;
+      else if (reg.estado === "Ausente") Ausente++;
+      else if (reg.estado === "Tardanza") Tardanza++;
     });
     return { Presente, Ausente, Tardanza };
   };
+
+  // Mensajes de carga y error
+  if (loading) {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <div className="spinner-border text-primary" role="status">
+          <span className="visually-hidden">Cargando...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="d-flex justify-content-center align-items-center vh-100">
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="d-flex">
@@ -115,33 +243,33 @@ function AsistenciaProfesor() {
       <div className="contenido-principal">
         <h2 className="mb-4" style={{fontWeight:700, color:"#1976d2"}}>Registro de Asistencia</h2>
 
-        <div className="mb-4 d-flex gap-2 flex-wrap">
-          <label className="fw-bold">Seleccionar curso y sección:</label>
+        <div className="mb-4 d-flex align-items-center flex-wrap gap-3">
+          <label className="fw-bold mb-0">Curso y Sección:</label>
           <select
-            className="form-select mt-1"
-            value={cursoSeleccionado}
-            onChange={(e) => setCursoSeleccionado(e.target.value)}
+            className="form-select"
+            value={cursoSeleccionadoId || ""}
+            onChange={handleCursoChange}
             style={{maxWidth: 320}}
           >
             <option value="">-- Selecciona un curso --</option>
             {cursosDelProfesor.map((curso) => (
-              <option key={curso.id} value={curso.id}>
+              <option key={curso.idSeccionCurso} value={curso.idSeccionCurso}>
                 {curso.nombre} - {curso.seccion}
               </option>
             ))}
           </select>
-          {cursoSeleccionado && (
+          
+          {cursoSeleccionadoId && (
             <button
               className="btn btn-outline-success"
-              style={{height: 38}}
               onClick={() => setMostrarGrafica(true)}
             >
-              <span role="img" aria-label="gráfica">📊</span> Ver gráfica de asistencia
+              <span role="img" aria-label="gráfica">📊</span> gráfica 
             </button>
           )}
         </div>
 
-        {cursoSeleccionado && (
+        {cursoSeleccionadoId && (
           <>
             <div className="mb-3 d-flex align-items-center gap-3">
               <label className="fw-bold mb-0">Fecha:</label>
@@ -153,75 +281,83 @@ function AsistenciaProfesor() {
                 style={{ maxWidth: 180 }}
               />
             </div>
-            <div className="table-responsive">
-              <table className="table table-bordered table-hover align-middle asistencia-table">
-                <thead className="table-primary">
-                  <tr>
-                    <th>Alumno</th>
-                    <th>
-                      <span role="img" aria-label="presente">✅</span> Presente
-                    </th>
-                    <th>
-                      <span role="img" aria-label="ausente">❌</span> Ausente
-                    </th>
-                    <th>
-                      <span role="img" aria-label="tardanza">⏰</span> Tardanza
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {alumnosPorCurso[cursoSeleccionado].map(alumno => (
-                    <tr key={alumno.id}>
-                      <td style={{fontWeight:500}}>{alumno.nombre}</td>
-                      <td>
-                        <input
-                          type="radio"
-                          name={`asistencia-${alumno.id}`}
-                          checked={asistencia[alumno.id] === "Presente" || !asistencia[alumno.id]}
-                          onChange={() => setAsistencia({ ...asistencia, [alumno.id]: "Presente" })}
-                          style={{width:22, height:22}}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="radio"
-                          name={`asistencia-${alumno.id}`}
-                          checked={asistencia[alumno.id] === "Ausente"}
-                          onChange={() => setAsistencia({ ...asistencia, [alumno.id]: "Ausente" })}
-                          style={{width:22, height:22}}
-                        />
-                      </td>
-                      <td>
-                        <input
-                          type="radio"
-                          name={`asistencia-${alumno.id}`}
-                          checked={asistencia[alumno.id] === "Tardanza"}
-                          onChange={() => setAsistencia({ ...asistencia, [alumno.id]: "Tardanza" })}
-                          style={{width:22, height:22}}
-                        />
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-            <div style={{display:"flex", justifyContent:"center"}}>
-              <button className="btn btn-success btn-lg mb-4 px-5" onClick={guardarAsistencia}>
-                Guardar asistencia
-              </button>
-            </div>
+            
+            {alumnosParaTomarAsistencia.length > 0 ? (
+                <div className="table-responsive">
+                    <table className="table table-bordered table-hover align-middle asistencia-table">
+                        <thead className="table-primary">
+                            <tr>
+                                <th>Alumno</th>
+                                <th>
+                                <span role="img" aria-label="presente">✅</span> Presente
+                                </th>
+                                <th>
+                                <span role="img" aria-label="ausente">❌</span> Ausente
+                                </th>
+                                <th>
+                                <span role="img" aria-label="tardanza">⏰</span> Tardanza
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {alumnosParaTomarAsistencia.map(alumno => (
+                                <tr key={alumno.id}>
+                                    <td style={{fontWeight:500}}>{alumno.nombre}</td>
+                                    <td>
+                                        <input
+                                            type="radio"
+                                            name={`asistencia-${alumno.id}`}
+                                            checked={asistenciaActual[alumno.id] === "Presente" || !asistenciaActual[alumno.id]}
+                                            onChange={() => setAsistenciaActual({ ...asistenciaActual, [alumno.id]: "Presente" })}
+                                            style={{width:22, height:22}}
+                                        />
+                                    </td>
+                                    <td>
+                                        <input
+                                            type="radio"
+                                            name={`asistencia-${alumno.id}`}
+                                            checked={asistenciaActual[alumno.id] === "Ausente"}
+                                            onChange={() => setAsistenciaActual({ ...asistenciaActual, [alumno.id]: "Ausente" })}
+                                            style={{width:22, height:22}}
+                                        />
+                                    </td>
+                                    <td>
+                                        <input
+                                            type="radio"
+                                            name={`asistencia-${alumno.id}`}
+                                            checked={asistenciaActual[alumno.id] === "Tardanza"}
+                                            onChange={() => setAsistenciaActual({ ...asistenciaActual, [alumno.id]: "Tardanza" })}
+                                            style={{width:22, height:22}}
+                                        />
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            ) : (
+                <p className="alert alert-info">No hay alumnos matriculados en este curso y sección.</p>
+            )}
+
+            {alumnosParaTomarAsistencia.length > 0 && (
+                <div style={{display:"flex", justifyContent:"center"}}>
+                    <button className="btn btn-success btn-lg mb-4 px-5" onClick={guardarAsistencia}>
+                        Guardar asistencia
+                    </button>
+                </div>
+            )}
 
             {mostrarGrafica && (
               <div className="modal-estadisticas">
                 <div className="modal-content">
-                  <h4 className="mb-3" style={{color:"#1976d2"}}>Resumen de asistencia</h4>
+                  <h4 className="mb-3" style={{color:"#1976d2"}}>Resumen de asistencia del curso</h4>
                   <div className="grafica-asistencia">
                     <Bar
                       data={{
-                        labels: ["Asistencias", "Faltas", "Tardanzas"],
+                        labels: ["Presente", "Ausente", "Tardanza"],
                         datasets: [
                           {
-                            label: "Cantidad",
+                            label: "Cantidad de registros",
                             data: [
                               resumenAsistencia().Presente,
                               resumenAsistencia().Ausente,
@@ -236,8 +372,34 @@ function AsistenciaProfesor() {
                       }}
                       options={{
                         responsive: true,
-                        plugins: { legend: { display: false } },
-                        scales: { y: { beginAtZero: true, precision: 0 } },
+                        plugins: {
+                          legend: {
+                            display: false
+                          },
+                          tooltip: {
+                            callbacks: {
+                              label: function(context) {
+                                let label = context.dataset.label || '';
+                                if (label) {
+                                  label += ': ';
+                                }
+                                if (context.parsed.y !== null) {
+                                  label += context.parsed.y;
+                                }
+                                return label;
+                              }
+                            }
+                          }
+                        },
+                        scales: {
+                          y: {
+                            beginAtZero: true,
+                            ticks: {
+                              stepSize: 1,
+                              precision: 0
+                            }
+                          }
+                        }
                       }}
                       height={260}
                       width={480}

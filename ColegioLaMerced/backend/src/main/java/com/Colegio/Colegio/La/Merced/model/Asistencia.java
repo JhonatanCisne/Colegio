@@ -6,11 +6,11 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToOne;
+import jakarta.persistence.ManyToOne; // ¡CAMBIO IMPORTANTE AQUÍ! De OneToOne a ManyToOne
 import jakarta.persistence.Table;
 
 @Entity
-@Table(name = "Asistencia")
+@Table(name = "Asistencia") // El nombre de la tabla en tu DB, mayúsculas/minúsculas según configuración
 public class Asistencia{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,14 +18,19 @@ public class Asistencia{
     private Integer idAsistencia;
 
     @Column(name = "Fecha", nullable = false, length=20)
-    private String fecha;
+    private String fecha; // Considera usar java.time.LocalDate
 
     @Column(name = "Estado", nullable = false, length=20)
     private String estado;
 
-    @OneToOne
+    // ----- LA CORRECCIÓN CLAVE -----
+    // Una Asistencia pertenece a UN CursoUnico (ManyToOne).
+    // Un CursoUnico puede tener MUCHAS Asistencias.
+    @ManyToOne // ¡Esto es lo que cambia!
     @JoinColumn(name = "ID_Curso_Unico", referencedColumnName = "ID_Curso_Unico", nullable=false)
     private CursoUnico cursoUnico;
+
+    // --- Métodos Getters y Setters ---
 
     public Integer getIdAsistencia() {
         return idAsistencia;
@@ -51,11 +56,13 @@ public class Asistencia{
         this.estado = estado;
     }
 
-    public CursoUnico getIdCursoUnico() {
+    // Nota: El nombre del getter/setter para 'cursoUnico' debe reflejar la propiedad
+    // No 'getIdCursoUnico()' sino 'getCursoUnico()' y 'setCursoUnico()'
+    public CursoUnico getCursoUnico() {
         return cursoUnico;
     }
 
-    public void setIdCursoUnico(CursoUnico cursoUnico) {
+    public void setCursoUnico(CursoUnico cursoUnico) {
         this.cursoUnico = cursoUnico;
     }
 
@@ -65,7 +72,7 @@ public class Asistencia{
                 "idAsistencia=" + idAsistencia +
                 ", fecha='" + fecha + '\'' +
                 ", estado='" + estado + '\'' +
-                ", idCursoUnico=" + cursoUnico +
+                ", cursoUnicoId=" + (cursoUnico != null ? cursoUnico.getIdCursoUnico() : "null") + // Muestra el ID del cursoUnico
                 '}';
     }
 }

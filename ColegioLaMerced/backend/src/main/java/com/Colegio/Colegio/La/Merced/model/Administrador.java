@@ -32,11 +32,4 @@ public class Administrador {
         this.contrasena = contrasena;
     }
 
-    @Override
-    public String toString() {
-        return "Administrador{" +
-                "usuario='" + usuario + '\'' +
-                ", contrasena='" + contrasena + '\'' +
-                '}';
-    }
 }
