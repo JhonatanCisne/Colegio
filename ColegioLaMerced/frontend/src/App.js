@@ -12,6 +12,10 @@ import LoginAdmin from "./Paginas/Administrador/LoginAdmin";
 import AdminAlumnos from "./Paginas/Administrador/AdminAlumnos";
 import AdminProfesores from "./Paginas/Administrador/AdminProfesores";
 
+import AdminAlumnoModificar from "./Paginas/Administrador/AdminAlumnoModificar";
+import AdminAlumnoEliminar from "./Paginas/Administrador/AdminAlumnoEliminar";
+import AdminAlumnoVer from "./Paginas/Administrador/AdminAlumnoVer";
+
 import AdminProfesoresModificar from "./Paginas/Administrador/AdminProfesoresModificar";
 import AdminProfesoresEliminar from "./Paginas/Administrador/AdminProfesoresEliminar";
 import AdminProfesoresVer from "./Paginas/Administrador/AdminProfesoresVer";
@@ -49,6 +53,10 @@ function Layout() {
           <Route path="/LoginAdmin" element={<LoginAdmin />} />
           <Route path="/AdminAlumnos" element={<AdminAlumnos />} />
           <Route path="/AdminProfesores" element={<AdminProfesores />} />
+
+          <Route path="/AdminAlumnoModificar" element={<AdminAlumnoModificar />} />
+          <Route path="/AdminAlumnoEliminar" element={<AdminAlumnoEliminar />} />
+          <Route path="/AdminAlumnoVer" element={<AdminAlumnoVer />} />
 
           <Route path="/AdminProfesoresModificar" element={<AdminProfesoresModificar />} />
           <Route path="/AdminProfesoresEliminar" element={<AdminProfesoresEliminar />} />
