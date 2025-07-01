@@ -1,294 +1,209 @@
-/* Solo blanco (#ffffff) y rojo escarlata (#8B0000) */
-
+/* --- ESTILOS PARA Asistencia.css --- */
 :root {
-  --rojo-escarlata: #8B0000;
-  --blanco: #ffffff;
+    --color-primario: #8A0303;
+    --color-fondo: #f4f6f9;
+    --color-blanco: #ffffff;
+    --color-texto-principal: #1e293b;
+    --color-texto-secundario: #64748b;
+    --color-borde: #e2e8f0;
+    --color-presente: #16a34a;
+    --color-tardanza: #f59e0b;
+    --color-ausente: #dc2626;
+    --sombra-suave: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    --font-principal: 'Inter', sans-serif;
 }
 
-/* Contenedor principal de la página de asistencia */
-.contenido-principal-asistencia-estudiante {
-  flex-grow: 1;
-  padding: 32px;
-  background-color: var(--blanco);
-  min-height: 100vh;
-  margin-left: 250px;
-  width: calc(100% - 250px);
-  box-sizing: border-box;
+.page-content {
+    flex-grow: 1;
+    padding: 2rem;
+    margin-left: 260px; /* Asume barra lateral de 260px */
 }
 
-/* Título de la sección */
-.contenido-principal-asistencia-estudiante h2 {
-  margin-bottom: 36px;
-  font-size: 2.5rem;
-  color: var(--rojo-escarlata);
-  text-align: center;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 1px;
+.page-header {
+    margin-bottom: 2rem;
 }
 
-/* Lista de cursos inscritos */
-.cursos-lista {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 28px;
-  margin-bottom: 40px;
-  justify-content: center;
+.page-header h2 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--color-texto-principal);
 }
 
-.curso-card {
-  background-color: var(--blanco);
-  border: 2px solid var(--rojo-escarlata);
-  border-radius: 16px;
-  padding: 28px 32px 56px 32px;
-  box-shadow: 0 6px 24px rgba(139,0,0,0.10);
-  cursor: pointer;
-  transition: all 0.25s;
-  width: 250px;
-  text-align: center;
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--rojo-escarlata);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  position: relative;
+.page-header p {
+    font-size: 1rem;
+    color: var(--color-texto-secundario);
+    margin-top: 0.25rem;
 }
 
-.curso-card:hover,
-.curso-card.selected {
-  background-color: var(--rojo-escarlata);
-  color: var(--blanco);
-  border-color: var(--rojo-escarlata);
-  box-shadow: 0 10px 32px rgba(139,0,0,0.18);
+/* --- Resumen General --- */
+.resumen-general-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
 }
 
-.curso-card span[role="img"] {
-  font-size: 2.6rem;
-  margin-bottom: 10px;
+.resumen-card {
+    background-color: var(--color-blanco);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    text-align: center;
+    box-shadow: var(--sombra-suave);
+    border: 1px solid var(--color-borde);
 }
 
-.curso-card .resumen-asistencia-card {
-  font-size: 1em;
-  font-weight: 700;
-  color: var(--rojo-escarlata);
-  margin-top: 18px;
-  padding-top: 12px;
-  border-top: 1px dashed var(--rojo-escarlata);
-  width: calc(100% - 20px);
-  position: absolute;
-  bottom: 12px;
-  left: 10px;
-  right: 10px;
-  background: var(--blanco);
+.resumen-card.porcentaje {
+    background-color: var(--color-primario);
+    color: var(--color-blanco);
 }
 
-.curso-card.selected .resumen-asistencia-card,
-.curso-card:hover .resumen-asistencia-card {
-  background: var(--rojo-escarlata);
-  color: var(--blanco);
-  border-top: 1px dashed var(--blanco);
+.resumen-value {
+    display: block;
+    font-size: 2.25rem;
+    font-weight: 700;
 }
 
-/* Contenedor de la tabla de asistencia detallada */
-.tab-content-asistencia {
-  background-color: var(--blanco);
-  border: 2px solid var(--rojo-escarlata);
-  border-radius: 16px;
-  padding: 32px;
-  box-shadow: 0 6px 24px rgba(139,0,0,0.10);
-  margin-top: 32px;
+.resumen-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-texto-secundario);
+}
+.resumen-card.porcentaje .resumen-label {
+    color: rgba(255, 255, 255, 0.8);
 }
 
-.tab-content-asistencia h4 {
-  font-size: 2rem;
-  color: var(--rojo-escarlata);
-  margin-bottom: 24px;
-  border-bottom: 2px solid var(--rojo-escarlata);
-  padding-bottom: 10px;
-  font-weight: 600;
+/* --- Layout Principal de Asistencia --- */
+.asistencia-layout {
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 1.5rem;
 }
 
-/* Estilos de la tabla de asistencia */
-.asistencia-table {
-  width: 100%;
-  margin-bottom: 1.5rem;
-  color: var(--rojo-escarlata);
-  border-collapse: separate;
-  border-spacing: 0;
-  border-radius: 12px;
-  overflow: hidden;
+.cursos-list-container, .detalle-asistencia-container {
+    background-color: var(--color-blanco);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: var(--sombra-suave);
+    border: 1px solid var(--color-borde);
 }
 
-.asistencia-table th,
-.asistencia-table td {
-  padding: 1rem;
-  vertical-align: middle;
-  border: 1px solid var(--rojo-escarlata);
-  text-align: center;
+.cursos-list-container h3, .detalle-asistencia-container h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 1rem 0;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-borde);
 }
 
-.asistencia-table thead th {
-  background-color: var(--rojo-escarlata);
-  font-weight: 700;
-  color: var(--blanco);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  border-bottom: 2px solid var(--rojo-escarlata);
+.curso-summary-card {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.2s ease-in-out;
 }
 
-.asistencia-table tbody tr:nth-of-type(even) {
-  background-color: var(--blanco);
+.curso-summary-card:hover {
+    background-color: var(--color-fondo);
 }
 
-.asistencia-table tbody tr:hover {
-  background-color: #fbeaea;
-  cursor: default;
+.curso-summary-card.selected {
+    background-color: var(--color-primario-claro);
+    border-color: var(--color-primario);
 }
 
-/* Colores para los estados de asistencia */
-.estado-presente {
-  color: var(--rojo-escarlata);
-  font-weight: bold;
+.curso-title {
+    display: block;
+    font-weight: 600;
+    color: var(--color-texto-principal);
 }
 
-.estado-tardanza {
-  color: var(--rojo-escarlata);
-  font-weight: bold;
+.curso-seccion {
+    font-size: 0.875rem;
+    color: var(--color-texto-secundario);
 }
 
-.estado-ausente {
-  color: var(--rojo-escarlata);
-  font-weight: bold;
+.curso-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.8rem;
+    margin-top: 0.75rem;
+    color: var(--color-texto-secundario);
 }
 
-/* Resumen final de asistencia */
-.resumen-final-asistencia {
-  background-color: var(--blanco);
-  border-radius: 14px;
-  padding: 28px;
-  margin-top: 32px;
-  border: 2px solid var(--rojo-escarlata);
-  text-align: left;
-  box-shadow: 0 4px 12px rgba(139,0,0,0.06);
+/* --- Timeline de Asistencia --- */
+.timeline {
+    max-height: 400px;
+    overflow-y: auto;
+    padding-right: 1rem;
 }
 
-.resumen-final-asistencia h5 {
-  color: var(--rojo-escarlata);
-  font-size: 1.5rem;
-  margin-bottom: 14px;
-  border-bottom: 1px solid var(--rojo-escarlata);
-  padding-bottom: 8px;
-  font-weight: 600;
+.timeline-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--color-borde);
+}
+.timeline-item:last-child {
+    border-bottom: none;
 }
 
-.resumen-final-asistencia p {
-  margin-bottom: 8px;
-  font-size: 1.1rem;
-  color: var(--rojo-escarlata);
-  line-height: 1.5;
+.timeline-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+.timeline-icon.presente { background-color: #dcfce7; color: var(--color-presente); }
+.timeline-icon.tardanza { background-color: #fef3c7; color: var(--color-tardanza); }
+.timeline-icon.ausente { background-color: #fee2e2; color: var(--color-ausente); }
+
+.timeline-content {
+    flex-grow: 1;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.resumen-final-asistencia .porcentaje-total {
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: var(--rojo-escarlata);
-  margin-top: 18px;
-  padding-top: 12px;
-  border-top: 2px dashed var(--rojo-escarlata);
-  text-align: center;
+.timeline-date {
+    font-weight: 500;
+    color: var(--color-texto-principal);
 }
 
-/* Loading spinner */
-.spinner-border {
-  color: var(--rojo-escarlata) !important;
-  width: 3rem;
-  height: 3rem;
+.timeline-status {
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+}
+.timeline-status.presente { background-color: #dcfce7; color: var(--color-presente); }
+.timeline-status.tardanza { background-color: #fef3c7; color: var(--color-tardanza); }
+.timeline-status.ausente { background-color: #fee2e2; color: var(--color-ausente); }
+
+.no-data-message {
+    text-align: center;
+    padding: 2rem;
+    color: var(--color-texto-secundario);
 }
 
-/* Alert styles */
-.alert-info {
-  background-color: var(--blanco);
-  color: var(--rojo-escarlata);
-  border: 2px solid var(--rojo-escarlata);
-  border-radius: 10px;
-  padding: 15px;
-  font-size: 1.1rem;
-  text-align: center;
-}
-
-.alert-danger {
-  background-color: var(--blanco);
-  color: var(--rojo-escarlata);
-  border: 2px solid var(--rojo-escarlata);
-  border-radius: 10px;
-  padding: 15px;
-  font-size: 1.1rem;
-  text-align: center;
-}
-
-/* Estilos responsivos */
+/* --- Responsividad --- */
 @media (max-width: 992px) {
-  .contenido-principal-asistencia-estudiante {
-    margin-left: 0;
-    width: 100%;
-    padding: 20px;
-  }
+    .asistencia-layout {
+        grid-template-columns: 1fr;
+    }
 }
 
 @media (max-width: 768px) {
-  .contenido-principal-asistencia-estudiante h2 {
-    font-size: 2rem;
-  }
-  .cursos-lista {
-    flex-direction: column;
-    align-items: center;
-  }
-  .curso-card {
-    width: 90%;
-    max-width: 320px;
-  }
-  .tab-content-asistencia h4 {
-    font-size: 1.5rem;
-  }
-  .resumen-final-asistencia h5 {
-    font-size: 1.2rem;
-  }
-  .resumen-final-asistencia p {
-    font-size: 1rem;
-  }
-}
-
-@media (max-width: 576px) {
-  .contenido-principal-asistencia-estudiante {
-    padding: 12px;
-  }
-  .contenido-principal-asistencia-estudiante h2 {
-    font-size: 1.4rem;
-    margin-bottom: 22px;
-  }
-  .cursos-lista {
-    gap: 12px;
-  }
-  .curso-card {
-    padding: 16px;
-    font-size: 1rem;
-  }
-  .curso-card span[role="img"] {
-    font-size: 1.6rem;
-  }
-  .tab-content-asistencia {
-    padding: 12px;
-  }
-  .asistencia-table th,
-  .asistencia-table td {
-    padding: 0.6rem;
-    font-size: 0.9rem;
-  }
-  .resumen-final-asistencia {
-    padding: 12px;
-  }
-  .resumen-final-asistencia .porcentaje-total {
-    font-size: 1rem;
-  }
+    .page-content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+    .resumen-general-grid {
+        grid-template-columns: 1fr 1fr;
+    }
 }

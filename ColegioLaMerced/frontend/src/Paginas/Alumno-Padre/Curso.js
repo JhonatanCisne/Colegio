@@ -1,132 +1,203 @@
 import React, { useState, useEffect } from "react";
+import { Bar } from 'react-chartjs-2';
+import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import BarraDeNavegacionLateralEstudiante from "../../Componentes/BarraDeNavegacionLateral";
 import "./Curso.css";
+import axios from "axios";
+
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 function Curso() {
   const [cursosInscritos, setCursosInscritos] = useState([]);
-  const [notasEstudiante, setNotasEstudiante] = useState({});
   const [cursoSeleccionado, setCursoSeleccionado] = useState(null);
-  const examenes = ["examen1", "examen2", "examen3", "examen4", "examenFinal"]; // Nombres de los campos en tu API
+  const [nombreAlumno, setNombreAlumno] = useState("");
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const examenes = ["examen1", "examen2", "examen3", "examen4", "examenFinal"];
+  const examenesLabels = ["Examen 1", "Examen 2", "Examen 3", "Examen 4", "Examen Final"];
+
+  const promedioNotasCurso = (notas) => {
+    if (!notas) return 0;
+    const valores = examenes.map(examen => notas[examen]).filter((n) => typeof n === 'number');
+    if (valores.length === 0) return 0;
+    const suma = valores.reduce((a, b) => a + b, 0);
+    return parseFloat((suma / valores.length).toFixed(2));
+  };
 
   useEffect(() => {
     const cargarCursosYNotas = async () => {
       const alumnoId = localStorage.getItem('alumnoId');
       if (!alumnoId) {
-        console.error("No se encontró el ID del alumno en localStorage.");
-        // Podrías redirigir al login aquí si es necesario
+        setError("No se encontró el ID del alumno. Por favor, inicie sesión.");
+        setLoading(false);
         return;
       }
 
       try {
-        // 1. Obtener los cursos únicos del alumno
-        const resCursosUnicos = await fetch('http://localhost:8080/api/cursosunicos');
-        if (!resCursosUnicos.ok) throw new Error('Error al cargar cursos únicos.');
-        const allCursosUnicos = await resCursosUnicos.json();
-        const cursosDelAlumno = allCursosUnicos.filter(cursoUnico => cursoUnico.idAlumno === parseInt(alumnoId));
+        const alumnoRes = await axios.get(`http://localhost:8080/api/alumnos/${alumnoId}`);
+        setNombreAlumno(`${alumnoRes.data.nombre} ${alumnoRes.data.apellido}`);
+        const [cursosUnicosRes, seccionCursosRes, cursosRes, seccionesRes, profesoresRes] = await Promise.all([
+          axios.get('http://localhost:8080/api/cursosunicos'),
+          axios.get('http://localhost:8080/api/seccioncursos'),
+          axios.get('http://localhost:8080/api/cursos'),
+          axios.get('http://localhost:8080/api/secciones'),
+          axios.get('http://localhost:8080/api/profesores')
+        ]);
 
-        // 2. Obtener la información de SeccionCurso y Curso para cada curso del alumno
-        const resSeccionCursos = await fetch('http://localhost:8080/api/seccioncursos');
-        if (!resSeccionCursos.ok) throw new Error('Error al cargar secciones de cursos.');
-        const allSeccionCursos = await resSeccionCursos.json();
+        const allCursosUnicos = cursosUnicosRes.data;
+        const allSeccionCursos = seccionCursosRes.data;
+        const allCursos = cursosRes.data;
+        const allSecciones = seccionesRes.data;
+        const allProfesores = profesoresRes.data;
 
-        const resCursos = await fetch('http://localhost:8080/api/cursos');
-        if (!resCursos.ok) throw new Error('Error al cargar nombres de cursos.');
-        const allCursos = await resCursos.json();
+        const cursosDelAlumno = allCursosUnicos.filter(
+          (cu) => cu.idAlumno === parseInt(alumnoId)
+        );
+
+        if (cursosDelAlumno.length === 0) {
+          setCursosInscritos([]);
+          setLoading(false);
+          return;
+        }
 
         const cursosFormateados = cursosDelAlumno.map(cursoUnico => {
-          const seccionCurso = allSeccionCursos.find(sc => sc.idSeccionCurso === cursoUnico.idSeccionCurso);
-          const curso = seccionCurso ? allCursos.find(c => c.idCurso === seccionCurso.idCurso) : null;
+          const seccionCurso = allSeccionCursos.find(
+            (sc) => sc.idSeccionCurso === cursoUnico.idSeccionCurso
+          ) || {};
+          const cursoInfo = allCursos.find((c) => c.idCurso === seccionCurso.idCurso) || { nombre: 'Curso Desconocido' };
+          const seccionInfo = allSecciones.find((s) => s.idSeccion === seccionCurso.idSeccion) || { grado: '', nombre: 'Desconocida' };
+          const profesorInfo = allProfesores.find((p) => p.idProfesor === seccionCurso.idProfesor) || { nombre: 'No asignado' };
           
-          return {
-            id: cursoUnico.idCursoUnico, // Usamos idCursoUnico como ID principal para el listado y notas
-            nombre: curso ? curso.nombre : 'Curso Desconocido',
-            seccion: seccionCurso ? `Sección ${seccionCurso.idSeccion}` : 'Sección Desconocida', // Asume que idSeccion es el nombre de la sección
-            notas: {
+          const notas = {
               examen1: cursoUnico.examen1,
               examen2: cursoUnico.examen2,
               examen3: cursoUnico.examen3,
               examen4: cursoUnico.examen4,
               examenFinal: cursoUnico.examenFinal,
-            }
+          };
+
+          return {
+            id: cursoUnico.idCursoUnico,
+            nombre: cursoInfo.nombre,
+            seccion: `${seccionInfo.grado}° ${seccionInfo.nombre}`,
+            profesor: `${profesorInfo.nombre} ${profesorInfo.apellido}`,
+            promedio: promedioNotasCurso(notas),
+            notas: notas
           };
         });
         
-        setCursosInscritos(cursosFormateados.map(c => ({ id: c.id, nombre: c.nombre, seccion: c.seccion })));
+        setCursosInscritos(cursosFormateados);
 
-        const notasMap = {};
-        cursosFormateados.forEach(curso => {
-          notasMap[curso.id] = curso.notas;
-        });
-        setNotasEstudiante(notasMap);
+        if (cursosFormateados.length > 0) {
+          setCursoSeleccionado(cursosFormateados[0]);
+        }
 
       } catch (error) {
         console.error("Error al cargar los datos del estudiante:", error);
+        setError("Error al cargar los datos. Intente de nuevo más tarde.");
+      } finally {
+        setLoading(false);
       }
     };
 
     cargarCursosYNotas();
   }, []);
 
-  const seleccionarCurso = (idCurso) => {
-    setCursoSeleccionado(idCurso);
+  const seleccionarCurso = (curso) => {
+    setCursoSeleccionado(curso);
   };
 
-  const promedioNotasCurso = (notas) => {
-    const valores = examenes.map(examen => notas[examen]).filter((n) => !isNaN(n) && n !== null);
-    if (valores.length === 0) return "-";
-    const suma = valores.reduce((a, b) => a + b, 0);
-    return (suma / valores.length).toFixed(2);
+  const notasActuales = cursoSeleccionado ? cursoSeleccionado.notas : null;
+
+  const chartData = {
+    labels: examenesLabels,
+    datasets: [
+      {
+        label: 'Calificaciones',
+        data: notasActuales ? examenes.map(examen => notasActuales[examen] ?? 0) : [],
+        backgroundColor: 'rgba(138, 3, 3, 0.6)',
+        borderColor: 'rgba(138, 3, 3, 1)',
+        borderWidth: 1,
+        borderRadius: 5,
+      },
+    ],
   };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      title: { display: true, text: 'Rendimiento en el Curso' },
+    },
+    scales: { y: { beginAtZero: true, max: 20 } },
+  };
+
+  if (loading) {
+    return (
+        <div className="d-flex">
+            <BarraDeNavegacionLateralEstudiante nombre={nombreAlumno} />
+            <div className="page-content">Cargando cursos...</div>
+        </div>
+    );
+  }
+
+  if (error) {
+    return (
+        <div className="d-flex">
+            <BarraDeNavegacionLateralEstudiante nombre={nombreAlumno} />
+            <div className="page-content">{error}</div>
+        </div>
+    );
+  }
 
   return (
     <div className="d-flex">
-      <BarraDeNavegacionLateralEstudiante />
-      <div className="contenido-principal">
-        <h2 className="mb-4" style={{ fontWeight: 700, color: "#8B0000" }}>
-          Mis Cursos
-        </h2>
+      <BarraDeNavegacionLateralEstudiante nombre={nombreAlumno} />
+      <div className="page-content">
+        <header className="page-header">
+          <h2>Mis Cursos y Calificaciones</h2>
+          <p>Selecciona un curso para ver tus notas y progreso.</p>
+        </header>
 
-        <div className="cursos-lista">
-          {cursosInscritos.map((curso) => (
+        <div className="cursos-selector-grid">
+          {cursosInscritos.length > 0 ? cursosInscritos.map((curso) => (
             <div
               key={curso.id}
-              className={`curso-card ${cursoSeleccionado === curso.id ? "selected" : ""}`}
-              onClick={() => seleccionarCurso(curso.id)}
+              className={`curso-selector-card ${cursoSeleccionado?.id === curso.id ? "selected" : ""}`}
+              onClick={() => seleccionarCurso(curso)}
             >
-              <span role="img" aria-label="libro">📘</span> {curso.nombre}
-              <br />
-              <span style={{ fontSize: "0.95em", color: "#8B0000" }}>{curso.seccion}</span>
+              <div className="curso-card-header">
+                <h3 className="curso-card-title">{curso.nombre}</h3>
+                <p className="curso-card-profesor">{curso.profesor}</p>
+              </div>
+              <div className="curso-card-body">
+                <p className="curso-card-promedio-label">Promedio</p>
+                <p className="curso-card-promedio-valor">{curso.promedio}</p>
+              </div>
             </div>
-          ))}
+          )) : <p>No estás inscrito en ningún curso.</p>}
         </div>
 
-        {cursoSeleccionado && (
-          <div className="tab-content">
-            <h4>Notas del curso: {cursosInscritos.find(c => c.id === cursoSeleccionado)?.nombre}</h4>
-            <table className="table table-striped">
-              <thead>
-                <tr>
-                  {examenes.map((examen) => (
-                    <th key={examen}>{examen.replace('examen', 'Examen ')}</th>
-                  ))}
-                  <th>Promedio</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  {examenes.map((examen) => (
-                    <td key={examen}>
-                      {notasEstudiante[cursoSeleccionado]?.[examen] !== undefined && notasEstudiante[cursoSeleccionado]?.[examen] !== null
-                        ? notasEstudiante[cursoSeleccionado][examen]
-                        : "-"}
-                    </td>
-                  ))}
-                  <td>
-                    {promedioNotasCurso(notasEstudiante[cursoSeleccionado] || {})}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+        {cursoSeleccionado && notasActuales && (
+          <div className="notas-details-card">
+            <h3 className="notas-header">Calificaciones de: {cursoSeleccionado.nombre}</h3>
+            <div className="grades-layout">
+              <div className="grades-grid">
+                {examenes.map((examen, index) => (
+                  <div className="grade-card" key={examen}>
+                    <h4>{examenesLabels[index]}</h4>
+                    <p className={`grade-score ${notasActuales[examen] < 11 ? 'desaprobado' : 'aprobado'}`}>{notasActuales[examen] ?? "-"}</p>
+                  </div>
+                ))}
+                <div className={`grade-card promedio ${cursoSeleccionado.promedio < 11 ? 'desaprobado' : 'aprobado'}`}>
+                  <h4>Promedio Final</h4>
+                  <p className="grade-score">{cursoSeleccionado.promedio}</p>
+                </div>
+              </div>
+              <div className="chart-container">
+                  <Bar options={chartOptions} data={chartData} />
+              </div>
+            </div>
           </div>
         )}
       </div>

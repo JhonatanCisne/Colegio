@@ -1,18 +1,20 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import 'bootstrap/dist/css/bootstrap.min.css';
 import './Login.css';
+import logo from '../../Imagenes/Escudo.png'; 
 
 function Login() {
   const navigate = useNavigate();
   const [dni, setDni] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const manejarSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    setIsLoading(true);
 
     try {
       const response = await axios.get('http://localhost:8080/api/profesores');
@@ -36,43 +38,78 @@ function Login() {
         setError('DNI o contraseña incorrectos');
       }
     } catch (err) {
+      console.error("Error de Conexión:", err);
       setError('Ocurrió un error al intentar cargar los datos. Asegúrate de que el servidor esté funcionando.');
+    } finally {
+        setIsLoading(false);
     }
   };
 
   return (
-    <div className="login-contenedor d-flex vh-100">
-      <div className="imagen-login d-none d-md-block col-md-6" />
+    <div className="login-container">
+        {/* Lado izquierdo: Branding y Logo (se oculta en móvil) */}
+        <div className="branding-side">
+            <div className="logo-container">
+                <img src={logo} alt="Escudo del Colegio" className="logo-monochrome" />
+            </div>
+            <h1>I.E.P. Nuestra Señora de</h1>
+            <h2>LA MERCED</h2>
+            <p className="footer-text">"La Merced un colegio que inspira, motiva y prepara a los líderes del mañana"</p>
+        </div>
 
-      <div className="formulario-contenedor col-12 col-md-6 d-flex justify-content-center align-items-center">
-        <form className="formulario-login w-75 p-4 rounded shadow" onSubmit={manejarSubmit}>
-          <h2 className="text-center mb-4">Iniciar Sesión del Profesor</h2>
+        {/* Lado derecho: Formulario de Login */}
+        <div className="form-side">
+            <div className="form-wrapper">
+                {/* NOTA: Se ha eliminado el encabezado móvil para una vista más limpia */}
+                
+                <div className="form-box">
+                    <h2>Acceso para Docentes</h2>
+                    <p className="form-subtitle">Por favor, ingrese sus credenciales.</p>
 
-          {error && <div className="alert alert-danger">{error}</div>}
+                    {error && <div className="error-message">{error}</div>}
 
-          <input
-            type="text"
-            placeholder="DNI"
-            className="form-control mb-3"
-            value={dni}
-            onChange={(e) => setDni(e.target.value)}
-            required
-          />
+                    <form onSubmit={manejarSubmit}>
+                        <div className="form-group">
+                            <label htmlFor="dni">Usuario Docente / DNI</label>
+                            <input 
+                                type="text" 
+                                id="dni" 
+                                name="dni" 
+                                placeholder="Ingresa tu DNI"
+                                value={dni}
+                                onChange={(e) => setDni(e.target.value)}
+                                required
+                            />
+                        </div>
 
-          <input
-            type="password"
-            placeholder="Contraseña"
-            className="form-control mb-3"
-            value={contrasena}
-            onChange={(e) => setContrasena(e.target.value)}
-            required
-          />
+                        <div className="form-group">
+                            <label htmlFor="password">Contraseña</label>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="••••••••"
+                                value={contrasena}
+                                onChange={(e) => setContrasena(e.target.value)}
+                                required
+                            />
+                        </div>
 
-          <button type="submit" className="btn btn-escarlata w-100">
-            Entrar
-          </button>
-        </form>
-      </div>
+                        <button type="submit" className="submit-button" disabled={isLoading}>
+                            {isLoading ? 'Verificando...' : 'Ingresar'}
+                        </button>
+                    </form>
+
+                    <div className="forgot-password">
+                        <a href="#">¿Olvidaste tu contraseña?</a>
+                    </div>
+                </div>
+
+                <p className="copyright">
+                    &copy;{new Date().getFullYear()} I.E.P. Nuestra Señora de la Merced. Todos los derechos reservados.
+                </p>
+            </div>
+        </div>
     </div>
   );
 }

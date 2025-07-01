@@ -1,17 +1,22 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import './LoginAlumno.css';
+import './LoginAlumno.css'; // Asegúrate de que este archivo CSS se importe
+
+// --- Importa tu imagen del escudo ---
+// Asegúrate de que la ruta sea correcta según la estructura de tu proyecto.
+import logo from '../../Imagenes/Escudo.png'; 
 
 function LoginAlumno() {
   const navigate = useNavigate();
   const [correo, setCorreo] = useState('');
   const [contrasena, setContrasena] = useState('');
   const [error, setError] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const manejarSubmit = async (e) => {
     e.preventDefault();
     setError(null);
+    setIsLoading(true);
 
     try {
       const response = await fetch('http://localhost:8080/api/alumnos');
@@ -33,44 +38,75 @@ function LoginAlumno() {
     } catch (err) {
       setError('Hubo un problema al intentar iniciar sesión. Inténtalo de nuevo más tarde.');
       console.error('Error de autenticación:', err);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   return (
-    <div className="login-contenedor d-flex vh-100">
-      <div className="imagen-login d-none d-md-block col-md-6" />
+    <div className="login-container">
+        {/* Lado izquierdo: Branding y Logo (se oculta en móvil) */}
+        <div className="branding-side">
+            <div className="logo-container">
+                <img src={logo} alt="Escudo del Colegio" className="logo-monochrome" />
+            </div>
+            <h1>I.E.P. Nuestra Señora de</h1>
+            <h2>LA MERCED</h2>
+            <p className="footer-text">"La Merced un colegio que inspira, motiva y prepara a los líderes del mañana"</p>
+        </div>
 
-      <div className="formulario-contenedor col-12 col-md-6 d-flex justify-content-center align-items-center">
-        <form className="formulario-login w-75 p-4 rounded shadow" onSubmit={manejarSubmit}>
-          <div className="text-center mb-4">
-            <h2 className="mt-2">Iniciar Sesión del Alumno</h2>
-          </div>
+        {/* Lado derecho: Formulario de Login */}
+        <div className="form-side">
+            <div className="form-wrapper">
+                
+                <div className="form-box">
+                    <h2>Acceso para Alumnos</h2>
+                    <p className="form-subtitle">Por favor, ingrese sus credenciales.</p>
 
-          {error && <div className="alert alert-danger">{error}</div>}
+                    {error && <div className="error-message">{error}</div>}
 
-          <input
-            type="email"
-            placeholder="Correo electrónico"
-            className="form-control mb-3"
-            value={correo}
-            onChange={(e) => setCorreo(e.target.value)}
-            required
-          />
+                    <form onSubmit={manejarSubmit}>
+                        <div className="form-group">
+                            <label htmlFor="correo">Correo Electrónico</label>
+                            <input 
+                                type="email" 
+                                id="correo" 
+                                name="correo" 
+                                placeholder="tucorreo@ejemplo.com"
+                                value={correo}
+                                onChange={(e) => setCorreo(e.target.value)}
+                                required
+                            />
+                        </div>
 
-          <input
-            type="password"
-            placeholder="Contraseña"
-            className="form-control mb-3"
-            value={contrasena}
-            onChange={(e) => setContrasena(e.target.value)}
-            required
-          />
+                        <div className="form-group">
+                            <label htmlFor="password">Contraseña</label>
+                            <input 
+                                type="password" 
+                                id="password" 
+                                name="password" 
+                                placeholder="••••••••"
+                                value={contrasena}
+                                onChange={(e) => setContrasena(e.target.value)}
+                                required
+                            />
+                        </div>
 
-          <button type="submit" className="btn btn-escarlata w-100">
-            Entrar
-          </button>
-        </form>
-      </div>
+                        <button type="submit" className="submit-button" disabled={isLoading}>
+                            {isLoading ? 'Verificando...' : 'Ingresar'}
+                        </button>
+                    </form>
+
+                    <div className="forgot-password">
+                        <a href="#">¿Olvidaste tu contraseña?</a>
+                    </div>
+                </div>
+
+                <p className="copyright">
+                    &copy;{new Date().getFullYear()} I.E.P. Nuestra Señora de la Merced. Todos los derechos reservados.
+                </p>
+            </div>
+        </div>
     </div>
   );
 }

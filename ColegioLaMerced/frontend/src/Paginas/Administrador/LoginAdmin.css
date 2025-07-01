@@ -1,77 +1,196 @@
-.login-admin-container {
-  height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--blanco, #ffffff);
+:root {
+    --color-primario: #8A0303; /* Guinda */
+    --color-primario-oscuro: #6a0202;
+    --color-acento: #D4AF37;   /* Dorado */
+    --color-fondo: #f7fafc;
+    --color-texto-principal: #333;
+    --color-texto-secundario: #555;
+    --color-blanco: #fff;
+    --color-borde: #ddd;
+    --color-error-fondo: #fde8e8;
+    --color-error-texto: #9b2c2c;
+    --color-error-borde: #f5c6cb;
 }
 
-.login-card {
-  width: 100%;
-  max-width: 400px;
-  background-color: #ffffff;
-  border-radius: 1.2rem;
-  box-shadow: 0 8px 32px rgba(139,0,0,0.12);
-  border: 2px solid #8B0000;
-  padding: 32px 28px 28px 28px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    font-family: 'Inter', sans-serif;
+    background-color: var(--color-fondo);
 }
 
-.login-card h2 {
-  font-weight: bold;
-  color: #8B0000;
-  margin-bottom: 24px;
-  font-size: 2rem;
-  text-align: center;
+/* --- CONTENEDOR PRINCIPAL --- */
+.login-container {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
 }
 
-/* Ejemplo de campos de formulario y botón para mantener coherencia visual */
-.login-card input[type="text"],
-.login-card input[type="password"] {
-  width: 100%;
-  padding: 12px;
-  margin-bottom: 18px;
-  border: 1.5px solid #8B0000;
-  border-radius: 6px;
-  background: #ffffff;
-  color: #8B0000;
-  font-size: 1rem;
-  outline: none;
-  transition: border 0.2s;
+/* --- LADO IZQUIERDO (BRANDING) --- */
+.branding-side {
+    width: 50%;
+    background-color: var(--color-primario);
+    color: var(--color-blanco);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    position: relative;
+    box-sizing: border-box;
 }
 
-.login-card input[type="text"]:focus,
-.login-card input[type="password"]:focus {
-  border: 2px solid #8B0000;
+.branding-side .logo-container {
+    width: 12rem; /* 192px */
+    height: auto;
+    margin-bottom: 1.5rem;
 }
 
-.login-card button {
-  width: 100%;
-  padding: 12px;
-  background: #8B0000;
-  color: #ffffff;
-  border: none;
-  border-radius: 6px;
-  font-size: 1.1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-  margin-top: 8px;
+.logo-monochrome {
+    filter: brightness(0) invert(1); /* Convierte la imagen a blanco */
 }
 
-.login-card button:hover {
-  background: #a30000;
+.branding-side h1 {
+    font-size: 2.25rem; /* 36px */
+    font-weight: 700;
+    text-align: center;
+    margin: 0 0 0.5rem 0;
 }
 
-@media (max-width: 500px) {
-  .login-card {
-    padding: 18px 8px 18px 8px;
-    max-width: 95vw;
-  }
-  .login-card h2 {
-    font-size: 1.3rem;
-  }
+.branding-side h2 {
+    font-size: 3.75rem; /* 60px */
+    font-weight: 700;
+    text-align: center;
+    color: var(--color-acento);
+    margin: 0;
 }
 
+.branding-side .footer-text {
+    position: absolute;
+    bottom: 1.5rem;
+    font-size: 0.875rem;
+    opacity: 0.7;
+}
+
+/* --- LADO DERECHO (FORMULARIO) --- */
+.form-side {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centra el formulario por defecto */
+    padding: 3rem;
+    background-image: url('https://www.transparenttextures.com/patterns/school.png');
+    background-color: var(--color-fondo);
+    box-sizing: border-box;
+}
+
+.form-wrapper {
+    width: 100%;
+    max-width: 28rem;
+}
+
+.form-box {
+    background-color: var(--color-blanco);
+    padding: 2rem;
+    border-radius: 1.5rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+}
+
+.form-box h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--color-texto-principal);
+    margin-bottom: 0.25rem;
+    text-align: left; /* Alineado a la izquierda en desktop */
+}
+
+.form-box .form-subtitle {
+    color: var(--color-texto-secundario);
+    margin-bottom: 1.5rem;
+    text-align: left; /* Alineado a la izquierda en desktop */
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #374151;
+    margin-bottom: 0.5rem;
+}
+
+.form-group input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    background-color: #f9fafb;
+    border: 1px solid var(--color-borde);
+    transition: border-color 0.3s, box-shadow 0.3s;
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--color-acento);
+    box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.3);
+}
+
+.submit-button {
+    width: 100%;
+    background-color: var(--color-primario);
+    color: var(--color-blanco);
+    font-weight: 700;
+    padding: 0.75rem 1rem;
+    border: none;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.submit-button:hover {
+    background-color: var(--color-primario-oscuro);
+}
+
+.submit-button:disabled {
+    background-color: #999;
+    cursor: not-allowed;
+}
+
+.copyright {
+    text-align: center;
+    color: #6b7280;
+    font-size: 0.75rem;
+    margin-top: 2rem;
+}
+
+.error-message {
+    background-color: var(--color-error-fondo);
+    color: var(--color-error-texto);
+    border: 1px solid var(--color-error-borde);
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    margin-bottom: 1rem;
+    text-align: center;
+    font-size: 0.875rem;
+}
+
+
+/* --- RESPONSIVIDAD --- */
+@media (max-width: 1024px) {
+    .branding-side {
+        display: none; /* Ocultar el panel izquierdo en tablets y móviles */
+    }
+    .form-side {
+        width: 100%;
+        padding: 1.5rem;
+    }
+    /* Centrar los títulos solo en la vista móvil */
+    .form-box h2, .form-box .form-subtitle {
+        text-align: center;
+    }
+}

@@ -1,36 +1,207 @@
-/* Contenedor general para asegurar full height */
-.login-contenedor {
-  width: 100vw;
-}
+:root {
+            --color-primario: #8A0303; /* Guinda */
+            --color-primario-oscuro: #6a0202;
+            --color-acento: #D4AF37;   /* Dorado */
+            --color-fondo: #f7fafc;
+            --color-texto-principal: #333;
+            --color-texto-secundario: #555;
+            --color-blanco: #fff;
+            --color-borde: #ddd;
+        }
 
-/* Imagen ocupa toda la altura y fondo ajustado */
-.imagen-login {
-  height: 100vh;
-  background-image: url('../../Imagenes/Escudo.jpg');
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-}
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--color-fondo);
+        }
 
-/* Contenedor del formulario con fondo claro */
-.formulario-contenedor {
-  background-color: #f1f1eb;
-}
+        /* --- CONTENEDOR PRINCIPAL --- */
+        .login-container {
+            display: flex;
+            min-height: 100vh;
+            width: 100%;
+        }
 
-/* Formulario con sombra, bordes redondeados y máximo ancho */
-.formulario-login {
-  max-width: 400px;
-  width: 100%;
-}
+        /* --- LADO IZQUIERDO (BRANDING) --- */
+        .branding-side {
+            width: 50%;
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            position: relative;
+        }
 
-/* Botón rojo escarlata */
-.btn-escarlata {
-  background-color: #FF2400; /* rojo escarlata */
-  color: white;
-  border: none;
-  transition: background-color 0.3s ease;
-}
+        .branding-side .logo-container {
+            width: 12rem; /* 192px */
+            height: auto;
+            margin-bottom: 1.5rem;
+        }
 
-.btn-escarlata:hover {
-  background-color: #cc1a00;
+        .branding-side h1 {
+            font-size: 2.25rem; /* 36px */
+            font-weight: 700;
+            text-align: center;
+            margin: 0 0 0.5rem 0;
+        }
+
+        .branding-side h2 {
+            font-size: 3.75rem; /* 60px */
+            font-weight: 700;
+            text-align: center;
+            color: var(--color-acento);
+            margin: 0;
+        }
+
+        .branding-side .footer-text {
+            position: absolute;
+            bottom: 1.5rem;
+            font-size: 0.875rem; /* 14px */
+            opacity: 0.7;
+        }
+
+        /* --- LADO DERECHO (FORMULARIO) --- */
+        .form-side {
+            width: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 3rem;
+            background-image: url('https://www.transparenttextures.com/patterns/school.png');
+            background-color: var(--color-fondo);
+        }
+
+        .form-wrapper {
+            width: 100%;
+            max-width: 28rem; /* 448px */
+        }
+        
+        .form-box {
+            background-color: var(--color-blanco);
+            padding: 2rem;
+            border-radius: 1.5rem; /* 24px */
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
+        .form-box h2 {
+            font-size: 1.5rem; /* 24px */
+            font-weight: 700;
+            color: var(--color-texto-principal);
+            margin-bottom: 0.25rem;
+        }
+
+        .form-box .form-subtitle {
+            color: var(--color-texto-secundario);
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-group label {
+            display: block;
+            font-size: 0.875rem; /* 14px */
+            font-weight: 700;
+            color: #374151;
+            margin-bottom: 0.5rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            box-sizing: border-box;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem; /* 8px */
+            background-color: #f9fafb;
+            border: 1px solid var(--color-borde);
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--color-acento);
+            box-shadow: 0 0 0 2px rgba(212, 175, 55, 0.3);
+        }
+
+        .submit-button {
+            width: 100%;
+            background-color: var(--color-primario);
+            color: var(--color-blanco);
+            font-weight: 700;
+            padding: 0.75rem 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .submit-button:hover {
+            background-color: var(--color-primario-oscuro);
+        }
+
+        .forgot-password {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .forgot-password a {
+            font-size: 0.875rem;
+            color: var(--color-primario);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .forgot-password a:hover {
+            color: var(--color-primario-oscuro);
+        }
+
+        .copyright {
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.75rem; /* 12px */
+            margin-top: 2rem;
+        }
+
+        /* --- RESPONSIVIDAD --- */
+        .mobile-header {
+            display: none; /* Oculto por defecto */
+        }
+
+        @media (max-width: 1024px) {
+            .branding-side {
+                display: none; /* Ocultar el panel izquierdo en tablets y móviles */
+            }
+            .form-side {
+                width: 100%;
+                padding: 1.5rem;
+            }
+            .mobile-header {
+                display: block; /* Mostrar el logo en móvil */
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+            .mobile-header .logo-container {
+                width: 8rem; /* 128px */
+                margin: 0 auto 1rem auto;
+            }
+            .mobile-header h1 {
+                font-size: 1.5rem;
+                color: var(--color-texto-principal);
+            }
+            .mobile-header p {
+                color: var(--color-texto-secundario);
+            }
+        }
+        /* --- AJUSTES SOLO PARA PANTALLAS GRANDES (DESKTOP) --- */
+@media (min-width: 1025px) {
+    .branding-side .logo-container {
+        position: relative;
+        left: -10rem; /* Mueve el logo solo en pantallas de más de 1024px */
+    }
 }

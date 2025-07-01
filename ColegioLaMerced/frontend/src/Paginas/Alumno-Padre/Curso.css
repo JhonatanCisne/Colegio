@@ -1,149 +1,208 @@
-/* CursoEstudiante.css - Modificado para tema Rojo Oscuro sin azul */
-
-/* Variables para colores */
+/* --- ESTILOS PARA Curso.css --- */
 :root {
-  --dark-red-primary: #8B0000; /* Rojo Oscuro principal (Dark Red) */
-  --dark-red-secondary: #A52A2A; /* Un tono más claro de marrón/rojo */
-  --dark-red-light: #CD5C5C; /* Un rojo ladrillo, más claro */
-  --dark-red-background-subtle: #FFF0F0; /* Fondo muy claro rojizo */
-  --dark-red-border-light: #FFC0CB; /* Rosa claro para bordes sutiles */
-  --dark-red-selected-bg: #FFDCDC; /* Fondo para elemento seleccionado */
-  --neutral-gray: #e0e0e0; /* Gris neutro para bordes y separadores */
-  --dark-text: #343a40; /* Texto oscuro principal */
-  --medium-text: #555; /* Texto medio */
+    --color-primario: #8A0303;
+    --color-primario-claro: #fdf2f2;
+    --color-acento: #D4AF37;
+    --color-fondo: #f8f9fa;
+    --color-blanco: #ffffff;
+    --color-texto-principal: #212529;
+    --color-texto-secundario: #6c757d;
+    --color-borde: #dee2e6;
+    --color-aprobado: #D4AF37;
+    --color-desaprobado: #dc3545;
+    --sombra-suave: 0 4px 8px rgba(0,0,0,0.05);
+    --font-principal: 'Inter', sans-serif;
 }
 
-/* Contenedor principal de la página */
-.contenido-principal {
-  flex-grow: 1; /* Permite que el contenido principal ocupe el espacio restante */
-  padding: 20px;
-  background-color: #f8f9fa; /* Un fondo claro para la página */
-  min-height: 100vh; /* Asegura que ocupe al menos la altura completa de la vista */
-  margin-left: 250px; /* Ajusta esto si tu barra lateral tiene un ancho diferente */
-  width: calc(100% - 250px); /* Ajusta para que ocupe el espacio restante */
-  box-sizing: border-box; /* Incluye padding y borde en el ancho total */
+.page-content {
+    flex-grow: 1;
+    padding: 2.5rem;
+    margin-left: 260px;
+    background-color: var(--color-fondo);
 }
 
-/* Estilos para el título de la sección */
-.contenido-principal h2 {
-  margin-bottom: 30px;
-  font-size: 2.2rem;
-  color: var(--dark-red-primary); /* Título en rojo oscuro */
-  text-align: center;
+.page-header {
+    margin-bottom: 2.5rem;
 }
 
-/* Contenedor de la lista de cursos */
-.cursos-lista {
-  display: flex;
-  flex-wrap: wrap; /* Permite que las tarjetas se envuelvan a la siguiente línea */
-  gap: 20px; /* Espacio entre las tarjetas */
-  margin-bottom: 30px;
-  justify-content: center; /* Centra las tarjetas */
+.page-header h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--color-texto-principal);
 }
 
-/* Estilos individuales de la tarjeta de curso */
-.curso-card {
-  background-color: #ffffff;
-  border: 1px solid var(--neutral-gray);
-  border-radius: 12px;
-  padding: 20px 25px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  cursor: pointer;
-  transition: all 0.3s ease;
-  width: 220px; /* Ancho fijo para las tarjetas */
-  text-align: center;
-  font-size: 1.15rem;
-  font-weight: 600;
-  color: #333;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+.page-header p {
+    font-size: 1.1rem;
+    color: var(--color-texto-secundario);
+    margin-top: 0.5rem;
 }
 
-.curso-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.15);
-  border-color: var(--dark-red-border-light); /* Borde rojo claro en hover */
+/* --- Grid para seleccionar cursos --- */
+.cursos-selector-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2.5rem;
 }
 
-.curso-card.selected {
-  border-color: var(--dark-red-primary); /* Borde rojo oscuro para el curso seleccionado */
-  box-shadow: 0 4px 15px rgba(139, 0, 0, 0.3); /* Sombra rojiza más pronunciada */
-  background-color: var(--dark-red-selected-bg); /* Fondo ligeramente rojo para el seleccionado */
-  color: var(--dark-red-secondary); /* Color de texto más oscuro */
+.curso-selector-card {
+    background-color: var(--color-blanco);
+    border: 1px solid var(--color-borde);
+    border-radius: 0.75rem;
+    box-shadow: var(--sombra-suave);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    overflow: hidden;
 }
 
-.curso-card span[role="img"] {
-  font-size: 2rem;
-  margin-bottom: 8px;
+.curso-selector-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 16px rgba(0,0,0,0.1);
 }
 
-/* Estilos para el contenido de la pestaña (donde se muestran las notas) */
-.tab-content {
-  background-color: #ffffff;
-  border: 1px solid var(--neutral-gray);
-  border-radius: 12px;
-  padding: 25px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-  margin-top: 20px;
+.curso-selector-card.selected {
+    border-left: 5px solid var(--color-primario);
+    background-color: var(--color-primario-claro);
 }
 
-.tab-content h4 {
-  font-size: 1.6rem;
-  color: var(--dark-text);
-  margin-bottom: 20px;
-  border-bottom: 2px solid var(--neutral-gray);
-  padding-bottom: 10px;
+.curso-card-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--color-borde);
 }
 
-/* Estilos de la tabla de notas */
-.table {
-  width: 100%;
-  margin-bottom: 1rem;
-  color: #212529;
-  border-collapse: collapse; /* Asegura que los bordes de la tabla se colapsen */
+.curso-card-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--color-texto-principal);
+    margin: 0;
 }
 
-.table th,
-.table td {
-  padding: 0.75rem;
-  vertical-align: top;
-  border-top: 1px solid #dee2e6;
-  text-align: center; /* Centra el texto en las celdas */
+.curso-card-profesor {
+    font-size: 0.9rem;
+    color: var(--color-texto-secundario);
+    margin: 0.25rem 0 0 0;
 }
 
-.table thead th {
-  vertical-align: bottom;
-  border-bottom: 2px solid #dee2e6;
-  background-color: #f2f2f2; /* Fondo para el encabezado de la tabla */
-  font-weight: 700;
-  color: #495057;
+.curso-card-body {
+    padding: 1.5rem;
+    text-align: center;
 }
 
-.table-striped tbody tr:nth-of-type(odd) {
-  background-color: rgba(0, 0, 0, 0.05); /* Rayas para filas impares */
+.curso-card-promedio-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    color: var(--color-texto-secundario);
+    margin: 0;
 }
 
-/* Asegura que el promedio se vea bien */
-.table td:last-child {
-  font-weight: 600;
-  color: var(--dark-red-primary); /* Promedio en rojo oscuro */
+.curso-card-promedio-valor {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--color-primario);
+    margin: 0.25rem 0 0 0;
 }
 
-/* Estilos responsivos (opcional pero recomendado) */
+/* --- Contenedor de detalles de notas --- */
+.notas-details-card {
+    background-color: var(--color-blanco);
+    border-radius: 0.75rem;
+    padding: 2rem;
+    box-shadow: var(--sombra-suave);
+    border: 1px solid var(--color-borde);
+}
+
+.notas-header {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-texto-principal);
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-borde);
+}
+
+.grades-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: center;
+}
+
+.grades-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+}
+
+.grade-card {
+    background-color: var(--color-fondo);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    text-align: center;
+}
+
+.grade-card h4 {
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--color-texto-secundario);
+    margin: 0 0 0.5rem 0;
+    text-transform: uppercase;
+}
+
+.grade-score {
+    font-size: 2.25rem;
+    font-weight: 700;
+    margin: 0;
+}
+
+.grade-score.aprobado {
+    color: var(--color-aprobado);
+}
+
+.grade-score.desaprobado {
+    color: var(--color-desaprobado);
+}
+
+.grade-card.promedio {
+    grid-column: 1 / -1;
+    color: var(--color-blanco);
+}
+
+.grade-card.promedio.aprobado {
+    background-color: var(--color-aprobado);
+}
+
+.grade-card.promedio.desaprobado {
+    background-color: var(--color-desaprobado);
+}
+
+.grade-card.promedio h4,
+.grade-card.promedio .grade-score {
+    color: var(--color-blanco);
+}
+
+.chart-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 250px;
+}
+
+/* --- Responsividad --- */
+@media (max-width: 1200px) {
+    .grades-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
 @media (max-width: 768px) {
-  .contenido-principal {
-    margin-left: 0; /* Deshabilita el margen para pantallas pequeñas si la barra lateral se oculta */
-    width: 100%;
-  }
-
-  .cursos-lista {
-    flex-direction: column; /* Apila las tarjetas en pantallas pequeñas */
-    align-items: center; /* Centra las tarjetas apiladas */
-  }
-
-  .curso-card {
-    width: 90%; /* Ajusta el ancho de las tarjetas para pantallas pequeñas */
-  }
+    .page-content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+    .cursos-selector-grid {
+        grid-template-columns: 1fr;
+    }
+    .grades-grid {
+        grid-template-columns: 1fr;
+    }
 }
