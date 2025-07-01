@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import "../Administrador/AdminProfesores.css"; // Asegúrate de que la ruta CSS sea correcta
+import "../Administrador/AdminProfesores.css";
 
 const AdminProfesoresModificar = () => {
   const navigate = useNavigate();
@@ -22,15 +22,23 @@ const AdminProfesoresModificar = () => {
 
   const [profesorSeccionesCursosAsignados, setProfesorSeccionesCursosAsignados] = useState([]);
 
-  // Mapas para almacenar nombres de entidades y detalles completos de horarios
   const [seccionesMap, setSeccionesMap] = useState(new Map());
   const [cursosMap, setCursosMap] = useState(new Map());
-  const [horariosFullMap, setHorariosFullMap] = useState(new Map()); // Almacena objetos completos de horario
+  const [horariosFullMap, setHorariosFullMap] = useState(new Map());
 
-  // Carga inicial de todos los datos de referencia (secciones, cursos, horarios)
+  // Función para cargar la lista de profesores (reutilizable)
+  const fetchProfesores = useCallback(async () => {
+    try {
+      const response = await axios.get("http://localhost:8080/api/profesores");
+      setProfesores(response.data);
+    } catch (err) {
+      setMensaje({ type: "error", text: "Error al cargar la lista de profesores." });
+    }
+  }, []); // Sin dependencias, ya que solo carga la lista de profesores
+
   useEffect(() => {
+    // Carga los datos de nombres iniciales (secciones, cursos, horarios)
     const fetchNombresData = async () => {
-      console.log("useEffect: Cargando datos de referencia (secciones, cursos, horarios)...");
       try {
         const [seccionesRes, cursosRes, horariosRes] = await Promise.all([
           axios.get("http://localhost:8080/api/secciones"),
@@ -40,34 +48,19 @@ const AdminProfesoresModificar = () => {
         setSeccionesMap(new Map(seccionesRes.data.map(s => [s.idSeccion, s.nombre])));
         setCursosMap(new Map(cursosRes.data.map(c => [c.idCurso, c.nombre])));
         setHorariosFullMap(new Map(horariosRes.data.map(h => [h.idHorario, h])));
-        console.log("useEffect: Datos de referencia cargados exitosamente.");
       } catch (error) {
-        console.error("Error al cargar nombres de secciones, cursos u horarios:", error);
         setMensaje({ type: "error", text: "Error al cargar datos iniciales." });
       }
     };
     fetchNombresData();
-  }, []); // Se ejecuta una sola vez al montar el componente
+  }, []);
 
-  // Carga inicial de la lista de profesores para el dropdown
   useEffect(() => {
-    const fetchProfesores = async () => {
-      console.log("useEffect: Cargando lista de profesores...");
-      try {
-        const response = await axios.get("http://localhost:8080/api/profesores");
-        setProfesores(response.data);
-        console.log("useEffect: Lista de profesores cargada.");
-      } catch (err) {
-        console.error("Error al obtener profesores:", err);
-        setMensaje({ type: "error", text: "Error al cargar la lista de profesores." });
-      }
-    };
+    // Carga la lista de profesores al montar el componente
     fetchProfesores();
-  }, []); // Se ejecuta una sola vez al montar el componente
+  }, [fetchProfesores]); // `fetchProfesores` es una dependencia del useCallback
 
-  // Función para cargar los detalles del profesor seleccionado y sus asignaciones
   const loadProfesorAndAssignments = useCallback(async () => {
-    console.log("loadProfesorAndAssignments: Iniciando carga de datos para profesor:", selectedProfesorId);
     setMensaje({ type: "", text: "" });
 
     if (!selectedProfesorId) {
@@ -75,18 +68,14 @@ const AdminProfesoresModificar = () => {
       setProfesorSeccionesCursosAsignados([]);
       setSeccionesCursosDisponibles([]);
       setHorariosDisponibles([]);
-      console.log("loadProfesorAndAssignments: No hay profesor seleccionado, limpiando estados.");
       return;
     }
 
     try {
-      // 1. Obtener detalles del profesor
       const profesorRes = await axios.get(`http://localhost:8080/api/profesores/${selectedProfesorId}`);
-      const { estado, ...restOfProfesorData } = profesorRes.data; // Ignorar el campo 'estado' si existe
+      const { estado, ...restOfProfesorData } = profesorRes.data;
       setProfesorToModify(restOfProfesorData);
-      console.log("loadProfesorAndAssignments: Datos de profesor cargados:", restOfProfesorData);
 
-      // 2. Obtener TODAS las secciones/cursos y horarios para la actualización más reciente
       const [seccionCursosRes, horariosRes] = await Promise.all([
         axios.get("http://localhost:8080/api/seccioncursos"),
         axios.get("http://localhost:8080/api/horarios"),
@@ -94,70 +83,47 @@ const AdminProfesoresModificar = () => {
 
       const allSeccionCursos = seccionCursosRes.data;
       const allHorarios = horariosRes.data;
-      console.log("loadProfesorAndAssignments: Todas las secciones/cursos y horarios obtenidos.");
 
-      // 3. Actualizar horariosFullMap con los datos más frescos antes de usarlos
-      // Esto es crucial para que el mapa refleje los cambios recientes de asignación/desasignación
       const updatedHorariosFullMap = new Map(allHorarios.map(h => [h.idHorario, h]));
-      setHorariosFullMap(updatedHorariosFullMap); // Actualiza el estado global de horariosFullMap
+      setHorariosFullMap(updatedHorariosFullMap);
 
-      // 4. Filtrar y mapear las asignaciones del profesor actual
       const asignadosSC = allSeccionCursos
         .filter(sc => sc.idProfesor === parseInt(selectedProfesorId))
         .map(sc => ({
           ...sc,
           nombreSeccion: seccionesMap.get(sc.idSeccion) || `Sección ID: ${sc.idSeccion}`,
           nombreCurso: cursosMap.get(sc.idCurso) || `Curso ID: ${sc.idCurso}`,
-          // Usar updatedHorariosFullMap (la versión más reciente) para encontrar los detalles del horario
           horarioDetalles: sc.idHorario ? updatedHorariosFullMap.get(sc.idHorario) : null
         }));
       setProfesorSeccionesCursosAsignados(asignadosSC);
-      console.log("loadProfesorAndAssignments: Asignaciones de profesor actualizadas:", asignadosSC);
 
-      // 5. Filtrar secciones/cursos disponibles (sin profesor asignado)
       const disponiblesSC = allSeccionCursos.filter(sc => sc.idProfesor === null || sc.idProfesor === 0 || sc.idProfesor === undefined);
       setSeccionesCursosDisponibles(disponiblesSC.map(sc => ({
         ...sc,
         nombreSeccion: seccionesMap.get(sc.idSeccion) || `Sección ID: ${sc.idSeccion}`,
         nombreCurso: cursosMap.get(sc.idCurso) || `Curso ID: ${sc.idCurso}`
       })));
-      console.log("loadProfesorAndAssignments: Secciones/cursos disponibles actualizadas.");
 
-      // 6. Filtrar horarios disponibles (sin profesor asignado)
-      // Nota: los horarios disponibles para el dropdown de "Asignar Nueva Sección/Curso y Horario"
-      // se filtran en otro useEffect basado en `seccionCursoParaAsignar`.
-      // Esta línea solo actualiza el estado general de horarios disponibles.
       setHorariosDisponibles(allHorarios.filter(h => h.idProfesor === null || h.idProfesor === 0 || h.idProfesor === undefined));
-      console.log("loadProfesorAndAssignments: Horarios disponibles generales actualizados.");
 
     } catch (err) {
-      console.error("loadProfesorAndAssignments: Error al cargar datos del profesor o asignaciones:", err);
       setMensaje({ type: "error", text: "Error al cargar los detalles del profesor y sus asignaciones." });
     }
-  }, [selectedProfesorId, seccionesMap, cursosMap]); // Dependencias de useCallback. horariosFullMap se actualiza DENTRO de la función.
+  }, [selectedProfesorId, seccionesMap, cursosMap]);
 
-  // useEffect principal que dispara loadProfesorAndAssignments
-  // Se ejecutará cuando cambie el profesor seleccionado o cuando los mapas de nombres se carguen inicialmente.
   useEffect(() => {
-    console.log("useEffect (selectedProfesorId, mapas): Estado de dependencias:", { selectedProfesorId, seccionesMapSize: seccionesMap.size, cursosMapSize: cursosMap.size, horariosFullMapSize: horariosFullMap.size });
-    // Solo llamar a loadProfesorAndAssignments si hay un profesor seleccionado y los mapas de nombres están cargados
     if (selectedProfesorId && seccionesMap.size > 0 && cursosMap.size > 0) {
       loadProfesorAndAssignments();
     } else if (!selectedProfesorId) {
-       // Limpiar estados si no hay profesor seleccionado
-       setProfesorToModify({ nombre: "", apellido: "", dni: "", contrasena: "" });
-       setProfesorSeccionesCursosAsignados([]);
-       setSeccionesCursosDisponibles([]);
-       setHorariosDisponibles([]);
+      setProfesorToModify({ nombre: "", apellido: "", dni: "", contrasena: "" });
+      setProfesorSeccionesCursosAsignados([]);
+      setSeccionesCursosDisponibles([]);
+      setHorariosDisponibles([]);
     }
-  }, [selectedProfesorId, seccionesMap, cursosMap, loadProfesorAndAssignments]); // horariosFullMap se añadió aquí como dependencia para forzar un re-render si cambia, aunque loadProfesorAndAssignments ya lo actualiza. Es una medida extra si el render no se dispara.
+  }, [selectedProfesorId, seccionesMap, cursosMap, loadProfesorAndAssignments]);
 
-
-  // useEffect para filtrar los horarios disponibles en el dropdown "Asignar Nueva Sección/Curso y Horario"
-  // Esto se ejecuta cuando cambia la sección/curso seleccionada para asignar o cuando cambia el mapa de horarios.
   useEffect(() => {
-    console.log("useEffect (seccionCursoParaAsignar, horariosFullMap): Filtrando horarios para asignación...");
-    setHorarioParaAsignar(""); // Limpiar la selección de horario al cambiar la sección/curso
+    setHorarioParaAsignar("");
     if (!seccionCursoParaAsignar) {
       setHorariosDisponibles([]);
       return;
@@ -170,34 +136,27 @@ const AdminProfesoresModificar = () => {
         );
 
         if (seccionCursoObj) {
-          // Filtrar horarios que estén "libres" y que correspondan a la misma sección
           const disponibles = Array.from(horariosFullMap.values()).filter(
             (h) =>
               (h.idProfesor === null || h.idProfesor === 0 || h.idProfesor === undefined) &&
               h.idSeccion === seccionCursoObj.idSeccion
           );
           setHorariosDisponibles(disponibles);
-          console.log("useEffect: Horarios disponibles para asignación:", disponibles);
         } else {
             setHorariosDisponibles([]);
-            console.log("useEffect: Sección/curso seleccionada para asignar no encontrada.");
         }
       } catch (err) {
-        console.error("Error al obtener horarios para nueva asignación:", err);
         setMensaje({ type: "error", text: "Error al cargar horarios disponibles para asignación." });
       }
     };
 
-    // Solo ejecutar si los mapas de datos de referencia están cargados
-    if (horariosFullMap.size > 0) { // Dependemos de que horariosFullMap ya esté poblado
+    if (horariosFullMap.size > 0) {
       fetchHorariosParaNuevaAsignacion();
     }
   }, [seccionCursoParaAsignar, seccionesCursosDisponibles, horariosFullMap]);
 
-
   const handleProfesorSelectChange = (e) => {
     setSelectedProfesorId(e.target.value);
-    console.log("Profesor seleccionado:", e.target.value);
   };
 
   const handleProfesorDetailsChange = (e) => {
@@ -214,19 +173,25 @@ const AdminProfesoresModificar = () => {
     }
 
     try {
-      const { estado, ...profesorDataToSend } = profesorToModify; // Asegurarse de no enviar 'estado'
+      const profesorDataToSend = {
+        ...profesorToModify,
+        estado: "activo"
+      };
+
       await axios.put(`http://localhost:8080/api/profesores/${selectedProfesorId}`, profesorDataToSend);
       setMensaje({ type: "success", text: "Datos del profesor actualizados exitosamente." });
-      loadProfesorAndAssignments(); // Refrescar la UI
-      console.log("Datos del profesor actualizados. Disparando loadProfesorAndAssignments().");
+      loadProfesorAndAssignments(); // Esto carga los detalles del profesor modificado
+      fetchProfesores(); // ¡ACTUALIZA LA LISTA DE PROFESORES EN EL SELECT!
     } catch (err) {
-      console.error("Error al actualizar profesor:", err);
-      setMensaje({ type: "error", text: `Error al actualizar profesor: ${err.message || err.response?.data || "Verifique la consola."}` });
+      let errorMessage = `Error al actualizar profesor: ${err.message || err.response?.data || "Verifique la consola."}`;
+      if (err.response) {
+        errorMessage = `Error ${err.response.status}: ${err.response.data || err.message}`;
+      }
+      setMensaje({ type: "error", text: errorMessage });
     }
   };
 
   const handleUnassignCombined = async (seccionCursoId) => {
-    console.log("Intentando desasignar sección/curso ID:", seccionCursoId);
     setMensaje({ type: "", text: "" });
     try {
       const scToUnassign = profesorSeccionesCursosAsignados.find(sc => sc.idSeccionCurso === seccionCursoId);
@@ -235,20 +200,17 @@ const AdminProfesoresModificar = () => {
         return;
       }
 
-      // 1. Prepara y envía la actualización para seccion_curso (idProfesor = null, idHorario = null)
       const cleanedSeccionCurso = {
         idSeccionCurso: scToUnassign.idSeccionCurso,
         idSeccion: scToUnassign.idSeccion,
         idCurso: scToUnassign.idCurso,
-        idProfesor: null, // Desasignar profesor
-        idHorario: null // Desasignar horario de seccion_curso
+        idProfesor: null,
+        idHorario: null
       };
-      console.log("Desasignando SeccionCurso:", cleanedSeccionCurso);
       await axios.put(`http://localhost:8080/api/seccioncursos/${seccionCursoId}`, cleanedSeccionCurso);
 
       let successMessage = "Sección/Curso desasignada exitosamente.";
 
-      // 2. Si también había un horario asociado, desasignarlo del horario
       if (scToUnassign.idHorario) {
         const horarioActual = horariosFullMap.get(scToUnassign.idHorario);
         if (horarioActual) {
@@ -257,9 +219,8 @@ const AdminProfesoresModificar = () => {
             hora: horarioActual.hora,
             dia: horarioActual.dia,
             idSeccion: horarioActual.idSeccion,
-            idProfesor: null // Desasignar profesor del horario
+            idProfesor: null
           };
-          console.log("Desasignando Horario:", cleanedHorario);
           await axios.put(`http://localhost:8080/api/horarios/${scToUnassign.idHorario}`, cleanedHorario);
           successMessage = "Sección/Curso y Horario asociados desasignados exitosamente.";
         } else {
@@ -268,11 +229,9 @@ const AdminProfesoresModificar = () => {
       }
 
       setMensaje({ type: "success", text: successMessage });
-      loadProfesorAndAssignments(); // Refrescar la UI
-      console.log("Desasignación completa. Disparando loadProfesorAndAssignments().");
+      loadProfesorAndAssignments();
 
     } catch (err) {
-      console.error("Error al desasignar sección/curso o horario asociado:", err);
       let errorMessage = `Error al desasignar: ${err.message || err.response?.data || "Verifique la consola del navegador y el estado del backend."}`;
       if (err.response) {
         if (err.response.status === 404) {
@@ -289,7 +248,6 @@ const AdminProfesoresModificar = () => {
 
   const handleAssignNewSeccionCursoHorario = async (e) => {
     e.preventDefault();
-    console.log("Intentando asignar nueva sección/curso y horario...");
     setMensaje({ type: "", text: "" });
 
     if (!selectedProfesorId || !seccionCursoParaAsignar || !horarioParaAsignar) {
@@ -298,7 +256,6 @@ const AdminProfesoresModificar = () => {
     }
 
     try {
-      // 1. Encuentra la sección/curso seleccionada de la lista de disponibles
       const seccionCursoToUpdate = seccionesCursosDisponibles.find(
         (sc) => sc.idSeccionCurso === parseInt(seccionCursoParaAsignar)
       );
@@ -307,21 +264,18 @@ const AdminProfesoresModificar = () => {
         throw new Error(`Sección/Curso con ID ${seccionCursoParaAsignar} no encontrada en la lista de disponibles.`);
       }
 
-      // 2. Prepara y envía la actualización para seccion_curso (asignar profesor y horario)
       const cleanedSeccionCurso = {
         idSeccionCurso: seccionCursoToUpdate.idSeccionCurso,
         idSeccion: seccionCursoToUpdate.idSeccion,
         idCurso: seccionCursoToUpdate.idCurso,
-        idProfesor: parseInt(selectedProfesorId), // Asignar profesor
-        idHorario: parseInt(horarioParaAsignar), // Asignar horario
+        idProfesor: parseInt(selectedProfesorId),
+        idHorario: parseInt(horarioParaAsignar),
       };
-      console.log("Asignando SeccionCurso:", cleanedSeccionCurso);
       await axios.put(
         `http://localhost:8080/api/seccioncursos/${seccionCursoToUpdate.idSeccionCurso}`,
         cleanedSeccionCurso
       );
 
-      // 3. Encuentra el horario seleccionado de la lista de disponibles
       const horarioToUpdate = horariosDisponibles.find(
         (h) => h.idHorario === parseInt(horarioParaAsignar)
       );
@@ -329,28 +283,24 @@ const AdminProfesoresModificar = () => {
         throw new Error("Horario seleccionado no encontrado para asignación.");
       }
 
-      // 4. Prepara y envía la actualización para horario (asignar profesor)
       const cleanedHorario = {
         idHorario: horarioToUpdate.idHorario,
         hora: horarioToUpdate.hora,
         dia: horarioToUpdate.dia,
         idSeccion: horarioToUpdate.idSeccion,
-        idProfesor: parseInt(selectedProfesorId) // Asignar profesor al horario
+        idProfesor: parseInt(selectedProfesorId)
       };
-      console.log("Asignando Horario:", cleanedHorario);
       await axios.put(
         `http://localhost:8080/api/horarios/${horarioToUpdate.idHorario}`,
         cleanedHorario
       );
 
       setMensaje({ type: "success", text: "Nueva sección/curso y horario asignados exitosamente." });
-      setSeccionCursoParaAsignar(""); // Limpiar el campo de selección
-      setHorarioParaAsignar(""); // Limpiar el campo de selección
-      loadProfesorAndAssignments(); // Refrescar la UI
-      console.log("Asignación completa. Disparando loadProfesorAndAssignments().");
+      setSeccionCursoParaAsignar("");
+      setHorarioParaAsignar("");
+      loadProfesorAndAssignments();
 
     } catch (err) {
-      console.error("Error al asignar nueva sección/curso y horario:", err);
       let errorMessage = `Error al asignar: ${err.message || err.response?.data || "Verifique la consola."}`;
       if (err.response) {
         if (err.response.status === 404) {
@@ -362,7 +312,6 @@ const AdminProfesoresModificar = () => {
       setMensaje({ type: "error", text: errorMessage });
     }
   };
-
 
   return (
     <div className="contenedor-principal">
