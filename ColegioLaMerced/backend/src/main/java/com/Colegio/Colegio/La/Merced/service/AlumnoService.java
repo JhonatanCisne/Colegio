@@ -6,17 +6,22 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // ¡Añadir esta importación!
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.Colegio.Colegio.La.Merced.dto.AlumnoDTO;
 import com.Colegio.Colegio.La.Merced.exception.DniAlreadyExistsException;
 import com.Colegio.Colegio.La.Merced.model.Alumno;
+import com.Colegio.Colegio.La.Merced.model.CursoUnico;
 import com.Colegio.Colegio.La.Merced.model.Padre;
 import com.Colegio.Colegio.La.Merced.repository.AlumnoRepository;
+import com.Colegio.Colegio.La.Merced.repository.AsistenciaRepository;
+import com.Colegio.Colegio.La.Merced.repository.CursoUnicoRepository;
 import com.Colegio.Colegio.La.Merced.repository.PadreRepository;
-import com.Colegio.Colegio.La.Merced.repository.CursoUnicoRepository; // ¡Añadir esta importación!
 
+import jakarta.persistence.EntityManager; // <--- NEW IMPORT
 
 @Service
 public class AlumnoService {
@@ -27,8 +32,14 @@ public class AlumnoService {
     @Autowired
     private PadreRepository padreRepository;
 
-    @Autowired // ¡Añadir esta inyección de dependencia!
+    @Autowired
     private CursoUnicoRepository cursoUnicoRepository;
+
+    @Autowired
+    private AsistenciaRepository asistenciaRepository;
+
+    @Autowired
+    private EntityManager entityManager; // <--- NEW INJECTION
 
     private AlumnoDTO convertToDto(Alumno alumno) {
         AlumnoDTO dto = new AlumnoDTO();
@@ -107,7 +118,6 @@ public class AlumnoService {
         });
     }
 
-    // Método para eliminar un alumno por su ID (ya existente)
     public boolean deleteAlumno(Integer id) {
         if (alumnoRepository.existsById(id)) {
             alumnoRepository.deleteById(id);
@@ -116,32 +126,41 @@ public class AlumnoService {
         return false;
     }
 
-    /**
-     * Elimina un alumno por su DNI, y previamente elimina todos sus registros asociados
-     * en CursoUnico para mantener la integridad referencial.
-     * @param dni El DNI del alumno a eliminar.
-     * @throws RuntimeException si el alumno no es encontrado.
-     */
-    @Transactional // ¡Añadir esta anotación! Crucial para la atomicidad de la operación.
+    @Transactional
     public void eliminarAlumnoPorDni(String dni) {
-        Optional<Alumno> optionalAlumno = alumnoRepository.findByDni(dni); // Necesitarás este método en AlumnoRepository
+        Optional<Alumno> optionalAlumno = alumnoRepository.findByDni(dni);
 
         if (optionalAlumno.isEmpty()) {
-            throw new RuntimeException("Alumno con DNI " + dni + " no encontrado.");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Alumno con DNI " + dni + " no encontrado.");
         }
 
         Alumno alumno = optionalAlumno.get();
-        Integer alumnoId = alumno.getIdAlumno(); 
+        Integer alumnoId = alumno.getIdAlumno();
 
-        // PASO 1: Eliminar todos los registros de CursoUnico asociados a este alumno
-        // Usa el método que agregaste a CursoUnicoRepository.
-        // Por ejemplo, si usaste @Query("DELETE FROM CursoUnico cu WHERE cu.idAlumno = :idAlumno")
+        List<CursoUnico> cursosDelAlumno = cursoUnicoRepository.findByAlumnoIdAlumno(alumnoId);
+
+        // Clear the persistence context after fetching entities but before direct DELETE queries
+        // This ensures Hibernate doesn't hold references to entities that are about to be deleted directly.
+        entityManager.flush(); // Ensure any pending changes are pushed to DB
+        entityManager.clear(); // Detach all managed entities from the context
+
+        // 2. Iterar sobre cada CursoUnico y ELIMINAR SUS ASISTENCIAS PRIMERO.
+        // Even though we cleared the context, we still need the IDs from the 'cursosDelAlumno' list
+        // which was fetched BEFORE clearing.
+        for (CursoUnico cursoUnico : cursosDelAlumno) {
+            // Eliminar todas las Asistencias relacionadas con el CursoUnico actual.
+            asistenciaRepository.deleteByCursoUnicoId(cursoUnico.getIdCursoUnico());
+        }
+
+        // 3. Después de eliminar todas las Asistencias, ahora sí eliminar los CursoUnico asociados al alumno.
         cursoUnicoRepository.deleteCursoUnicoByAlumnoId(alumnoId);
 
-        // Si optaste por el método derivado de Spring Data JPA:
-        // cursoUnicoRepository.deleteByIdAlumno(alumnoId);
-
-        // PASO 2: Ahora que las referencias han sido eliminadas, eliminar el alumno
-        alumnoRepository.delete(alumno);
+        // 4. Finalmente, eliminar el alumno, una vez que todas sus dependencias han sido eliminadas.
+        // It's good practice to fetch the Alumno again or ensure it's re-attached if needed,
+        // especially after clearing the context.
+        // However, for a simple delete by ID, often the initial 'alumno' object might still work
+        // or a re-fetch is safer if you encounter issues.
+        // For simplicity and given the error, a direct deleteById might be more robust here.
+        alumnoRepository.deleteById(alumnoId); // Use deleteById with the ID you already have.
     }
 }

@@ -2,7 +2,7 @@ package com.Colegio.Colegio.La.Merced.controller;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired; // Necesario para los Optional de los métodos get/update
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException; // ¡Añadir esta importación!
 
 import com.Colegio.Colegio.La.Merced.dto.AlumnoDTO;
 import com.Colegio.Colegio.La.Merced.service.AlumnoService;
@@ -62,11 +63,15 @@ public class AlumnoController {
     public ResponseEntity<String> eliminarAlumnoPorDni(@PathVariable String dni) {
         try {
             alumnoService.eliminarAlumnoPorDni(dni);
-            return new ResponseEntity<>("Alumno con DNI " + dni + " y sus cursos asociados eliminados exitosamente.", HttpStatus.NO_CONTENT);
-        } catch (RuntimeException e) {
-            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+            // El mensaje del frontend ya maneja el éxito, aquí solo enviamos 204 No Content
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build(); 
+        } catch (ResponseStatusException e) {
+            // Captura las excepciones de estado HTTP (ej. 404 Not Found) lanzadas por el servicio
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         } catch (Exception e) {
-            return new ResponseEntity<>("Error interno del servidor al eliminar el alumno: " + e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+            // Captura cualquier otra excepción inesperada
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                                 .body("Error interno del servidor al eliminar el alumno: " + e.getMessage());
         }
     }
 }
