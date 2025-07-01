@@ -2,17 +2,17 @@ package com.Colegio.Colegio.La.Merced.dto;
 
 public class CursoUnicoDTO {
     private Integer idCursoUnico;
-    private float examen1;
-    private float examen2;
-    private float examen3;
-    private float examen4;
-    private float examenFinal;
+    private Float examen1;
+    private Float examen2;
+    private Float examen3;
+    private Float examen4;
+    private Float examenFinal;
     private Integer idSeccionCurso; 
     private Integer idAlumno;      
     public CursoUnicoDTO() {
     }
 
-    public CursoUnicoDTO(Integer idCursoUnico, float examen1, float examen2, float examen3, float examen4, float examenFinal, Integer idSeccionCurso, Integer idAlumno) {
+    public CursoUnicoDTO(Integer idCursoUnico, Float examen1, Float examen2, Float examen3, Float examen4, Float examenFinal, Integer idSeccionCurso, Integer idAlumno) {
         this.idCursoUnico = idCursoUnico;
         this.examen1 = examen1;
         this.examen2 = examen2;
@@ -31,43 +31,43 @@ public class CursoUnicoDTO {
         this.idCursoUnico = idCursoUnico;
     }
 
-    public float getExamen1() {
+    public Float getExamen1() {
         return examen1;
     }
 
-    public void setExamen1(float examen1) {
+    public void setExamen1(Float examen1) {
         this.examen1 = examen1;
     }
 
-    public float getExamen2() {
+    public Float getExamen2() {
         return examen2;
     }
 
-    public void setExamen2(float examen2) {
+    public void setExamen2(Float examen2) {
         this.examen2 = examen2;
     }
 
-    public float getExamen3() {
+    public Float getExamen3() {
         return examen3;
     }
 
-    public void setExamen3(float examen3) {
+    public void setExamen3(Float examen3) {
         this.examen3 = examen3;
     }
 
-    public float getExamen4() {
+    public Float getExamen4() {
         return examen4;
     }
 
-    public void setExamen4(float examen4) {
+    public void setExamen4(Float examen4) {
         this.examen4 = examen4;
     }
 
-    public float getExamenFinal() {
+    public Float getExamenFinal() {
         return examenFinal;
     }
 
-    public void setExamenFinal(float examenFinal) {
+    public void setExamenFinal(Float examenFinal) {
         this.examenFinal = examenFinal;
     }
 

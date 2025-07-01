@@ -18,19 +18,19 @@ public class CursoUnico {
     private Integer idCursoUnico;
 
     @Column(name = "Examen1", nullable = true)
-    private float examen1;
+    private Float examen1;
 
     @Column(name = "Examen2", nullable = true)
-    private float examen2;
+    private Float examen2;
     
     @Column(name = "Examen3", nullable = true)
-    private float examen3;
+    private Float examen3;
 
     @Column(name = "Examen4", nullable = true)
-    private float examen4;
+    private Float examen4;
 
-    @Column(name = "ExamenFinal", nullable = true)
-    private float examenFinal;
+    @Column(name = "Examenfinal", nullable = true)
+    private Float examenFinal;
 
     @ManyToOne 
     @JoinColumn(name = "ID_Seccion_Curso", referencedColumnName = "ID_Seccion_Curso", nullable=false)
@@ -48,43 +48,43 @@ public class CursoUnico {
         this.idCursoUnico = idCursoUnico;
     }
 
-    public float getExamen1() {
+    public Float getExamen1() {
         return examen1;
     }
 
-    public void setExamen1(float examen1) {
+    public void setExamen1(Float examen1) {
         this.examen1 = examen1;
     }
 
-    public float getExamen2() {
+    public Float getExamen2() {
         return examen2;
     }
 
-    public void setExamen2(float examen2) {
+    public void setExamen2(Float examen2) {
         this.examen2 = examen2;
     }
 
-    public float getExamen3() {
+    public Float getExamen3() {
         return examen3;
     }
 
-    public void setExamen3(float examen3) {
+    public void setExamen3(Float examen3) {
         this.examen3 = examen3;
     }
 
-    public float getExamen4() {
+    public Float getExamen4() {
         return examen4;
     }
 
-    public void setExamen4(float examen4) {
+    public void setExamen4(Float examen4) {
         this.examen4 = examen4;
     }
 
-    public float getExamenFinal() {
+    public Float getExamenFinal() {
         return examenFinal;
     }
 
-    public void setExamenFinal(float examenFinal) {
+    public void setExamenFinal(Float examenFinal) {
         this.examenFinal = examenFinal;
     }
 
