@@ -3,200 +3,239 @@ import BarraDeNavegacionLateralProfesor from "../../Componentes/BarraDeNavegacio
 import "./AnunciosProfesor.css";
 import axios from "axios";
 
+const AnnounceIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>;
+const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>;
+
 function AnunciosProfesor() {
-  const [anuncios, setAnuncios] = useState([]);
-  const [nuevoTitulo, setNuevoTitulo] = useState("");
-  const [nuevaDescripcion, setNuevaDescripcion] = useState("");
-  const [profesorId, setProfesorId] = useState(null);
   const [nombreProfesor, setNombreProfesor] = useState("");
+  const [anuncios, setAnuncios] = useState([]);
   const [cursosDelProfesor, setCursosDelProfesor] = useState([]);
-  const [cursoSeleccionadoParaAnuncio, setCursoSeleccionadoParaAnuncio] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [filtroCurso, setFiltroCurso] = useState("todos");
+
+  // Formulario de creación
+  const [nuevoTitulo, setNuevoTitulo] = useState("");
+  const [nuevaDescripcion, setNuevaDescripcion] = useState("");
+  const [cursoSeleccionado, setCursoSeleccionado] = useState("");
+
+  // Modal de edición
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingAnuncio, setEditingAnuncio] = useState(null);
+  const [editedTitulo, setEditedTitulo] = useState("");
+  const [editedDescripcion, setEditedDescripcion] = useState("");
 
   useEffect(() => {
-    const cargarDatosIniciales = async () => {
-      try {
-        const profesorInfo = JSON.parse(localStorage.getItem('profesorLogged'));
-        if (!profesorInfo || !profesorInfo.idProfesor) {
-          setError("No se encontró ID de profesor. Por favor, inicie sesión nuevamente.");
-          setLoading(false);
-          return;
-        }
-        setProfesorId(profesorInfo.idProfesor);
-        setNombreProfesor(`${profesorInfo.nombre} ${profesorInfo.apellido}`);
+    const cargarDatos = async () => {
+      const profesorData = JSON.parse(localStorage.getItem('profesorLogged'));
+      if (!profesorData) {
+        setError("No se encontró información del profesor. Por favor, inicie sesión.");
+        setLoading(false);
+        return;
+      }
+      setNombreProfesor(`${profesorData.nombre} ${profesorData.apellido}`);
 
-        const [anunciosRes, seccionCursosRes, seccionesRes, cursosRes] = await Promise.all([
+      try {
+        const [anunciosRes, seccionCursosRes, cursosRes, seccionesRes] = await Promise.all([
           axios.get("http://localhost:8080/api/anuncios"),
           axios.get("http://localhost:8080/api/seccioncursos"),
-          axios.get("http://localhost:8080/api/secciones"),
           axios.get("http://localhost:8080/api/cursos"),
+          axios.get("http://localhost:8080/api/secciones"),
         ]);
 
-        const misSeccionCursos = seccionCursosRes.data.filter(
-          (sc) => sc.idProfesor === profesorInfo.idProfesor
-        );
+        const misSeccionCursos = seccionCursosRes.data.filter(sc => sc.idProfesor === profesorData.idProfesor);
+        const misSeccionCursosIds = misSeccionCursos.map(sc => sc.idSeccionCurso);
 
-        const idsCursosDelProfesor = misSeccionCursos.map(sc => sc.idSeccionCurso);
-
-        const cursosParaMostrar = misSeccionCursos.map((sc) => {
-          const seccion = seccionesRes.data.find(
-            (s) => s.idSeccion === sc.idSeccion
-          );
-          const curso = cursosRes.data.find((c) => c.idCurso === sc.idCurso);
-          return {
-            idSeccionCurso: sc.idSeccionCurso,
-            nombreCompleto: `${curso ? curso.nombre : "Curso Desconocido"} - ${
-              seccion ? `${seccion.grado}° ${seccion.nombre}` : "Sección Desconocida"
-            }`,
+        const cursosParaDropdown = misSeccionCursos.map(sc => {
+          const curso = cursosRes.data.find(c => c.idCurso === sc.idCurso);
+          const seccion = seccionesRes.data.find(s => s.idSeccion === sc.idSeccion);
+          return { 
+            id: sc.idSeccionCurso, 
+            nombre: `${curso.nombre} - ${seccion.grado}° ${seccion.nombre}`
           };
         });
-        setCursosDelProfesor(cursosParaMostrar);
+        setCursosDelProfesor(cursosParaDropdown);
 
-        const anunciosFiltrados = anunciosRes.data.filter(anuncio => 
-          idsCursosDelProfesor.includes(anuncio.idSeccionCurso)
-        );
+        const anunciosFiltrados = anunciosRes.data
+          .filter(anuncio => misSeccionCursosIds.includes(anuncio.idSeccionCurso))
+          .map(anuncio => {
+            const seccionCurso = seccionCursosRes.data.find(sc => sc.idSeccionCurso === anuncio.idSeccionCurso);
+            const curso = cursosRes.data.find(c => c.idCurso === seccionCurso.idCurso);
+            const seccion = seccionesRes.data.find(s => s.idSeccion === seccionCurso.idSeccion);
+            return {
+              id: anuncio.idAnuncio,
+              titulo: anuncio.contenido.split('\n')[0].replace('Título: ', ''),
+              contenido: anuncio.contenido.split('\n').slice(1).join('\n').replace('Descripción: ', ''),
+              profesor: anuncio.nombreProfesor,
+              curso: `${curso.nombre} - ${seccion.grado}° ${seccion.nombre}`,
+              idSeccionCurso: anuncio.idSeccionCurso
+            };
+          });
         
-        const anunciosFormateados = anunciosFiltrados.map(anuncio => ({
-          titulo: anuncio.nombreProfesor,
-          descripcion: anuncio.contenido,
-          fecha: new Date(anuncio.idAnuncio).toISOString().slice(0, 10) 
-        }));
-        setAnuncios(anunciosFormateados);
-        setLoading(false);
+        setAnuncios(anunciosFiltrados.sort((a, b) => b.id - a.id));
 
       } catch (err) {
-        console.error("Error al cargar datos iniciales:", err);
-        setError("Error al cargar los datos. Por favor, intente recargar la página.");
+        setError("Error al cargar los datos. Intente de nuevo más tarde.");
+      } finally {
         setLoading(false);
       }
     };
-
-    cargarDatosIniciales();
+    cargarDatos();
   }, []);
 
-  const manejarEnvio = async (e) => {
+  const handleCrearAnuncio = async (e) => {
     e.preventDefault();
-    if (nuevoTitulo && nuevaDescripcion && cursoSeleccionadoParaAnuncio) {
-      const nuevoAnuncio = {
-        nombreProfesor: nombreProfesor,
-        contenido: `Título: ${nuevoTitulo}\nDescripción: ${nuevaDescripcion}`,
-        idSeccionCurso: parseInt(cursoSeleccionadoParaAnuncio),
-      };
+    if (!nuevoTitulo || !nuevaDescripcion || !cursoSeleccionado) {
+      alert("Por favor, complete todos los campos.");
+      return;
+    }
 
-      try {
-        const res = await axios.post("http://localhost:8080/api/anuncios", nuevoAnuncio);
-        if (res.status === 201) {
-          setAnuncios([
-            { 
-              titulo: nuevoTitulo, 
-              descripcion: nuevaDescripcion, 
-              fecha: new Date().toISOString().slice(0, 10) 
-            },
-            ...anuncios
-          ]);
-          setNuevoTitulo("");
-          setNuevaDescripcion("");
-          setCursoSeleccionadoParaAnuncio("");
-        } else {
-          throw new Error("Error al publicar el anuncio.");
-        }
-      } catch (err) {
-        alert("No se pudo publicar el anuncio. Verifique su conexión o intente de nuevo.");
-        console.error("Error al publicar anuncio:", err);
-      }
-    } else {
-      alert("Por favor, complete todos los campos y seleccione un curso.");
+    const profesorData = JSON.parse(localStorage.getItem('profesorLogged'));
+    const nuevoAnuncio = {
+      nombreProfesor: `${profesorData.nombre} ${profesorData.apellido}`,
+      contenido: `Título: ${nuevoTitulo}\nDescripción: ${nuevaDescripcion}`,
+      idSeccionCurso: parseInt(cursoSeleccionado),
+    };
+
+    try {
+      const res = await axios.post("http://localhost:8080/api/anuncios", nuevoAnuncio);
+      window.location.reload();
+    } catch (error) {
+      alert("No se pudo crear el anuncio.");
     }
   };
 
-  if (loading) {
-    return (
-      <div className="d-flex justify-content-center align-items-center vh-100">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Cargando...</span>
-        </div>
-      </div>
-    );
-  }
+  const openEditModal = (anuncio) => {
+    setEditingAnuncio(anuncio);
+    setEditedTitulo(anuncio.titulo);
+    setEditedDescripcion(anuncio.contenido);
+    setIsEditModalOpen(true);
+  };
 
-  if (error) {
-    return (
-      <div className="d-flex justify-content-center align-items-center vh-100">
-        <div className="alert alert-danger" role="alert">
-          {error}
-        </div>
-      </div>
-    );
-  }
+  const closeEditModal = () => {
+    setIsEditModalOpen(false);
+    setEditingAnuncio(null);
+  };
+
+  const handleUpdateAnuncio = async (e) => {
+    e.preventDefault();
+    if (!editedTitulo || !editedDescripcion) {
+        alert("El título y la descripción не pueden estar vacíos.");
+        return;
+    }
+
+    const anuncioParaBackend = {
+        idAnuncio: editingAnuncio.id,
+        nombreProfesor: nombreProfesor,
+        contenido: `Título: ${editedTitulo}\nDescripción: ${editedDescripcion}`,
+        idSeccionCurso: editingAnuncio.idSeccionCurso,
+    };
+
+    const anuncioParaEstado = {
+        ...editingAnuncio,
+        titulo: editedTitulo,
+        contenido: editedDescripcion,
+    };
+
+    try {
+        await axios.put(`http://localhost:8080/api/anuncios/${editingAnuncio.id}`, anuncioParaBackend);
+        setAnuncios(anuncios.map(a => a.id === editingAnuncio.id ? anuncioParaEstado : a));
+        closeEditModal();
+    } catch (error) {
+        alert("No se pudo actualizar el anuncio.");
+    }
+  };
+
+  const anunciosMostrados = anuncios.filter(anuncio => 
+    filtroCurso === "todos" || anuncio.curso === filtroCurso
+  );
+
+  const cursosDisponibles = [...new Set(anuncios.map(a => a.curso))];
+
+  if (loading) return <div className="page-content">Cargando...</div>;
+  if (error) return <div className="page-content">{error}</div>;
 
   return (
     <div className="d-flex">
-      <BarraDeNavegacionLateralProfesor />
-      <div className="contenido-principal p-4">
-        <h2 className="mb-4" style={{ color: "#1976d2", fontWeight: 700 }}>Publicar Anuncios</h2>
+      <BarraDeNavegacionLateralProfesor nombre={nombreProfesor} />
+      <div className="page-content">
+        <header className="page-header">
+          <h2>Anuncios y Novedades</h2>
+          <p>Crea y gestiona los anuncios para tus cursos.</p>
+        </header>
 
-        <form onSubmit={manejarEnvio} className="mb-5 anuncio-form">
-          <div className="mb-3">
-            <label className="form-label fw-bold">Título del Anuncio</label>
-            <input
-              type="text"
-              className="form-control"
-              value={nuevoTitulo}
-              onChange={(e) => setNuevoTitulo(e.target.value)}
-              required
-              placeholder="Ej: Aviso importante"
-            />
-          </div>
-          <div className="mb-3">
-            <label className="form-label fw-bold">Descripción</label>
-            <textarea
-              className="form-control"
-              value={nuevaDescripcion}
-              onChange={(e) => setNuevaDescripcion(e.target.value)}
-              required
-              placeholder="Escribe aquí el detalle del anuncio..."
-              rows={3}
-            ></textarea>
-          </div>
-          <div className="mb-3">
-            <label className="form-label fw-bold">Seleccionar Curso</label>
-            <select
-              className="form-select"
-              value={cursoSeleccionadoParaAnuncio}
-              onChange={(e) => setCursoSeleccionadoParaAnuncio(e.target.value)}
-              required
-            >
-              <option value="">Seleccione un curso</option>
-              {cursosDelProfesor.map((curso) => (
-                <option key={curso.idSeccionCurso} value={curso.idSeccionCurso}>
-                  {curso.nombreCompleto}
-                </option>
-              ))}
-            </select>
-          </div>
-          <button type="submit" className="btn btn-primary px-4 py-2">Publicar Anuncio</button>
-        </form>
-
-        <h3 className="mb-3" style={{ color: "#1976d2" }}>Anuncios Publicados</h3>
-        <div className="anuncios-vertical">
-          {anuncios.length > 0 ? (
-            anuncios.map((anuncio, index) => (
-              <div key={index} className="anuncio mb-4 p-3 shadow-sm rounded" style={{ background: "#f4f8fd" }}>
-                <div className="d-flex align-items-center mb-2">
-                  <span style={{ fontSize: "1.6em", marginRight: 10 }}>📢</span>
-                  <h5 className="mb-0" style={{ fontWeight: 600 }}>{anuncio.titulo}</h5>
-                  <span className="ms-auto" style={{ fontSize: "0.98em", color: "#888"}}>
-                    {anuncio.fecha}
-                  </span>
-                </div>
-                <p style={{ marginLeft: 32 }}>{anuncio.descripcion}</p>
-              </div>
-            ))
-          ) : (
-            <p className="text-muted">No hay anuncios publicados para tus cursos.</p>
-          )}
+        <div className="anuncio-form-card">
+          <h3>Crear Nuevo Anuncio</h3>
+          <form onSubmit={handleCrearAnuncio}>
+            <div className="form-group">
+              <label className="form-label">Título</label>
+              <input type="text" className="form-control" value={nuevoTitulo} onChange={e => setNuevoTitulo(e.target.value)} placeholder="Título del anuncio" />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Descripción</label>
+              <textarea className="form-control" value={nuevaDescripcion} onChange={e => setNuevaDescripcion(e.target.value)} placeholder="Contenido del anuncio"></textarea>
+            </div>
+            <div className="form-group">
+              <label className="form-label">Curso</label>
+              <select className="form-select" value={cursoSeleccionado} onChange={e => setCursoSeleccionado(e.target.value)}>
+                <option value="">Selecciona un curso</option>
+                {cursosDelProfesor.map(curso => (
+                  <option key={curso.id} value={curso.id}>{curso.nombre}</option>
+                ))}
+              </select>
+            </div>
+            <button type="submit" className="btn-submit">Publicar Anuncio</button>
+          </form>
         </div>
+
+        <div className="anuncios-filter-bar">
+            <label htmlFor="curso-filter">Filtrar por curso:</label>
+            <select id="curso-filter" value={filtroCurso} onChange={(e) => setFiltroCurso(e.target.value)}>
+                <option value="todos">Todos los cursos</option>
+                {cursosDisponibles.map(curso => (
+                    <option key={curso} value={curso}>{curso}</option>
+                ))}
+            </select>
+        </div>
+
+        <div className="anuncios-grid">
+          {anunciosMostrados.map((anuncio) => (
+              <div key={anuncio.id} className="anuncio-card">
+                <div className="anuncio-card-header">
+                  <div className="anuncio-icon"><AnnounceIcon /></div>
+                  <div className="anuncio-header-text">
+                    <h3 className="anuncio-title">{anuncio.titulo}</h3>
+                    <span className="anuncio-meta">Publicado por: {anuncio.profesor} | Para: {anuncio.curso}</span>
+                  </div>
+                  <button className="edit-btn" onClick={() => openEditModal(anuncio)}><EditIcon /></button>
+                </div>
+                <p className="anuncio-content">{anuncio.contenido}</p>
+              </div>
+            ))}
+        </div>
+
+        {isEditModalOpen && (
+            <div className="modal-backdrop">
+                <div className="modal-content">
+                    <h3>Editar Anuncio</h3>
+                    <form onSubmit={handleUpdateAnuncio}>
+                        <div className="form-group">
+                            <label>Título</label>
+                            <input type="text" value={editedTitulo} onChange={e => setEditedTitulo(e.target.value)} />
+                        </div>
+                        <div className="form-group">
+                            <label>Descripción</label>
+                            <textarea value={editedDescripcion} onChange={e => setEditedDescripcion(e.target.value)}></textarea>
+                        </div>
+                        <div className="modal-actions">
+                            <button type="submit" className="btn-submit">Guardar Cambios</button>
+                            <button type="button" className="btn-cancel" onClick={closeEditModal}>Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        )}
+
       </div>
     </div>
   );

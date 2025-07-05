@@ -1,114 +1,244 @@
-/* General container for the main content area */
-.contenido-principal {
-  flex-grow: 1; /* Allows the content to fill available space */
-  padding: 30px; /* Ample padding around the content */
-  background-color: #f8f9fa; /* Light background for the content area */
-  min-height: 100vh; /* Ensures the background covers the full viewport height */
-  display: flex;
-  flex-direction: column;
+/* --- ESTILOS PARA Anuncios.css --- */
+:root {
+    --color-primario: #8A0303;
+    --color-fondo: #f4f6f9;
+    --color-blanco: #ffffff;
+    --color-texto-principal: #1e293b;
+    --color-texto-secundario: #64748b;
+    --color-borde: #e2e8f0;
+    --sombra-suave: 0 4px 6px -1px rgb(0 0 0 / 0.05), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+    --font-principal: 'Inter', sans-serif;
 }
 
-/* Styles for the announcement form */
-.anuncio-form {
-  background: #ffffff; /* White background for the form card */
-  padding: 30px; /* Padding inside the form */
-  border-radius: 12px; /* Slightly rounded corners */
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08); /* Soft, noticeable shadow */
-  margin-bottom: 40px; /* Space below the form */
+.page-content {
+    flex-grow: 1;
+    padding: 2rem;
+    margin-left: 260px; /* Asume barra lateral de 260px */
 }
 
-.anuncio-form .form-label {
-  font-size: 1.05em; /* Slightly larger labels */
-  margin-bottom: 8px; /* Space between label and input */
-  color: #343a40; /* Darker text for labels */
+.page-header {
+    margin-bottom: 2rem;
 }
 
-.anuncio-form .form-control,
-.anuncio-form .form-select {
-  border-radius: 8px; /* Rounded borders for inputs and selects */
-  border: 1px solid #ced4da; /* Subtle border color */
-  padding: 10px 15px; /* Comfortable padding */
-  font-size: 1em; /* Standard font size */
-  transition: all 0.3s ease; /* Smooth transition for focus effects */
+.page-header h2 {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: var(--color-texto-principal);
 }
 
-.anuncio-form .form-control:focus,
-.anuncio-form .form-select:focus {
-  border-color: #007bff; /* Primary color border on focus */
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); /* Glow effect on focus */
+.page-header p {
+    font-size: 1rem;
+    color: var(--color-texto-secundario);
+    margin-top: 0.25rem;
 }
 
-.anuncio-form textarea.form-control {
-  resize: vertical; /* Allow vertical resizing of textareas */
+/* --- Formulario de Anuncios --- */
+.anuncio-form-card {
+    background-color: var(--color-blanco);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: var(--sombra-suave);
+    border: 1px solid var(--color-borde);
+    margin-bottom: 2rem;
 }
 
-.anuncio-form .btn-primary {
-  background-color: #007bff; /* Primary button color */
-  border-color: #007bff; /* Matching border color */
-  padding: 12px 25px; /* Generous padding for the button */
-  font-size: 1.1em; /* Larger font size for the button text */
-  border-radius: 8px; /* Rounded button corners */
-  transition: background-color 0.3s ease, transform 0.2s ease; /* Smooth transitions */
+.anuncio-form-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-texto-principal);
+    margin-bottom: 1.5rem;
 }
 
-.anuncio-form .btn-primary:hover {
-  background-color: #0056b3; /* Darker shade on hover */
-  border-color: #0056b3;
-  transform: translateY(-2px); /* Slight lift effect on hover */
+.anuncio-form-card .form-group {
+    margin-bottom: 1rem;
 }
 
-/* Styles for the list of published announcements */
-.anuncios-vertical {
-  display: flex;
-  flex-direction: column;
-  gap: 20px; /* Space between each announcement card */
+.anuncio-form-card .form-label {
+    display: block;
+    font-weight: 500;
+    color: var(--color-texto-secundario);
+    margin-bottom: 0.5rem;
 }
 
-.anuncio {
-  background: #ffffff; /* White background for each announcement card */
-  padding: 25px; /* Padding inside the announcement card */
-  border-radius: 12px; /* Rounded corners */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06); /* Softer shadow */
-  border-left: 5px solid #1976d2; /* Left border accent color */
-  transition: transform 0.2s ease; /* Smooth transition for hover effect */
+.anuncio-form-card .form-control,
+.anuncio-form-card .form-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-borde);
+    background-color: var(--color-fondo);
+    font-family: var(--font-principal);
+    font-size: 1rem;
 }
 
-.anuncio:hover {
-  transform: translateY(-3px); /* Lift effect on hover */
+.anuncio-form-card .btn-submit {
+    background-color: var(--color-primario);
+    color: var(--color-blanco);
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
 }
 
-.anuncio h5 {
-  color: #1976d2; /* Blue color for the title */
-  font-size: 1.3em; /* Larger title font size */
-  margin-bottom: 0;
-  display: flex;
-  align-items: center;
+.anuncio-form-card .btn-submit:hover {
+    background-color: #6e0202; /* Un poco más oscuro */
 }
 
-.anuncio h5 span {
-  margin-right: 10px; /* Space between emoji and title */
+
+/* --- Barra de Filtro --- */
+.anuncios-filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    background-color: var(--color-blanco);
+    padding: 1rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--sombra-suave);
 }
 
-.anuncio p {
-  color: #555; /* Slightly darker text for description */
-  line-height: 1.6; /* Improved readability for paragraphs */
-  margin-top: 10px; /* Space above description */
-  padding-left: 42px; /* Align description with title text */
+.anuncios-filter-bar label {
+    font-weight: 500;
+    color: var(--color-texto-secundario);
 }
 
-.anuncio .ms-auto {
-  font-size: 0.9em; /* Smaller font for date */
-  color: #888; /* Muted color for date */
-  white-space: nowrap; /* Prevent date from wrapping */
+.anuncios-filter-bar select {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--color-borde);
+    background-color: var(--color-fondo);
+    font-family: var(--font-principal);
+    font-size: 1rem;
 }
 
-/* Styles for loading and error messages */
-.spinner-border {
-  width: 3rem;
-  height: 3rem;
+/* --- Grid de Anuncios --- */
+.anuncios-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
 }
 
-.alert {
-  padding: 15px;
-  border-radius: 8px;
+.anuncio-card {
+    background-color: var(--color-blanco);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    box-shadow: var(--sombra-suave);
+    border: 1px solid var(--color-borde);
+    transition: box-shadow 0.2s ease-in-out;
+}
+
+.anuncio-card:hover {
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.07), 0 4px 6px -4px rgb(0 0 0 / 0.07);
+}
+
+.anuncio-card-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+
+.anuncio-icon {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-primario-claro);
+    color: var(--color-primario);
+}
+
+.anuncio-header-text {
+    flex-grow: 1;
+}
+
+.anuncio-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--color-texto-principal);
+    margin: 0;
+}
+
+.anuncio-meta {
+    font-size: 0.875rem;
+    color: var(--color-texto-secundario);
+}
+
+.anuncio-content {
+    font-size: 1rem;
+    line-height: 1.6;
+    color: var(--color-texto-secundario);
+    padding-left: 3.5rem; /* Alineado con el texto del header */
+    margin-bottom: 1rem;
+}
+
+.edit-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-texto-secundario);
+    padding: 0.5rem;
+}
+
+.edit-btn:hover {
+    color: var(--color-primario);
+}
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background: var(--color-blanco);
+    border-radius: 0.75rem;
+    padding: 2rem;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    width: 90%;
+    max-width: 500px;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn-cancel {
+    background-color: var(--color-borde);
+    color: var(--color-texto-secundario);
+}
+
+.no-data-message {
+    text-align: center;
+    padding: 3rem;
+    background-color: var(--color-blanco);
+    border-radius: 0.75rem;
+    color: var(--color-texto-secundario);
+    box-shadow: var(--sombra-suave);
+}
+
+/* --- Responsividad --- */
+@media (max-width: 768px) {
+    .page-content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+    .anuncios-filter-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
 }

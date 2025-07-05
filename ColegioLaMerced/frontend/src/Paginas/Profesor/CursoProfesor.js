@@ -1,19 +1,18 @@
 import React, { useState, useEffect, useCallback } from "react";
 import BarraDeNavegacionLateralProfesor from "../../Componentes/BarraDeNavegacionLateralProfesor";
 import { Bar } from "react-chartjs-2";
-import { Chart, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from "chart.js"; // Import Tooltip and Legend
+import { Chart, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from "chart.js";
 import axios from "axios";
 import "./CursoProfesor.css";
 
-// Register Chart.js components including Tooltip and Legend
+const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>;
+
 Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
 
-function Curso() {
+function CursoProfesor() {
   const [profesorId, setProfesorId] = useState(null);
   const [cursosDelProfesor, setCursosDelProfesor] = useState([]);
   const [seccionCursosData, setSeccionCursosData] = useState([]);
-  const [seccionesData, setSeccionesData] = useState([]);
-  const [cursosData, setCursosData] = useState([]);
   const [alumnosData, setAlumnosData] = useState([]);
   const [cursosUnicosData, setCursosUnicosData] = useState([]);
 
@@ -24,12 +23,9 @@ function Curso() {
   const [modoEdicion, setModoEdicion] = useState(null);
   const [notaTemporal, setNotaTemporal] = useState("");
   const [examenSeleccionado, setExamenSeleccionado] = useState("");
-  const [mostrarEstadisticas, setMostrarEstadisticas] = useState(false);
-  const [tab, setTab] = useState("alumnos"); // Keep tab state if other tabs are planned
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  // Initial data loading effect
   useEffect(() => {
     const loadInitialData = async () => {
       try {
@@ -56,8 +52,6 @@ function Curso() {
         ]);
 
         setSeccionCursosData(seccionCursosRes.data);
-        setSeccionesData(seccionesRes.data);
-        setCursosData(cursosRes.data);
         setAlumnosData(alumnosRes.data);
         setCursosUnicosData(cursosUnicosRes.data);
 
@@ -76,15 +70,12 @@ function Curso() {
             seccion: seccion
               ? `${seccion.grado}° ${seccion.nombre}`
               : "Sección Desconocida",
-            idSeccion: sc.idSeccion,
-            idCurso: sc.idCurso,
           };
         });
         setCursosDelProfesor(cursosParaMostrar);
         setLoading(false);
       } catch (err) {
-        console.error("Error al cargar datos iniciales:", err);
-        setError("Error al cargar los datos del sistema. Por favor, intente recargar la página.");
+        setError("Error al cargar los datos del sistema. Por favor, intente recargar.");
         setLoading(false);
       }
     };
@@ -92,8 +83,6 @@ function Curso() {
     loadInitialData();
   }, []);
 
-  // Effect to load students and their grades for the selected course
-  // Using useCallback for optimization
   const loadAlumnosYNotas = useCallback(() => {
     if (cursoSeleccionado === null || !profesorId || loading) {
       setAlumnosPorCurso([]);
@@ -136,11 +125,10 @@ function Curso() {
         nombre: `${alumno.nombre} ${alumno.apellido}`,
         notas: notas,
       };
-    }).sort((a, b) => a.nombre.localeCompare(b.nombre)); // Sort alphabetically
+    }).sort((a, b) => a.nombre.localeCompare(b.nombre));
 
     setAlumnosPorCurso(alumnosConNotas);
-    setModoEdicion(null); // Reset edit mode when course changes
-    setMostrarEstadisticas(false); // Hide stats when course changes
+    setModoEdicion(null);
   }, [cursoSeleccionado, alumnosData, cursosUnicosData, seccionCursosData, profesorId, loading]);
 
   useEffect(() => {
@@ -149,7 +137,6 @@ function Curso() {
 
   const seleccionarCurso = (idSeccionCurso) => {
     setCursoSeleccionado(idSeccionCurso);
-    setTab("alumnos");
   };
 
   const editarNota = (idAlumno, examen) => {
@@ -169,7 +156,6 @@ function Curso() {
     const alumnoActual = alumnosPorCurso.find((a) => a.id === idAlumno);
     if (!alumnoActual || alumnoActual.idCursoUnico === null) {
       alert("Error: No se encontró el registro de notas para este alumno en este curso.");
-      console.error("No se pudo encontrar idCursoUnico para el alumno:", idAlumno);
       return;
     }
 
@@ -178,7 +164,6 @@ function Curso() {
 
     if (!currentCursoUnico) {
       alert("Error: El registro de curso único no se encontró en los datos cargados.");
-      console.error("Registro de curso único no encontrado con ID:", idCursoUnico);
       return;
     }
 
@@ -194,7 +179,6 @@ function Curso() {
       );
 
       if (res.status === 200) {
-        // Optimistically update the state for a smoother UI
         setCursosUnicosData(prev => prev.map(cu =>
           cu.idCursoUnico === idCursoUnico ? res.data : cu
         ));
@@ -221,7 +205,6 @@ function Curso() {
       }
     } catch (err) {
       alert("No se pudo guardar la nota. Verifique su conexión o intente de nuevo.");
-      console.error("Error guardando nota:", err);
     }
   };
 
@@ -232,280 +215,135 @@ function Curso() {
     return (suma / valores.length).toFixed(2);
   };
 
-  const promedioGeneral = () => {
-    if (!cursoSeleccionado || alumnosPorCurso.length === 0) return "-";
-    let total = 0;
-    let count = 0;
-    alumnosPorCurso.forEach((alumno) => {
-      const valores = Object.values(alumno.notas).filter((n) => typeof n === 'number' && !isNaN(n));
-      valores.forEach((nota) => {
-        total += nota;
-        count++;
-      });
-    });
-    return count > 0 ? (total / count).toFixed(2) : "-";
+  const getPromedioClass = (promedio) => {
+    if (promedio === "-" || promedio < 10.5) {
+      return "promedio-desaprobado";
+    }
+    return "promedio-aprobado";
   };
 
-  const estadisticasCurso = () => {
-    if (!cursoSeleccionado || alumnosPorCurso.length === 0) return null;
-    const notas = alumnosPorCurso.flatMap((a) =>
-      Object.values(a.notas).filter((n) => typeof n === 'number' && !isNaN(n))
-    );
-    const aprobados = notas.filter((n) => n >= 11).length;
-    const desaprobados = notas.filter((n) => n < 11).length;
-    const max = notas.length ? Math.max(...notas) : "-";
-    const min = notas.length ? Math.min(...notas) : "-";
-    return {
-      cantidadAlumnos: alumnosPorCurso.length,
-      cantidadNotas: notas.length,
-      aprobados,
-      desaprobados,
-      max,
-      min,
-      promedio: promedioGeneral(),
-    };
+  const chartData = {
+    labels: examenes.map(e => e.replace('examen', 'Ex. ')),
+    datasets: [
+      {
+        label: 'Promedio de Notas por Examen',
+        data: examenes.map(examen => {
+          const notasExamen = alumnosPorCurso.map(a => a.notas[examen]).filter(n => typeof n === 'number');
+          if (notasExamen.length === 0) return 0;
+          const suma = notasExamen.reduce((a, b) => a + b, 0);
+          return (suma / notasExamen.length).toFixed(2);
+        }),
+        backgroundColor: 'rgba(138, 3, 3, 0.6)',
+        borderColor: 'rgba(138, 3, 3, 1)',
+        borderWidth: 1,
+        borderRadius: 5,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    responsive: true,
+    plugins: {
+      legend: { display: false },
+      title: { display: true, text: 'Rendimiento Promedio del Curso' },
+    },
+    scales: { y: { beginAtZero: true, max: 20 } },
   };
 
   if (loading) {
-    return (
-      <div className="d-flex justify-content-center align-items-center vh-100">
-        <div className="spinner-border text-primary" role="status">
-          <span className="visually-hidden">Cargando...</span>
-        </div>
-      </div>
-    );
+    return <div className="page-content">Cargando...</div>;
   }
 
   if (error) {
-    return (
-      <div className="d-flex justify-content-center align-items-center vh-100">
-        <div className="alert alert-danger" role="alert">
-          {error}
-        </div>
-      </div>
-    );
+    return <div className="page-content">{error}</div>;
   }
 
   return (
     <div className="d-flex">
       <BarraDeNavegacionLateralProfesor />
-      <div className="contenido-principal">
-        <h2 className="mb-4" style={{ fontWeight: 700, color: "#1976d2" }}>
-          Mis Cursos
-        </h2>
+      <div className="page-content">
+        <header className="page-header">
+          <h2>Gestión de Cursos y Calificaciones</h2>
+          <p>Selecciona un curso para registrar y modificar las notas de los alumnos.</p>
+        </header>
 
-        <div className="cursos-lista">
+        <div className="cursos-selector-grid">
           {cursosDelProfesor.length > 0 ? (
             cursosDelProfesor.map((curso) => (
               <div
                 key={curso.idSeccionCurso}
-                className={`curso-card${
+                className={`curso-selector-card${
                   cursoSeleccionado === curso.idSeccionCurso ? " selected" : ""
                 }`}
                 onClick={() => seleccionarCurso(curso.idSeccionCurso)}
               >
-                <span role="img" aria-label="libro">
-                  📘
-                </span>{" "}
-                {curso.nombre}
-                <br />
-                <span style={{ fontSize: "0.95em", color: "#007bff" }}>
-                  {curso.seccion}
-                </span>
+                <div className="curso-card-header">
+                  <h3 className="curso-card-title">{curso.nombre}</h3>
+                  <p className="curso-card-profesor">{curso.seccion}</p>
+                </div>
               </div>
             ))
           ) : (
-            <p className="text-muted">No se encontraron cursos asignados a este profesor.</p>
+            <p>No se encontraron cursos asignados.</p>
           )}
         </div>
 
         {cursoSeleccionado && (
-          <div className="mt-4"> {/* Removed flex-column flex-md-row and tab-content, adjust as needed if you plan more tabs */}
-            {tab === "alumnos" && (
-              <>
-                <h4>Alumnos del curso</h4>
+          <div className="notas-details-card">
+            <h3 className="notas-header">Calificaciones del Curso</h3>
+            <div className="grades-layout">
+              <div className="table-responsive">
                 {alumnosPorCurso.length > 0 ? (
-                  <div className="table-responsive">
-                    <table className="table table-bordered table-striped table-hover align-middle"> {/* Added align-middle for vertical alignment */}
-                      <thead className="table-primary"> {/* Styled header */}
-                        <tr>
-                          <th>Código</th> {/* Changed from Nombre to Código as per your previous request logic */}
-                          <th>Nombre del Alumno</th>
-                          {examenes.map((examen) => (
-                            <th key={examen} className="text-center">{examen.replace('examen', 'Examen ').trim()}</th> 
-                          ))}
-                          <th className="text-center">Promedio</th> {/* Centered text */}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {alumnosPorCurso.map((alumno) => (
-                          <tr
-                            key={alumno.id}
-                            className={modoEdicion === alumno.id ? "table-info" : ""}
-                          >
-                            <td>{alumno.id}</td> {/* Displaying alumno.id here */}
-                            <td>{alumno.nombre}</td>
-                            {examenes.map((examen) => (
-                              <td key={examen} className="text-center"> {/* Centered text */}
-                                {modoEdicion === alumno.id && examenSeleccionado === examen ? (
-                                  <div className="d-flex flex-column align-items-center"> {/* Centered input and buttons */}
-                                    <input
-                                      type="number"
-                                      min="0"
-                                      max="20"
-                                      step="0.1"
-                                      className="form-control form-control-sm text-center" // Center text in input
-                                      value={notaTemporal}
-                                      onChange={(e) => setNotaTemporal(e.target.value)}
-                                      onKeyPress={(e) => { // Allow saving with Enter key
-                                        if (e.key === 'Enter') {
-                                          guardarNota(alumno.id);
-                                        }
-                                      }}
-                                      style={{ maxWidth: '80px', marginBottom: '5px' }} // Added max-width and margin
-                                    />
-                                    <div className="d-flex gap-1"> {/* Added gap for spacing */}
-                                      <button
-                                        className="btn btn-sm btn-success"
-                                        onClick={() => guardarNota(alumno.id)}
-                                        title="Guardar Nota"
-                                      >
-                                        💾 {/* Save icon */}
-                                      </button>
-                                      <button
-                                        className="btn btn-sm btn-secondary"
-                                        onClick={() => setModoEdicion(null)}
-                                        title="Cancelar Edición"
-                                      >
-                                        ✖️ {/* Cancel icon */}
-                                      </button>
-                                    </div>
-                                  </div>
-                                ) : (
-                                  <div className="d-flex flex-column align-items-center"> {/* Centered grade and button */}
-                                    <span className="fw-bold fs-5">
-                                      {alumno.notas[examen] !== undefined && alumno.notas[examen] !== null
-                                        ? alumno.notas[examen]
-                                        : "-"}
-                                    </span>
-                                    <button
-                                      className="btn btn-sm btn-outline-primary mt-1"
-                                      onClick={() => editarNota(alumno.id, examen)}
-                                      title="Editar Nota"
-                                    >
-                                      ✏️ {/* Edit icon */}
-                                    </button>
-                                  </div>
-                                )}
-                              </td>
-                            ))}
-                            <td className="text-center"> {/* Centered text */}
-                              <span className="fw-bold fs-5">
-                                {promedioAlumno(alumno.notas)}
-                              </span>
-                            </td>
-                          </tr>
+                  <table className="table">
+                    <thead>
+                      <tr>
+                        <th>Alumno</th>
+                        {examenes.map((examen) => (
+                          <th key={examen}>{examen.replace('examen', 'Ex. ')}</th>
                         ))}
-                      </tbody>
-                      <tfoot> {/* Added a footer for general average */}
-                        <tr>
-                          <td colSpan={2} className="text-end fw-bold">Promedio General del Curso:</td>
+                        <th>Promedio</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {alumnosPorCurso.map((alumno) => (
+                        <tr key={alumno.id}>
+                          <td>{alumno.nombre}</td>
                           {examenes.map((examen) => (
-                            <td key={`avg-${examen}`} className="text-center">
-                              {/* You might want to calculate average for each exam here if needed */}
-                              -
+                            <td key={examen}>
+                              {modoEdicion === alumno.id && examenSeleccionado === examen ? (
+                                <div className="d-flex align-items-center">
+                                  <input
+                                    type="number"
+                                    value={notaTemporal}
+                                    onChange={(e) => setNotaTemporal(e.target.value)}
+                                    className="form-control form-control-sm"
+                                    style={{ width: '70px' }}
+                                  />
+                                  <button onClick={() => guardarNota(alumno.id)} className="btn btn-sm btn-success ms-1">Guardar</button>
+                                  <button onClick={() => setModoEdicion(null)} className="btn btn-sm btn-secondary ms-1">Cancelar</button>
+                                </div>
+                              ) : (                                
+                                <span 
+                                  onDoubleClick={() => editarNota(alumno.id, examen)} 
+                                  style={{ cursor: 'pointer' }}>
+                                    {alumno.notas[examen] ?? "-"}
+                                </span>
+                              )}
                             </td>
                           ))}
-                          <td className="text-center fw-bold fs-5 text-primary">
-                            {promedioGeneral()}
-                          </td>
+                          <td className={getPromedioClass(promedioAlumno(alumno.notas))}>{promedioAlumno(alumno.notas)}</td>
                         </tr>
-                      </tfoot>
-                    </table>
-                  </div>
+                      ))}
+                    </tbody>
+                  </table>
                 ) : (
-                  <p className="alert alert-info">No hay alumnos inscritos en este curso o sección.</p>
+                  <p>No hay alumnos en este curso.</p>
                 )}
-
-                {alumnosPorCurso.length > 0 && (
-                  <button
-                    className="btn btn-info mt-3"
-                    onClick={() => setMostrarEstadisticas(!mostrarEstadisticas)}
-                  >
-                    {mostrarEstadisticas ? "Ocultar Estadísticas" : "Mostrar Estadísticas"}
-                  </button>
-                )}
-
-                {mostrarEstadisticas && estadisticasCurso() && (
-                  <div className="mt-4 p-3 border rounded bg-light">
-                    <h5 className="text-primary mb-3">Estadísticas del curso</h5>
-                    <div className="row">
-                      <div className="col-md-6">
-                        <p>Cantidad de alumnos: <strong>{estadisticasCurso().cantidadAlumnos}</strong></p>
-                        <p>Cantidad de notas registradas: <strong>{estadisticasCurso().cantidadNotas}</strong></p>
-                        <p>Aprobados: <strong className="text-success">{estadisticasCurso().aprobados}</strong></p>
-                        <p>Desaprobados: <strong className="text-danger">{estadisticasCurso().desaprobados}</strong></p>
-                        <p>Nota máxima: <strong className="text-success">{estadisticasCurso().max}</strong></p>
-                        <p>Nota mínima: <strong className="text-danger">{estadisticasCurso().min}</strong></p>
-                        <p>Promedio general del curso: <strong className="text-primary">{estadisticasCurso().promedio}</strong></p>
-                      </div>
-                      <div className="col-md-6 d-flex justify-content-center align-items-center">
-                        <div style={{ maxWidth: "400px", width: "100%" }}>
-                          <Bar
-                            data={{
-                              labels: ["Aprobados", "Desaprobados"],
-                              datasets: [
-                                {
-                                  label: "Cantidad de estudiantes",
-                                  data: [
-                                    estadisticasCurso().aprobados,
-                                    estadisticasCurso().desaprobados,
-                                  ],
-                                  backgroundColor: ["#4caf50", "#f44336"],
-                                  borderRadius: 8, // Added border-radius for nicer bars
-                                },
-                              ],
-                            }}
-                            options={{
-                              responsive: true,
-                              maintainAspectRatio: false, // Allow charts to resize more freely
-                              plugins: {
-                                legend: {
-                                  display: false,
-                                },
-                                tooltip: {
-                                  callbacks: {
-                                    label: function(context) {
-                                      let label = context.dataset.label || '';
-                                      if (label) {
-                                        label += ': ';
-                                      }
-                                      if (context.parsed.y !== null) {
-                                        label += context.parsed.y;
-                                      }
-                                      return label;
-                                    }
-                                  }
-                                }
-                              },
-                              scales: {
-                                y: {
-                                  beginAtZero: true,
-                                  ticks: {
-                                    stepSize: 1,
-                                    precision: 0 // Ensure integer ticks
-                                  }
-                                }
-                              }
-                            }}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </>
-            )}
+              </div>
+              <div className="chart-container">
+                <Bar options={chartOptions} data={chartData} />
+              </div>
+            </div>
           </div>
         )}
       </div>
@@ -513,4 +351,4 @@ function Curso() {
   );
 }
 
-export default Curso;
+export default CursoProfesor;

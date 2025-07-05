@@ -43,14 +43,14 @@
 .nav-link {
     display: flex;
     align-items: center;
-    gap: 8rem; /* Aumentar espacio entre icono y texto */
+    gap: 1rem; /* Aumentar espacio entre icono y texto */
     padding: 0.85rem 1rem; /* Aumentar padding vertical */
     margin-bottom: 0.75rem; /* Aumentar espacio entre links */
     border-radius: 0.5rem;
     text-decoration: none;
     font-weight: 500;
     font-size: 1rem; /* Aumentar tamaño de fuente */
-    color: var(--color-texto-secundario);
+    color: #000;
     transition: background-color 0.2s ease, color 0.2s ease;
 }
 
@@ -94,7 +94,7 @@
 
 .user-name {
     font-weight: 500;
-    color: var(--color-texto-principal);
+    color: #000;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -109,7 +109,7 @@
     border-radius: 0.5rem;
     text-decoration: none;
     font-weight: 500;
-    color: var(--color-texto-secundario);
+    color: #000;
     transition: background-color 0.2s ease, color 0.2s ease;
     border: none;
     background: none;
@@ -167,7 +167,7 @@
         background: none;
         border: none;
         cursor: pointer;
-        color: var(--color-texto-principal);
+        color: #000;
     }
     .mobile-nav {
         display: flex;
@@ -191,3 +191,5 @@
         padding-top: 1rem;
     }
 }
+
+
