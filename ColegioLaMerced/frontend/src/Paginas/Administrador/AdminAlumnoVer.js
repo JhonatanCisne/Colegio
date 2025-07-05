@@ -83,6 +83,63 @@ const AdminAlumnoVer = () => {
     fetchAlumnosData();
   }, []);
 
+  // Función para exportar a CSV
+  const exportToCsv = () => {
+    if (alumnos.length === 0) {
+      alert('No hay alumnos para exportar.');
+      return;
+    }
+
+    // Encabezados del CSV
+    const headers = [
+      'Nombre',
+      'Apellido',
+      'DNI',
+      'Correo',
+      'Nombre Padre',
+      'Apellido Padre',
+      'Grado',
+      'Seccion'
+    ];
+
+    // Mapea los datos de los alumnos a un formato de fila CSV
+    const rows = alumnos.map(alumno => [
+      alumno.nombre,
+      alumno.apellido,
+      alumno.dni,
+      alumno.correo,
+      alumno.nombrePadre,
+      alumno.apellidoPadre,
+      alumno.grado,
+      alumno.seccionNombre
+    ]);
+
+    // Combina encabezados y filas, escapando comas internas y añadiendo comillas si es necesario
+    const csvContent = [
+      headers.map(header => `"${header}"`).join(','), // Asegura que los encabezados estén entre comillas
+      ...rows.map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')) // Escapa comillas internas y rodea con comillas
+    ].join('\n');
+
+    // Crea un Blob y un enlace para la descarga
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+
+    // Asegura que el navegador soporte el atributo 'download'
+    if (link.download !== undefined) {
+      const url = URL.createObjectURL(blob);
+      link.setAttribute('href', url);
+      link.setAttribute('download', 'lista_alumnos.csv'); // Nombre del archivo
+
+      // Simula un clic para descargar el archivo
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url); // Libera el objeto URL
+    } else {
+      alert('Tu navegador no soporta la descarga de archivos. Intenta con otro navegador.');
+    }
+  };
+
   return (
     <div className="admin-container">
       <div className="sidebar">
@@ -105,34 +162,41 @@ const AdminAlumnoVer = () => {
         )}
 
         {!loading && !error && alumnos.length > 0 && (
-          <div className="alumnos-table-container">
-            <table className="alumnos-table">
-              <thead>
-                <tr>
-                  <th>Nombre</th> {/* Reincorporado */}
-                  <th>Apellido</th> {/* Reincorporado */}
-                  <th>DNI</th>
-                  <th>Correo</th>
-                  <th>Padre</th>
-                  <th>Grado</th>
-                  <th>Sección</th>
-                </tr>
-              </thead>
-              <tbody>
-                {alumnos.map((alumno) => (
-                  <tr key={alumno.idAlumno}>
-                    <td>{alumno.nombre}</td> {/* Reincorporado */}
-                    <td>{alumno.apellido}</td> {/* Reincorporado */}
-                    <td>{alumno.dni}</td>
-                    <td>{alumno.correo}</td>
-                    <td>{`${alumno.nombrePadre} ${alumno.apellidoPadre}`}</td>
-                    <td>{alumno.grado}</td>
-                    <td>{alumno.seccionNombre}</td>
+          <>
+            {/* Botón de Exportar a CSV */}
+            <button className="export-button" onClick={exportToCsv}>
+              Exportar a CSV
+            </button>
+
+            <div className="alumnos-table-container">
+              <table className="alumnos-table">
+                <thead>
+                  <tr>
+                    <th>Nombre</th>
+                    <th>Apellido</th>
+                    <th>DNI</th>
+                    <th>Correo</th>
+                    <th>Padre</th>
+                    <th>Grado</th>
+                    <th>Sección</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  {alumnos.map((alumno) => (
+                    <tr key={alumno.idAlumno}>
+                      <td>{alumno.nombre}</td>
+                      <td>{alumno.apellido}</td>
+                      <td>{alumno.dni}</td>
+                      <td>{alumno.correo}</td>
+                      <td>{`${alumno.nombrePadre} ${alumno.apellidoPadre}`}</td>
+                      <td>{alumno.grado}</td>
+                      <td>{alumno.seccionNombre}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
     </div>
