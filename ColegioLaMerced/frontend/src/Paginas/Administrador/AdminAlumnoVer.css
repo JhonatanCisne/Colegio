@@ -94,7 +94,7 @@ body, html {
 
 /* Estilos para el nuevo botón de exportar */
 .export-button {
-  background-color: #4CAF50; /* Un color verde distintivo */
+  background-color: #8B0000; /* Un color verde distintivo */
   color: white;
   padding: 10px 20px;
   border: none;
@@ -107,7 +107,7 @@ body, html {
 }
 
 .export-button:hover {
-  background-color: #45a049; /* Un verde más oscuro al pasar el ratón */
+  background-color: #8B0000; /* Un verde más oscuro al pasar el ratón */
 }
 
 

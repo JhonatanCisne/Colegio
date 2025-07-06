@@ -165,7 +165,7 @@ const AdminAlumnoVer = () => {
           <>
             {/* Botón de Exportar a CSV */}
             <button className="export-button" onClick={exportToCsv}>
-              Exportar a CSV
+              Exportar
             </button>
 
             <div className="alumnos-table-container">

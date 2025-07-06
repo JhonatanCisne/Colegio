@@ -1,0 +1,228 @@
+/* AdminProfesoresVer.css */
+
+/* Reset básico para asegurar que no haya márgenes/padding predeterminados del navegador */
+body, html {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+}
+
+.contenedor-principal {
+    min-height: 100vh;
+    font-family: 'Arial', sans-serif;
+    display: flex; /* Usamos flexbox para el layout del sidebar y contenido */
+    background-color: #ffffff; /* Asegura un fondo blanco para el contenedor principal */
+}
+
+/* Sidebar */
+.sidebar {
+    width: 250px;
+    background-color: #8B0000; /* Rojo oscuro */
+    color: #ffffff;
+    padding: 20px;
+    box-sizing: border-box;
+    height: 100vh; /* Ocupa toda la altura de la ventana */
+    position: fixed; /* Fijo en la pantalla */
+    left: 0;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 2px 0 8px rgba(139,0,0,0.10);
+    display: flex;
+    flex-direction: column;
+}
+
+.sidebar h2 {
+    text-align: center;
+    color: #ffffff;
+    margin-bottom: 30px;
+    font-size: 1.5em;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #ffffff;
+}
+
+.sidebar ul {
+    list-style: none;
+    padding: 0;
+    flex-grow: 1; /* Permite que la lista ocupe el espacio restante */
+}
+
+.sidebar ul li {
+    margin-bottom: 15px;
+    cursor: pointer;
+    font-size: 1em;
+    padding: 12px 15px;
+    border-radius: 5px;
+    transition: background-color 0.3s, color 0.3s, transform 0.2s;
+    background-color: #8B0000; /* Fondo de los ítems por defecto */
+    color: #ffffff; /* Color de texto por defecto */
+}
+
+.sidebar ul li:hover:not(.parent-menu-item):not(.activo) {
+    background-color: #ffffff; /* Blanco al pasar el ratón */
+    color: #8B0000; /* Rojo oscuro al pasar el ratón */
+    transform: translateX(5px);
+}
+
+.sidebar ul li.activo {
+    background-color: #ffffff; /* Fondo blanco para el ítem activo */
+    color: #8B0000; /* Texto rojo oscuro para el ítem activo */
+    font-weight: bold;
+}
+
+.sidebar ul li.parent-menu-item {
+    font-weight: bold;
+    color: #ffffff;
+    padding: 0; /* Elimina padding para el padre */
+    margin-bottom: 0; /* Elimina margen inferior del padre */
+    cursor: default; /* No es un botón clicable directamente */
+    background-color: transparent; /* Fondo transparente para el padre */
+    border-radius: 0; /* Sin bordes redondeados para el padre */
+}
+
+.sidebar ul li.parent-menu-item ul {
+    list-style: none;
+    padding-left: 20px; /* Indentación para sub-menú */
+    margin-top: 10px;
+}
+
+.sidebar ul li.parent-menu-item ul li {
+    font-weight: normal; /* Restaura el peso de la fuente para sub-ítems */
+    margin-bottom: 10px;
+    padding: 10px 15px; /* Padding para sub-ítems */
+    background-color: #A52A2A; /* Un tono un poco más claro para el submenú */
+    color: #ffffff;
+}
+
+.sidebar ul li.parent-menu-item ul li:hover {
+    background-color: #ffffff;
+    color: #8B0000;
+    transform: translateX(5px);
+}
+
+.sidebar ul li.cerrar-sesion {
+    background-color: #DC3545; /* Color diferente para "Cerrar sesión" */
+    color: #ffffff;
+    margin-top: auto; /* Empuja el botón al final del sidebar */
+    text-align: center;
+}
+
+.sidebar ul li.cerrar-sesion:hover {
+    background-color: #C82333; /* Color más oscuro al pasar el ratón */
+    color: #ffffff;
+    transform: translateX(0); /* No hay traslación para este botón */
+}
+
+
+/* Contenido Principal */
+.contenido-principal {
+    margin-left: 270px; /* Margen para dejar espacio al sidebar fijo */
+    padding: 20px;
+    flex-grow: 1;
+    min-height: 100vh;
+    background-color: #ffffff;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+}
+
+.contenido-principal h1 {
+    color: #8B0000;
+    margin-bottom: 25px;
+    text-align: center;
+    font-size: 2em;
+    border-bottom: 2px solid #8B0000;
+    padding-bottom: 10px;
+}
+
+/* Mensajes (éxito/error) */
+.mensaje {
+    padding: 10px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.mensaje-exito {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.mensaje-error {
+    background-color: #f8d7da;
+    color: #721c24;
+    border: 1px solid #f5c6cb;
+}
+
+/* Estilos para el botón de exportar */
+.export-button {
+    background-color: #8B0000; /* Rojo distintivo */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    margin-bottom: 20px; /* Espacio debajo del botón */
+    align-self: flex-end; /* Alinea el botón a la derecha dentro del contenedor flex */
+    transition: background-color 0.3s ease;
+}
+
+.export-button:hover {
+    background-color: #A52A2A; /* Un rojo más oscuro al pasar el ratón */
+}
+
+/* Tabla de Profesores */
+.profesor-table-container {
+    overflow-x: auto; /* Permite desplazamiento horizontal en pantallas pequeñas */
+    margin-top: 20px;
+    flex-grow: 1;
+}
+
+.profesor-list-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    box-shadow: 0 2px 8px rgba(139,0,0,0.08);
+    background-color: #ffffff;
+}
+
+.profesor-list-table th,
+.profesor-list-table td {
+    border: 1.5px solid #8B0000; /* Borde rojo */
+    padding: 12px 15px;
+    text-align: left;
+    color: #8B0000; /* Texto rojo */
+    background: #ffffff;
+}
+
+.profesor-list-table th {
+    background-color: #8B0000; /* Fondo rojo para encabezados */
+    color: #ffffff; /* Texto blanco para encabezados */
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.9em;
+}
+
+.profesor-list-table tr:nth-child(even) {
+    background-color: #ffffff; /* Fondo blanco para filas pares */
+}
+
+.profesor-list-table tr:hover {
+    background-color: #fbeaea; /* Un rojo muy claro al pasar el ratón */
+}
+
+/* Estilos específicos para las celdas de listas (Cursos Asignados, Horarios Asignados) */
+.profesor-list-table td ul {
+    margin: 0;
+    padding-left: 20px; /* Indentación para las listas dentro de las celdas */
+    list-style: disc; /* Puntos de lista */
+}
+
+.profesor-list-table td ul li {
+    margin-bottom: 5px;
+}
