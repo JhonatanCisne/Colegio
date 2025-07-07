@@ -50,6 +50,7 @@ const AdminAlumnoEliminar = () => {
           <li><button onClick={() => navigate('/AdminAlumnoEliminar')}>Eliminar Alumno</button></li>
           <li><button onClick={() => navigate('/AdminAlumnoVer')}>Ver Alumnos</button></li>
           <li><button onClick={() => navigate('/AdminAlumnoModificar')}>Modificar Alumno</button></li>
+          
         </ul>
       </div>
       <div className="content">

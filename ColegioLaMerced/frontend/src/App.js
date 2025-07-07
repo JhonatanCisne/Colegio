@@ -20,6 +20,12 @@ import AdminProfesoresModificar from "./Paginas/Administrador/AdminProfesoresMod
 import AdminProfesoresEliminar from "./Paginas/Administrador/AdminProfesoresEliminar";
 import AdminProfesoresVer from "./Paginas/Administrador/AdminProfesoresVer";
 
+// Componentes de Secciones
+import AdminSeccionAgregar from "./Paginas/Administrador/AdminSeccionAgregar";
+import AdminSeccionModificar from "./Paginas/Administrador/AdminSeccionModificar"; // Nuevo componente para modificar
+import AdminSeccionEliminar from "./Paginas/Administrador/AdminSeccionEliminar";
+
+
 import InicioProfesor from "./Paginas/Profesor/InicioProfesor";
 import CursoProfesor from "./Paginas/Profesor/CursoProfesor";
 import AsistenciaProfesor from "./Paginas/Profesor/AsistenciaProfesor";
@@ -61,6 +67,11 @@ function Layout() {
           <Route path="/AdminProfesoresModificar" element={<AdminProfesoresModificar />} />
           <Route path="/AdminProfesoresEliminar" element={<AdminProfesoresEliminar />} />
           <Route path="/AdminProfesoresVer" element={<AdminProfesoresVer />} />
+          
+          {/* Rutas de Secciones */}
+          <Route path="/AdminSeccionesAgregar" element={<AdminSeccionAgregar />} />
+          <Route path="/AdminSeccionesModificar" element={<AdminSeccionModificar />} /> {/* Usando el nuevo AdminSeccionModificar.js */}
+          <Route path="/AdminSeccionEliminar" element={<AdminSeccionEliminar />} />
 
           <Route path="/inicioProfesor" element={<InicioProfesor />} />
           <Route path="/cursosProfesor" element={<CursoProfesor />} />

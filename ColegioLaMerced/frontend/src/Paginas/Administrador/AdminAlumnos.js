@@ -227,6 +227,15 @@ const AdminAlumnos = () => {
             Profesores
           </li>
           <li
+            className={seccionSidebar === "Seccion" ? "activo" : ""}
+            onClick={() => {
+              setSeccionSidebar("Seccion");
+              navigate("/AdminSeccionesAgregar");
+            }}
+          >
+            Secciones
+          </li>
+          <li
             className="cerrar-sesion"
             onClick={() => {
               localStorage.clear();
