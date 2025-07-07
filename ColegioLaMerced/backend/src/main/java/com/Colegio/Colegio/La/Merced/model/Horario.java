@@ -23,23 +23,16 @@ public class Horario{
     @Column(name = "dia", nullable = false, length = 20)
     private String dia;
 
-    // Relación de Muchos a Uno: Muchos Horarios pueden pertenecer a UNA Sección.
-    // La columna ID_Seccion en la tabla Horario hará referencia al ID_Seccion de la tabla Seccion.
     @ManyToOne
     @JoinColumn(name = "ID_Seccion", referencedColumnName = "ID_Seccion", nullable = false)
     private Seccion seccion;
 
-    // Relación de Muchos a Uno: Muchos Horarios pueden ser impartidos por UN Profesor.
-    // La columna ID_Profesor en la tabla Horario hará referencia al ID_Profesor de la tabla Profesor.
     @ManyToOne
     @JoinColumn(name = "ID_Profesor", referencedColumnName = "ID_Profesor", nullable = true)
     private Profesor profesor;
 
-    // Constructor vacío (requerido por JPA)
     public Horario() {
     }
-
-    // --- Getters y Setters ---
 
     public Integer getIdHorario() {
         return idHorario;
@@ -65,7 +58,6 @@ public class Horario{
         this.dia = dia;
     }
 
-    // Getters y Setters para las entidades relacionadas (nomenclatura estándar)
     public Seccion getSeccion() {
         return seccion;
     }

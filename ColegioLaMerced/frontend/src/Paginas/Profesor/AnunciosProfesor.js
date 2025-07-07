@@ -5,6 +5,7 @@ import axios from "axios";
 
 const AnnounceIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>;
 const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>;
+const DeleteIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 6h18"></path><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>;
 
 function AnunciosProfesor() {
   const [nombreProfesor, setNombreProfesor] = useState("");
@@ -14,12 +15,10 @@ function AnunciosProfesor() {
   const [error, setError] = useState(null);
   const [filtroCurso, setFiltroCurso] = useState("todos");
 
-  // Formulario de creación
   const [nuevoTitulo, setNuevoTitulo] = useState("");
   const [nuevaDescripcion, setNuevaDescripcion] = useState("");
   const [cursoSeleccionado, setCursoSeleccionado] = useState("");
 
-  // Modal de edición
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editingAnuncio, setEditingAnuncio] = useState(null);
   const [editedTitulo, setEditedTitulo] = useState("");
@@ -98,7 +97,7 @@ function AnunciosProfesor() {
     };
 
     try {
-      const res = await axios.post("http://localhost:8080/api/anuncios", nuevoAnuncio);
+      await axios.post("http://localhost:8080/api/anuncios", nuevoAnuncio);
       window.location.reload();
     } catch (error) {
       alert("No se pudo crear el anuncio.");
@@ -120,7 +119,7 @@ function AnunciosProfesor() {
   const handleUpdateAnuncio = async (e) => {
     e.preventDefault();
     if (!editedTitulo || !editedDescripcion) {
-        alert("El título y la descripción не pueden estar vacíos.");
+        alert("El título y la descripción no pueden estar vacíos.");
         return;
     }
 
@@ -131,18 +130,23 @@ function AnunciosProfesor() {
         idSeccionCurso: editingAnuncio.idSeccionCurso,
     };
 
-    const anuncioParaEstado = {
-        ...editingAnuncio,
-        titulo: editedTitulo,
-        contenido: editedDescripcion,
-    };
-
     try {
         await axios.put(`http://localhost:8080/api/anuncios/${editingAnuncio.id}`, anuncioParaBackend);
-        setAnuncios(anuncios.map(a => a.id === editingAnuncio.id ? anuncioParaEstado : a));
+        setAnuncios(anuncios.map(a => a.id === editingAnuncio.id ? { ...editingAnuncio, titulo: editedTitulo, contenido: editedDescripcion } : a));
         closeEditModal();
     } catch (error) {
         alert("No se pudo actualizar el anuncio.");
+    }
+  };
+
+  const handleDeleteAnuncio = async (idAnuncio) => {
+    if (window.confirm("¿Estás seguro de que quieres eliminar este anuncio?")) {
+      try {
+        await axios.delete(`http://localhost:8080/api/anuncios/${idAnuncio}`);
+        setAnuncios(anuncios.filter(anuncio => anuncio.id !== idAnuncio));
+      } catch (error) {
+        alert("No se pudo eliminar el anuncio.");
+      }
     }
   };
 
@@ -207,7 +211,10 @@ function AnunciosProfesor() {
                     <h3 className="anuncio-title">{anuncio.titulo}</h3>
                     <span className="anuncio-meta">Publicado por: {anuncio.profesor} | Para: {anuncio.curso}</span>
                   </div>
-                  <button className="edit-btn" onClick={() => openEditModal(anuncio)}><EditIcon /></button>
+                  <div className="anuncio-actions">
+                    <button className="edit-btn" onClick={() => openEditModal(anuncio)}><EditIcon /></button>
+                    <button className="delete-btn" onClick={() => handleDeleteAnuncio(anuncio.id)}><DeleteIcon /></button>
+                  </div>
                 </div>
                 <p className="anuncio-content">{anuncio.contenido}</p>
               </div>

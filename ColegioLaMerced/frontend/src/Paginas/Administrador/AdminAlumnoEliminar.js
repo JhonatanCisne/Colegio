@@ -7,38 +7,55 @@ const AdminAlumnoEliminar = () => {
   const [dniBuscar, setDniBuscar] = useState('');
   const [mensaje, setMensaje] = useState('');
   const [error, setError] = useState('');
+  const [dniParaModal, setDniParaModal] = useState(null); 
+  const [mostrarModal, setMostrarModal] = useState(false);
 
   const handleEliminarAlumno = async (e) => {
     e.preventDefault();
     setMensaje('');
     setError('');
+    setDniParaModal(null);
+    setMostrarModal(false);
 
     if (!dniBuscar) {
       setError('Por favor, ingresa el DNI del alumno a eliminar.');
       return;
     }
 
+    setDniParaModal(dniBuscar);
+    setMostrarModal(true);
+  };
+
+  const confirmarEliminacion = async () => {
+    setMostrarModal(false);
+    setMensaje('');
+    setError('');
+
     try {
-      // Llamada directa al nuevo endpoint de eliminación por DNI
       const response = await fetch(`http://localhost:8080/api/alumnos/dni/${dniBuscar}`, {
         method: 'DELETE',
       });
 
-      if (response.status === 204) { // HttpStatus.NO_CONTENT
-        setMensaje(`Alumno con DNI ${dniBuscar} y sus cursos asociados eliminados exitosamente.`);
+      if (response.status === 204) {
+        setMensaje(`✅ Alumno con DNI ${dniBuscar} y sus cursos asociados eliminados exitosamente.`);
         setDniBuscar('');
-      } else if (response.status === 404) { // HttpStatus.NOT_FOUND
+        setDniParaModal(null);
+      } else if (response.status === 404) {
         const errorMessage = await response.text();
-        setError(errorMessage || 'No se encontró ningún alumno con ese DNI.');
+        setError(errorMessage || '❌ No se encontró ningún alumno con ese DNI para eliminar.');
       } else {
-        // Para otros códigos de error (ej. 500 Internal Server Error)
         const errorData = await response.text();
-        setError(`Error al eliminar alumno: ${errorData || response.statusText}`);
+        setError(`❌ Error al eliminar alumno: ${errorData || response.statusText}`);
       }
     } catch (err) {
-      console.error("Error en la solicitud de eliminación:", err);
-      setError(`Error de conexión al eliminar alumno: ${err.message}`);
+      setError(`❌ Error de conexión al eliminar alumno: ${err.message}`);
     }
+  };
+
+  const cancelarEliminacion = () => {
+    setMostrarModal(false);
+    setMensaje('ℹ️ Eliminación de alumno cancelada.');
+    setError('');
   };
 
   return (
@@ -50,9 +67,9 @@ const AdminAlumnoEliminar = () => {
           <li><button onClick={() => navigate('/AdminAlumnoEliminar')}>Eliminar Alumno</button></li>
           <li><button onClick={() => navigate('/AdminAlumnoVer')}>Ver Alumnos</button></li>
           <li><button onClick={() => navigate('/AdminAlumnoModificar')}>Modificar Alumno</button></li>
-          
         </ul>
       </div>
+
       <div className="content">
         <h1>Eliminar Alumno</h1>
 
@@ -71,6 +88,20 @@ const AdminAlumnoEliminar = () => {
 
         {mensaje && <p className="success-message">{mensaje}</p>}
         {error && <p className="error-message">{error}</p>}
+
+        {mostrarModal && dniParaModal && (
+          <div className="modal-backdrop">
+            <div className="modal-content">
+              <h2>Confirmar Eliminación</h2>
+              <p>¿Estás seguro de que deseas eliminar al alumno con **DNI: {dniParaModal}**?</p>
+              <p className="advertencia">⚠️ ¡Advertencia! Esta acción es irreversible y eliminará todos los datos del alumno, incluyendo sus cursos asociados.</p>
+              <div className="modal-actions">
+                <button onClick={confirmarEliminacion} className="btn-confirmar">Confirmar Eliminación</button>
+                <button onClick={cancelarEliminacion} className="btn-cancelar">Cancelar</button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

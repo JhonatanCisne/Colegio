@@ -64,4 +64,15 @@ public class CursoUnicoController {
         }
         return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
+
+        @DeleteMapping("/eliminarPorAlumno/{idAlumno}")
+    public ResponseEntity<Void> deleteCursosUnicosByAlumnoId(@PathVariable Integer idAlumno) {
+        try {
+            cursoUnicoService.deleteCursosUnicosByAlumnoId(idAlumno);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT); // 204 No Content
+        } catch (Exception e) {
+            System.err.println("Error al eliminar cursos únicos para el alumno " + idAlumno + ": " + e.getMessage());
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }

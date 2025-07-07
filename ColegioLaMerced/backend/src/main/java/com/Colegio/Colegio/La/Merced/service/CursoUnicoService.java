@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.Colegio.Colegio.La.Merced.dto.CursoUnicoDTO;
 import com.Colegio.Colegio.La.Merced.model.CursoUnico;
@@ -112,5 +113,10 @@ public class CursoUnicoService {
             return true;
         }
         return false;
+    }
+
+    @Transactional
+    public void deleteCursosUnicosByAlumnoId(Integer idAlumno) {
+        cursoUnicoRepository.deleteCursoUnicoByAlumnoId(idAlumno);
     }
 }
