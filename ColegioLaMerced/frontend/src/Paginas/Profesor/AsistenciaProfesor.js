@@ -3,6 +3,7 @@ import BarraDeNavegacionLateralProfesor from "../../Componentes/BarraDeNavegacio
 import { Bar } from "react-chartjs-2";
 import { Chart, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from "chart.js";
 import axios from "axios";
+import * as XLSX from 'xlsx';
 import "./AsistenciaProfesor.css";
 
 Chart.register(BarElement, CategoryScale, LinearScale, Tooltip, Legend);
@@ -19,7 +20,8 @@ function AsistenciaProfesor() {
   const [alumnosParaTomarAsistencia, setAlumnosParaTomarAsistencia] = useState([]);
   const [fecha, setFecha] = useState(() => new Date().toISOString().slice(0, 10));
   const [asistenciaActual, setAsistenciaActual] = useState({});
-  const [timeFrame, setTimeFrame] = useState('day');
+  const [fechaInicio, setFechaInicio] = useState(() => new Date().toISOString().slice(0, 10));
+  const [fechaFin, setFechaFin] = useState(() => new Date().toISOString().slice(0, 10));
   
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -164,7 +166,7 @@ function AsistenciaProfesor() {
     }
   };
 
-  const resumenAsistencia = (timeFrame) => {
+  const resumenAsistencia = (fechaInicio, fechaFin) => {
     if (!cursoSeleccionadoId) return { Presente: 0, Ausente: 0, Tardanza: 0 };
 
     const idCursosUnicosDeEstaSeccion = cursosUnicosData
@@ -173,20 +175,15 @@ function AsistenciaProfesor() {
 
     const asistenciasDelCurso = asistenciasGuardadas.filter(asist => {
         const asistenciaDate = new Date(asist.fecha);
-        const selectedDate = new Date(fecha);
-        if (timeFrame === 'day') {
-            return idCursosUnicosDeEstaSeccion.includes(asist.idCursoUnico) && asist.fecha === fecha;
-        }
-        if (timeFrame === 'month') {
-            return idCursosUnicosDeEstaSeccion.includes(asist.idCursoUnico) &&
-                asistenciaDate.getMonth() === selectedDate.getMonth() &&
-                asistenciaDate.getFullYear() === selectedDate.getFullYear();
-        }
-        if (timeFrame === 'year') {
-            return idCursosUnicosDeEstaSeccion.includes(asist.idCursoUnico) &&
-                asistenciaDate.getFullYear() === selectedDate.getFullYear();
-        }
-        return false;
+        const startDate = new Date(fechaInicio);
+        const endDate = new Date(fechaFin);
+        
+        asistenciaDate.setHours(0, 0, 0, 0);
+        startDate.setHours(0, 0, 0, 0);
+        endDate.setHours(0, 0, 0, 0);
+
+        return idCursosUnicosDeEstaSeccion.includes(asist.idCursoUnico) &&
+               asistenciaDate >= startDate && asistenciaDate <= endDate;
     });
 
     let Presente = 0, Ausente = 0, Tardanza = 0;
@@ -196,6 +193,61 @@ function AsistenciaProfesor() {
       else if (reg.estado === "Tardanza") Tardanza++;
     });
     return { Presente, Ausente, Tardanza };
+  };
+
+  const descargarAsistenciaExcel = () => {
+    if (!cursoSeleccionadoId || alumnosParaTomarAsistencia.length === 0) {
+      alert("Seleccione un curso con alumnos para descargar la asistencia.");
+      return;
+    }
+
+    const idCursosUnicosDeEstaSeccion = cursosUnicosData
+      .filter(cu => cu.idSeccionCurso === cursoSeleccionadoId)
+      .map(cu => cu.idCursoUnico);
+
+    const asistenciasDelCurso = asistenciasGuardadas.filter(asist => {
+      const asistenciaDate = new Date(asist.fecha);
+      const startDate = new Date(fechaInicio);
+      const endDate = new Date(fechaFin);
+      asistenciaDate.setHours(0, 0, 0, 0);
+      startDate.setHours(0, 0, 0, 0);
+      endDate.setHours(0, 0, 0, 0);
+      return idCursosUnicosDeEstaSeccion.includes(asist.idCursoUnico) &&
+             asistenciaDate >= startDate && asistenciaDate <= endDate;
+    });
+
+    if (asistenciasDelCurso.length === 0) {
+      alert("No hay datos de asistencia para el rango de fechas seleccionado.");
+      return;
+    }
+
+    const dates = [...new Set(asistenciasDelCurso.map(a => a.fecha))].sort();
+    
+    const dataParaExcel = alumnosParaTomarAsistencia.map(alumno => {
+      const row = { 'Alumno': alumno.nombre };
+      
+      const asistenciasDelAlumno = asistenciasDelCurso.filter(asist => {
+          const cursoUnico = cursosUnicosData.find(cu => cu.idCursoUnico === asist.idCursoUnico);
+          return cursoUnico && cursoUnico.idAlumno === alumno.id;
+      });
+
+      dates.forEach(date => {
+        const registro = asistenciasDelAlumno.find(a => a.fecha === date);
+        row[date] = registro ? registro.estado : '-';
+      });
+      
+      return row;
+    });
+
+    const worksheet = XLSX.utils.json_to_sheet(dataParaExcel);
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, "Asistencia");
+    
+    const cursoActual = cursosDelProfesor.find(c => c.idSeccionCurso === cursoSeleccionadoId);
+    const cursoNombre = cursoActual ? `${cursoActual.nombre}_${cursoActual.seccion}`.replace(/[^a-zA-Z0-9]/g, '_') : 'Curso';
+    const fileName = `Asistencia_${cursoNombre}_${fechaInicio}_a_${fechaFin}.xlsx`;
+
+    XLSX.writeFile(workbook, fileName);
   };
 
   if (loading) {
@@ -276,9 +328,22 @@ function AsistenciaProfesor() {
             {cursoSeleccionadoId ? (
               <>
                 <div className="d-flex justify-content-center mb-3">
-                  <button className={`btn btn-sm ${timeFrame === 'day' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setTimeFrame('day')}>Día</button>
-                  <button className={`btn btn-sm ${timeFrame === 'month' ? 'btn-primary' : 'btn-outline-primary'} mx-2`} onClick={() => setTimeFrame('month')}>Mes</button>
-                  <button className={`btn btn-sm ${timeFrame === 'year' ? 'btn-primary' : 'btn-outline-primary'}`} onClick={() => setTimeFrame('year')}>Año</button>
+                  <label className="fw-bold mb-0 me-2">Desde:</label>
+                  <input
+                    type="date"
+                    value={fechaInicio}
+                    onChange={e => setFechaInicio(e.target.value)}
+                    className="form-control"
+                    style={{ maxWidth: 180 }}
+                  />
+                  <label className="fw-bold mb-0 ms-3 me-2">Hasta:</label>
+                  <input
+                    type="date"
+                    value={fechaFin}
+                    onChange={e => setFechaFin(e.target.value)}
+                    className="form-control"
+                    style={{ maxWidth: 180 }}
+                  />
                 </div>
                 <div className="grafica-container">
                   <Bar
@@ -288,9 +353,9 @@ function AsistenciaProfesor() {
                         {
                           label: "Cantidad",
                           data: [
-                            resumenAsistencia(timeFrame).Presente,
-                            resumenAsistencia(timeFrame).Ausente,
-                            resumenAsistencia(timeFrame).Tardanza
+                            resumenAsistencia(fechaInicio, fechaFin).Presente,
+                            resumenAsistencia(fechaInicio, fechaFin).Ausente,
+                            resumenAsistencia(fechaInicio, fechaFin).Tardanza
                           ],
                           backgroundColor: ["#4caf50", "#f44336", "#ff9800"],
                         },
@@ -302,6 +367,7 @@ function AsistenciaProfesor() {
                     }}
                   />
                 </div>
+                <button className="btn btn-success mt-3" onClick={descargarAsistenciaExcel}>Descargar Excel</button>
               </>
             ) : (
               <p className="no-data-message">Selecciona un curso para ver el resumen.</p>
