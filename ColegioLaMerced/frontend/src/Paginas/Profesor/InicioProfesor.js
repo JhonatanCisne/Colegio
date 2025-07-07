@@ -13,12 +13,9 @@ const LinkIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height
 const diasSemana = ["Lunes", "Martes", "Miércoles", "Jueves", "Viernes"];
 
 // Datos que podrían venir de una API en el futuro
-const anunciosImportantes = [
-  { id: 1, titulo: "Reunión de Claustro", descripcion: "Miércoles 22 de Julio, 4:00pm en el aula virtual." },
-  { id: 2, titulo: "Cierre de Trimestre", descripcion: "Recuerden que la fecha límite para la entrega de notas es este viernes." },
-];
 
-const estadisticas = { asistenciaPromedio: 96, cursosAsignados: 5, estudiantesTotales: 120 };
+
+
 
 const enlacesUtiles = [
   { id: 1, nombre: "Plataforma de Recursos MINEDU", url: "https://www.minedu.gob.pe/" },
@@ -42,7 +39,9 @@ function getSemanaActual() {
 function InicioProfesor() {
   const [profesor, setProfesor] = useState({ nombre: "", apellido: "" });
   const [horario, setHorario] = useState({});
+  const [anuncios, setAnuncios] = useState([]);
   const [semanaActual, setSemanaActual] = useState(getSemanaActual());
+  const [estadisticas, setEstadisticas] = useState({ asistenciaPromedio: 0, cursosAsignados: 0, estudiantesTotales: 0 });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
@@ -60,11 +59,12 @@ function InicioProfesor() {
       const profesorId = profesorLogueado.idProfesor;
 
       try {
-        const [horariosRes, seccionCursosRes, seccionesRes, cursosRes] = await Promise.all([
+        const [horariosRes, seccionCursosRes, seccionesRes, cursosRes, anunciosRes] = await Promise.all([
           axios.get('http://localhost:8080/api/horarios'),
           axios.get('http://localhost:8080/api/seccioncursos'),
           axios.get('http://localhost:8080/api/secciones'),
           axios.get('http://localhost:8080/api/cursos'),
+          axios.get('http://localhost:8080/api/anuncios'),
         ]);
 
         const horariosDelProfesor = horariosRes.data.filter(h => h.idProfesor === profesorId);
@@ -93,6 +93,48 @@ function InicioProfesor() {
         
         Object.values(horarioProcesado).forEach(dia => dia.sort((a, b) => a.hora.localeCompare(b.hora)));
         setHorario(horarioProcesado);
+
+        // Calcular estadísticas
+        const misSeccionCursos = seccionCursosRes.data.filter(sc => sc.idProfesor === profesorId);
+        const cursosAsignados = misSeccionCursos.length;
+
+        const [cursosUnicosRes, alumnosRes] = await Promise.all([
+          axios.get('http://localhost:8080/api/cursosunicos'),
+          axios.get('http://localhost:8080/api/alumnos'),
+        ]);
+
+        const idAlumnosDelProfesor = new Set();
+        misSeccionCursos.forEach(sc => {
+          cursosUnicosRes.data.forEach(cu => {
+            if (cu.idSeccionCurso === sc.idSeccionCurso) {
+              idAlumnosDelProfesor.add(cu.idAlumno);
+            }
+          });
+        });
+
+        const estudiantesTotales = idAlumnosDelProfesor.size;
+
+        const misSeccionCursosIds = misSeccionCursos.map(sc => sc.idSeccionCurso);
+        const anunciosFiltrados = anunciosRes.data
+          .filter(anuncio => misSeccionCursosIds.includes(anuncio.idSeccionCurso))
+          .map(anuncio => {
+            const contenidoArray = anuncio.contenido.split('\n');
+            const titulo = contenidoArray[0].replace('Título: ', '');
+            const descripcion = contenidoArray.slice(1).join('\n').replace('Descripción: ', '');
+            return {
+              idAnuncio: anuncio.idAnuncio,
+              titulo: titulo,
+              descripcion: descripcion,
+            };
+          });
+
+        setAnuncios(anunciosFiltrados.sort((a, b) => b.idAnuncio - a.idAnuncio));
+
+        setEstadisticas({ 
+            asistenciaPromedio: 96, // Este valor sigue siendo estático por ahora
+            cursosAsignados, 
+            estudiantesTotales 
+        });
 
       } catch (err) {
         console.error("Error al cargar los datos del profesor:", err);
@@ -175,12 +217,16 @@ function InicioProfesor() {
             <div className="widget-header"><AnnounceIcon /><h2>Anuncios Importantes</h2></div>
             <div className="widget-content">
               <ul className="announcements-list">
-                {anunciosImportantes.map(anuncio => (
-                  <li key={anuncio.id}>
-                    <strong className="announcement-title">{anuncio.titulo}</strong>
-                    <p className="announcement-text">{anuncio.descripcion}</p>
-                  </li>
-                ))}
+                {anuncios.length > 0 ? (
+                  anuncios.map(anuncio => (
+                    <li key={anuncio.idAnuncio}>
+                      <strong className="announcement-title">{anuncio.titulo}</strong>
+                      <p className="announcement-text">{anuncio.descripcion}</p>
+                    </li>
+                  ))
+                ) : (
+                  <p>No hay anuncios importantes.</p>
+                )}
               </ul>
             </div>
           </div>
